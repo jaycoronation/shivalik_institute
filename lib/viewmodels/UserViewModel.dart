@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:shivalik_institute/model/UserProfileResponseModel.dart';
 import '../constant/ApiService.dart';
+import '../model/BatchResponseModel.dart';
 
 class UserViewModel extends ChangeNotifier {
   late UserProfileResponseModel _response;
@@ -15,14 +16,9 @@ class UserViewModel extends ChangeNotifier {
 
     try {
       _response = await ApiService.userDetails(jsonBody);
-      print("RESPONSE IN VIEWMODEL === ${_response}");
-    }
-    catch (error)
-    {
+    } catch (error) {
       // Handle error, e.g., show an error message to the user
-    }
-    finally
-    {
+    } finally {
       _isLoading = false;
       notifyListeners();
     }

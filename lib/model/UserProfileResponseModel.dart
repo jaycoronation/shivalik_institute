@@ -284,7 +284,7 @@ class Details {
     _address = json['address'];
     _paymentMode = json['payment_mode'];
     _paymentDetails = json['payment_details'];
-    _documentSubmitted = json['document_submitted'] != null ? json['document_submitted'].cast<String>() : [];
+    //_documentSubmitted = json['document_submitted'] != null ? json['document_submitted'].cast<String>() : [];
     _startDateCourse = json['start_date_course'];
     _enrolledBy = json['enrolled_by'];
     _totalFees = json['total_fees'];

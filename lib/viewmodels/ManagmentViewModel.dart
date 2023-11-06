@@ -15,6 +15,7 @@ class ManagementViewModel extends ChangeNotifier {
 
     try {
       _response = await ApiService.managementList(jsonBody);
+
     } catch (error) {
       // Handle error, e.g., show an error message to the user
     } finally {

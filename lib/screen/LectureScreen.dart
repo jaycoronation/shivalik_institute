@@ -766,84 +766,100 @@ class _LectureScreenState extends BaseState<LectureScreen> {
 
   showFacultyBottomSheet() {
     print(listFaculty.length);
+
     showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: white,
       isScrollControlled: true,
-      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.66),
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-      elevation: 5,
       isDismissible: true,
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20)
+          )
+      ),
       builder: (BuildContext context) {
-        return Wrap(
-          children: [
-            Padding(
-                padding: const EdgeInsets.all(14),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Container(height: 2, width : 40, color: black, margin: const EdgeInsets.only(bottom:12)),
-                      const Text("Select Faculty",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: black, fontWeight: FontWeight.bold, fontSize: 16),),
-                      Container(height: 12),
-                      ListView.builder(
-                        itemCount: listFaculty.length,
-                        shrinkWrap: true,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (context, index) {
-                          var getSet = listFaculty[index];
-                          return Visibility(
-                            visible: getSet != "All",
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () async {
-                                setState(() {
-                                  selectedFacultyId = getSet.id ?? '';
-                                  selectedFaculty = "${getSet.firstName} ${getSet.lastName}";
-                                });
-                                getLectureList(true);
-                                Navigator.pop(context);
-                              },
-                              child: Column(
-                                children: [
-                                  Container(
-                                    alignment: Alignment.center,
-                                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                                    margin: const EdgeInsets.only(top: 6, right: 12),
-                                    child: Text(
-                                      "${getSet.firstName} ${getSet.lastName}",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          color: black,
-                                          fontSize: 14
+        return StatefulBuilder(
+          builder: (context, updateState) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.88),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(height: 10,),
+                    Center(
+                      child: Container(
+                          height: 2,
+                          width: 40,
+                          color: black,
+                          margin: const EdgeInsets.only(bottom: 12)
+                      ),
+                    ),
+                    Container(height: 8,),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Center(
+                          child: Text("Select Faculty" ,
+                              style: TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w600),textAlign: TextAlign.center),
+                        ),
+                        Container(height: 12,),
+                        ListView.builder(
+                          itemCount: listFaculty.length,
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: (context, index) {
+                            var getSet = listFaculty[index];
+                            return Visibility(
+                              visible: getSet != "All",
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () async {
+                                  setState(() {
+                                    selectedFacultyId = getSet.id ?? '';
+                                    selectedFaculty = "${getSet.firstName} ${getSet.lastName}";
+                                  });
+                                  getLectureList(true);
+                                  Navigator.pop(context);
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                      margin: const EdgeInsets.only(top: 6, right: 12),
+                                      child: Text(
+                                        "${getSet.firstName} ${getSet.lastName}",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            color: black,
+                                            fontSize: 14
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const Divider(
-                                    color: Colors.transparent,
-                                    height: 0.7,
-                                    thickness: 0.7,
-                                  )
-                                ],
+                                    const Divider(
+                                      color: Colors.transparent,
+                                      height: 0.7,
+                                      thickness: 0.7,
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      )
-                    ],
-                  ),
-                )
-            ),
-          ],
+                            );
+                          },
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
+
   }
 
   @override

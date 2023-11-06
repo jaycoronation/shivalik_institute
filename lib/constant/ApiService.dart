@@ -40,7 +40,6 @@ class ApiService {
   }
 
   static Future<CommonResponseModel> saveUserData(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -171,10 +170,20 @@ class ApiService {
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
-    final response = await http.post(Uri.parse(userProfiledUrl),body: jsonBody);
+    final response = await http.post(Uri.parse(userProfileUrl),body: jsonBody);
     if (response.statusCode == 200) {
-      final dynamic data = json.decode(response.body);
-      return UserProfileResponseModel.fromJson(data);
+      try {
+        final dynamic data = json.decode(response.body);
+        
+        print("Print In == ${UserProfileResponseModel.fromJson(data)}");
+        
+        print("Data == $data");
+        
+        return UserProfileResponseModel.fromJson(data);
+      } on Exception catch (e) {
+        print("EXECTIOn E === $e");
+      }
+      return UserProfileResponseModel();
     } else {
       throw Exception('Failed to load users');
     }

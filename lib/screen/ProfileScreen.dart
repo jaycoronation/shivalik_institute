@@ -188,7 +188,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                 }
               else
                 {
-
+                  setData(value.response.details ?? Details());
                   return SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 18.0, right: 18),
@@ -1384,7 +1384,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     );
   }
 
-  void getCountryData() {
+  void getContryData() {
     Provider.of<CountryViewModel>(context,listen: false).countryData();
   }
 
@@ -1469,13 +1469,9 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     UserViewModel userViewModel = Provider.of<UserViewModel>(context,listen: false);
     await userViewModel.getUserDetails(jsonBody);
 
-    print("userViewModel.isLoading ==== ${userViewModel.isLoading}");
-    print("userViewModel.response ==== ${userViewModel.response}");
-
     if (userViewModel.response.success == '1')
       {
-        setData(userViewModel.response.details ?? Details());
-        getCountryData();
+        getContryData();
         getStateData();
         getCityData();
         getBatchData();
@@ -1483,7 +1479,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       }
     else
       {
-        getCountryData();
+        getContryData();
         getStateData();
         getCityData();
         getBatchData();
@@ -1627,5 +1623,9 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       },
     );
   }
+
+
+
+
 
 }
