@@ -14,6 +14,7 @@ import 'package:shivalik_institute/viewmodels/TestimonialsViewModel.dart';
 
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
+import '../common_widget/loading_more.dart';
 import '../common_widget/no_data_new.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
@@ -43,7 +44,7 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
   @override
   void initState(){
     super.initState();
-    getTestimonialsList();
+    getTestimonialsList(true);
 
     _scrollViewController = ScrollController();
     _scrollViewController.addListener(() {
@@ -69,7 +70,7 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
       if ((_scrollViewController.position.pixels >= maxScroll)) {
         setState(() {
           _isLoadingMore = true;
-          getTestimonialsList();
+          getTestimonialsList(false);
         });
       }
     }
@@ -118,7 +119,7 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
           ),
           body: Consumer<TestimonialsViewModel>(
             builder: (context, value, child) {
-              if (value.isLoading)
+              if ((value.isLoading) && (_isLoadingMore == false))
               {
                 return const LoadingWidget();
               }
@@ -150,7 +151,7 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
                                     setState(() {
                                       searchParam = text;
                                     });
-                                    getTestimonialsList();
+                                    getTestimonialsList(true);
                                   }
                                 },
                                 onChanged: (value) {
@@ -207,7 +208,7 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
                                     searchParam = "";
                                     listTestimonials = [];
                                   });
-                                  getTestimonialsList();
+                                  getTestimonialsList(true);
                                 },
                                 child: Container(
                                   width: 20,
@@ -322,7 +323,12 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
                           },
                         ),
                       )
-                          : const MyNoDataNewWidget(msg: "No Testimonials Founds", img: "")
+                          : const MyNoDataNewWidget(msg: "No Testimonials Founds", img: ""),
+
+                      Visibility(
+                          visible: _isLoadingMore,
+                          child: const LoadingMoreWidget()
+                      )
                     ],
                   ),
                 );
@@ -337,7 +343,14 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
     );
   }
 
-  Future<void> getTestimonialsList() async {
+  Future<void> getTestimonialsList(bool isFirstTime) async {
+    if (isFirstTime) {
+      setState(() {
+        _isLoadingMore = false;
+        _pageIndex = 1;
+        _isLastPage = false;
+      });
+    }
     Map<String, String> jsonBody = {
       'limit': _pageResult.toString(),
       'page': _pageIndex.toString(),
@@ -353,9 +366,24 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
 
     if (testimonialsViewModel.response.success == "1")
     {
-      listTestimonials = [];
-      listTestimonials.addAll(testimonialsViewModel.response.list ?? []);
+      List<TestimonialsList>? _tempList = [];
+      _tempList = testimonialsViewModel.response.list;
+      listTestimonials?.addAll(_tempList!);
+
+      print(listTestimonials?.length);
+
+
+      if (_tempList?.isNotEmpty ?? false) {
+        _pageIndex += 1;
+        if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
+          _isLastPage = true;
+        }
+      }
+
     }
+    setState(() {
+      _isLoadingMore = false;
+    });
   }
 
   @override

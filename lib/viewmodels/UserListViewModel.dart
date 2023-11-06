@@ -18,6 +18,7 @@ class UserListViewModel extends ChangeNotifier {
     try {
       _response = await ApiService.userList(jsonBody);
     } catch (error) {
+      print(error);
       // Handle error, e.g., show an error message to the user
     } finally {
       _isLoading = false;

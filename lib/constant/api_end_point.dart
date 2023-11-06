@@ -20,3 +20,6 @@ const caseStudyListUrl = "${MAIN_URL}manage_case_studies/list";
 const managementsListUrl = "${MAIN_URL}manage_managements/list";
 const testimonialsListUrl = "${MAIN_URL}manage_testimonials/list";
 const materialListUrl = "${MAIN_URL}manage_documents/list";
+const holidayAddUrl = "${MAIN_URL}manage_holidays/save";
+const updateHolidayAddUrl = "${MAIN_URL}manage_holidays/details";
+const deelteHolidayAddUrl = "${MAIN_URL}manage_holidays/delete";

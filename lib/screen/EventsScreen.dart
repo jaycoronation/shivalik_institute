@@ -7,6 +7,7 @@ import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/viewmodels/EventViewModel.dart';
 
 import '../common_widget/common_widget.dart';
+import '../common_widget/loading_more.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../model/EventResponseModel.dart';
@@ -38,7 +39,7 @@ class _EventsScreenState extends BaseState<EventsScreen> {
   @override
   void initState(){
     super.initState();
-    getEventsList();
+    getEventsList(true);
 
     _scrollViewController = ScrollController();
     _scrollViewController.addListener(() {
@@ -66,7 +67,7 @@ class _EventsScreenState extends BaseState<EventsScreen> {
       if ((_scrollViewController.position.pixels >= maxScroll)) {
         setState(() {
           _isLoadingMore = true;
-          getEventsList();
+          getEventsList(false);
         });
       }
     }
@@ -115,7 +116,7 @@ class _EventsScreenState extends BaseState<EventsScreen> {
           ),
           body: Consumer<EventViewModel>(
             builder: (context, value, child) {
-              if (value.isLoading)
+              if ((value.isLoading) && (_isLoadingMore == false))
                 {
                   return const LoadingWidget();
                 }
@@ -149,7 +150,7 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                                           setState(() {
                                             searchParam = text;
                                           });
-                                          getEventsList();
+                                          getEventsList(true);
                                         }
                                       },
                                       onChanged: (value) {
@@ -206,7 +207,7 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                                           searchParam = "";
                                           listEvent = [];
                                         });
-                                        getEventsList();
+                                        getEventsList(true);
                                       },
                                       child: Container(
                                         width: 20,
@@ -312,7 +313,10 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                                 },
                               ),
                             ),
-
+                            Visibility(
+                                visible: _isLoadingMore,
+                                child: const LoadingMoreWidget()
+                            )
                           ],
                         ),
                       );
@@ -332,10 +336,18 @@ class _EventsScreenState extends BaseState<EventsScreen> {
     );
   }
 
-  Future<void> getEventsList() async {
+  Future<void> getEventsList(bool isFirstTime) async {
+    if (isFirstTime) {
+      setState(() {
+        _isLoadingMore = false;
+        _pageIndex = 1;
+        _isLastPage = false;
+      });
+    }
+
     /*page: 1, limit: 10, search: "", total: 0, status: 1, filter: "upcoming", filter_by: "upcoming",…}*/
     Map<String, String> jsonBody = {
-      'filter': "upcoming",
+      'filter': "",
       'filter_by': "past",
       'limit': _pageResult.toString(),
       'page': _pageIndex.toString(),
@@ -348,9 +360,23 @@ class _EventsScreenState extends BaseState<EventsScreen> {
 
     if (eventViewModel.response.success == "1")
     {
-      listEvent = [];
-      listEvent.addAll(eventViewModel.response.eventList ?? []);
+      List<EventList>? _tempList = [];
+      _tempList = eventViewModel.response.eventList;
+      listEvent?.addAll(_tempList!);
+
+      print(listEvent?.length);
+
+      if (_tempList?.isNotEmpty ?? false) {
+        _pageIndex += 1;
+        if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
+          _isLastPage = true;
+        }
+      }
+
     }
+    setState(() {
+      _isLoadingMore = false;
+    });
   }
 
   @override

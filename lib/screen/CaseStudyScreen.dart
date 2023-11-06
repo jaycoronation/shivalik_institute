@@ -10,6 +10,7 @@ import 'package:shivalik_institute/viewmodels/HolidayViewModel.dart';
 
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
+import '../common_widget/loading_more.dart';
 import '../common_widget/no_data_new.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
@@ -39,7 +40,7 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
   @override
   void initState(){
     super.initState();
-    getCaseStudyList();
+    getCaseStudyList(true);
 
     _scrollViewController = ScrollController();
     _scrollViewController.addListener(() {
@@ -67,7 +68,7 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
       if ((_scrollViewController.position.pixels >= maxScroll)) {
         setState(() {
           _isLoadingMore = true;
-          getCaseStudyList();
+          getCaseStudyList(false);
         });
       }
     }
@@ -116,7 +117,7 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
           ),
           body: Consumer<CaseStudyViewModel>(
             builder: (context, value, child) {
-              if (value.isLoading)
+              if ((value.isLoading) && (_isLoadingMore == false))
               {
                 return const LoadingWidget();
               }
@@ -148,7 +149,7 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
                                     setState(() {
                                       searchParam = text;
                                     });
-                                    getCaseStudyList();
+                                    getCaseStudyList(true);
                                   }
                                 },
                                 onChanged: (value) {
@@ -205,7 +206,7 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
                                     searchParam = "";
                                     listCaseStudy = [];
                                   });
-                                  getCaseStudyList();
+                                  getCaseStudyList(true);
                                 },
                                 child: Container(
                                   width: 20,
@@ -272,7 +273,11 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
                           },
                         ),
                       )
-                          : const MyNoDataNewWidget(msg: "No Case Study Founds", img: "")
+                          : const MyNoDataNewWidget(msg: "No Case Study Founds", img: ""),
+                      Visibility(
+                          visible: _isLoadingMore,
+                          child: const LoadingMoreWidget()
+                      )
                     ],
                   ),
                 );
@@ -287,7 +292,15 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
     );
   }
 
-  Future<void> getCaseStudyList() async {
+  Future<void> getCaseStudyList(bool isFirstTime) async {
+    if (isFirstTime) {
+      setState(() {
+        _isLoadingMore = false;
+        _pageIndex = 1;
+        _isLastPage = false;
+      });
+    }
+
     /*page: 1, limit: 10, search: "", total: 0, status: 1, filter: "upcoming", filter_by: "upcoming",…}*/
     Map<String, String> jsonBody = {
       'limit': _pageResult.toString(),
@@ -301,9 +314,23 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
 
     if (caseStudyViewModel.response.success == "1")
     {
-      listCaseStudy = [];
-      listCaseStudy.addAll(caseStudyViewModel.response.list ?? []);
+      List<CaseStudyList>? _tempList = [];
+      _tempList = caseStudyViewModel.response.list;
+      listCaseStudy?.addAll(_tempList!);
+
+      print(listCaseStudy?.length);
+
+
+      if (_tempList?.isNotEmpty ?? false) {
+        _pageIndex += 1;
+        if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
+          _isLastPage = true;
+        }
+      }
     }
+    setState(() {
+      _isLoadingMore = false;
+    });
   }
 
   @override

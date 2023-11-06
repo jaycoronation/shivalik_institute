@@ -12,6 +12,7 @@ import 'package:shivalik_institute/viewmodels/ManagmentViewModel.dart';
 
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
+import '../common_widget/loading_more.dart';
 import '../common_widget/no_data_new.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
@@ -41,7 +42,7 @@ class _ManagementScreenState extends BaseState<ManagementScreen> {
   @override
   void initState(){
     super.initState();
-    getManagementList();
+    getManagementList(true);
 
     _scrollViewController = ScrollController();
     _scrollViewController.addListener(() {
@@ -69,7 +70,7 @@ class _ManagementScreenState extends BaseState<ManagementScreen> {
       if ((_scrollViewController.position.pixels >= maxScroll)) {
         setState(() {
           _isLoadingMore = true;
-          getManagementList();
+          getManagementList(false);
         });
       }
     }
@@ -118,7 +119,7 @@ class _ManagementScreenState extends BaseState<ManagementScreen> {
           ),
           body: Consumer<ManagementViewModel>(
             builder: (context, value, child) {
-              if (value.isLoading)
+              if ((value.isLoading) && (_isLoadingMore == false))
               {
                 return const LoadingWidget();
               }
@@ -150,7 +151,7 @@ class _ManagementScreenState extends BaseState<ManagementScreen> {
                                     setState(() {
                                       searchParam = text;
                                     });
-                                    getManagementList();
+                                    getManagementList(true);
                                   }
                                 },
                                 onChanged: (value) {
@@ -207,7 +208,7 @@ class _ManagementScreenState extends BaseState<ManagementScreen> {
                                     searchParam = "";
                                     listManagement = [];
                                   });
-                                  getManagementList();
+                                  getManagementList(true);
                                 },
                                 child: Container(
                                   width: 20,
@@ -322,7 +323,11 @@ class _ManagementScreenState extends BaseState<ManagementScreen> {
                           },
                         ),
                       )
-                          : const MyNoDataNewWidget(msg: "No Management Founds", img: "")
+                          : const MyNoDataNewWidget(msg: "No Management Founds", img: ""),
+                      Visibility(
+                          visible: _isLoadingMore,
+                          child: const LoadingMoreWidget()
+                      )
                     ],
                   ),
                 );
@@ -337,7 +342,15 @@ class _ManagementScreenState extends BaseState<ManagementScreen> {
     );
   }
 
-  Future<void> getManagementList() async {
+  Future<void> getManagementList(bool isFirstTime) async {
+    if (isFirstTime) {
+      setState(() {
+        _isLoadingMore = false;
+        _pageIndex = 1;
+        _isLastPage = false;
+      });
+    }
+
     Map<String, String> jsonBody = {
       'limit': _pageResult.toString(),
       'page': _pageIndex.toString(),
@@ -353,9 +366,25 @@ class _ManagementScreenState extends BaseState<ManagementScreen> {
 
     if (managementViewModel.response.success == "1")
     {
-      listManagement = [];
-      listManagement.addAll(managementViewModel.response.list ?? []);
+
+      List<ManagementList>? _tempList = [];
+      _tempList = managementViewModel.response.list;
+      listManagement?.addAll(_tempList!);
+
+      print(listManagement?.length);
+
+
+      if (_tempList?.isNotEmpty ?? false) {
+        _pageIndex += 1;
+        if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
+          _isLastPage = true;
+        }
+      }
+
     }
+    setState(() {
+      _isLoadingMore = false;
+    });
   }
 
   @override

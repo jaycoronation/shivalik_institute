@@ -11,6 +11,7 @@ import 'package:shivalik_institute/viewmodels/LectureViewModel.dart';
 import 'package:shivalik_institute/viewmodels/UserListViewModel.dart';
 
 import '../common_widget/common_widget.dart';
+import '../common_widget/loading_more.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../model/LecturesResponseModel.dart';
@@ -58,7 +59,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
     super.initState();
     moduleGetSet = (widget as LectureScreen).moduleGetSet;
     filterType = (widget as LectureScreen).filter;
-    getLectureList();
+    getLectureList(true);
     getFacultyList();
 
     _scrollViewController = ScrollController();
@@ -86,7 +87,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
       if ((_scrollViewController.position.pixels >= maxScroll)) {
         setState(() {
           _isLoadingMore = true;
-          getLectureList();
+          getLectureList(false);
         });
       }
     }
@@ -150,7 +151,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
           ),
           body: Consumer<LectureViewModel>(
             builder: (context, value, child) {
-              if (value.isLoading)
+              if ((value.isLoading) && (_isLoadingMore == false))
                 {
                   return const LoadingWidget();
                 }
@@ -239,7 +240,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                       setState(() {
                                         searchParam = text;
                                       });
-                                      getLectureList();
+                                      getLectureList(true);
                                     }
                                   },
                                   onChanged: (value) {
@@ -296,7 +297,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                       searchParam = "";
                                       listLecture = [];
                                     });
-                                    getLectureList();
+                                    getLectureList(true);
                                   },
                                   child: Container(
                                     width: 20,
@@ -427,7 +428,11 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                             },
                           ),
                         )
-                            : const MyNoDataNewWidget(msg: "No Lecture Founds", img: "")
+                            : const MyNoDataNewWidget(msg: "No Lecture Founds", img: ""),
+                        Visibility(
+                            visible: _isLoadingMore,
+                            child: const LoadingMoreWidget()
+                        )
                       ],
                     ),
                   );
@@ -442,7 +447,15 @@ class _LectureScreenState extends BaseState<LectureScreen> {
     );
   }
 
-  Future<void> getLectureList() async {
+  Future<void> getLectureList(bool isFirstTime) async {
+    if (isFirstTime) {
+      setState(() {
+        _isLoadingMore = false;
+        _pageIndex = 1;
+        _isLastPage = false;
+      });
+    }
+
     Map<String, String> jsonBody = {
       'batch_id': "",
       'faculty_id': selectedFacultyId,
@@ -465,7 +478,20 @@ class _LectureScreenState extends BaseState<LectureScreen> {
 
     if (moduleViewModel.response.success == "1")
       {
-        listLecture = moduleViewModel.response.lectureList ?? [];
+        List<LectureList>? _tempList = [];
+        _tempList = moduleViewModel.response.lectureList;
+        listLecture?.addAll(_tempList!);
+
+        print(listLecture?.length);
+
+        if (_tempList?.isNotEmpty ?? false) {
+          _pageIndex += 1;
+          if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
+            _isLastPage = true;
+          }
+        }
+
+        // listLecture = moduleViewModel.response.lectureList ?? [];
       }
 
   }
@@ -487,6 +513,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
       listFaculty = [];
       listFaculty.add(UserList(id: "",firstName: "All",lastName: ""));
       listFaculty.addAll(facultyViewModel.response.list ?? []);
+      print("list faculty${listFaculty.length}");
     }
   }
 
@@ -532,7 +559,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                               if (selectedDateFilter == "All") {
                                 fromDateApi = "";
                                 toDateApi = "";
-                                getLectureList();
+                                getLectureList(true);
                                 Navigator.pop(context);
                               } else if (selectedDateFilter == "Today") {
                                 var now = DateTime.now();
@@ -547,7 +574,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                 fromDateDisplay = startDateFormatDisplay;
                                 toDateDisplay = endDateFormatDisplay;
 
-                                getLectureList();
+                                getLectureList(true);
                                 Navigator.pop(context);
                               } else if (selectedDateFilter == "Tomorrow") {
                                 var now = DateTime.now().add(const Duration(days: 1));
@@ -562,7 +589,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                 fromDateDisplay = startDateFormatDisplay;
                                 toDateDisplay = endDateFormatDisplay;
 
-                                getLectureList();
+                                getLectureList(true);
                                 Navigator.pop(context);
                               } else if (selectedDateFilter == "Yesterday") {
                                 var now = DateTime.now().subtract(const Duration(days: 1));
@@ -577,7 +604,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                 fromDateDisplay = startDateFormatDisplay;
                                 toDateDisplay = endDateFormatDisplay;
 
-                                getLectureList();
+                                getLectureList(true);
                                 Navigator.pop(context);
                               } else if (selectedDateFilter == "Last 7 Days") {
                                 var now = DateTime.now().subtract(const Duration(days: 6));
@@ -595,7 +622,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                 fromDateDisplay = startDateFormatDisplay;
                                 toDateDisplay = endDateFormatDisplay;
 
-                                getLectureList();
+                                getLectureList(true);
                                 Navigator.pop(context);
                               } else if (selectedDateFilter == "Last 30 Days") {
                                 var now = DateTime.now().subtract(const Duration(days: 30));
@@ -613,7 +640,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                 fromDateDisplay = startDateFormatDisplay;
                                 toDateDisplay = endDateFormatDisplay;
 
-                                getLectureList();
+                                getLectureList(true);
                                 Navigator.pop(context);
                               } else if (selectedDateFilter == "This Month") {
                                 var now = DateTime.now();
@@ -631,7 +658,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                 fromDateDisplay = startDateFormatDisplay;
                                 toDateDisplay = endDateFormatDisplay;
 
-                                getLectureList();
+                                getLectureList(true);
                                 Navigator.pop(context);
                               } else if (selectedDateFilter == "Last Month") {
                                 var formatterToday = DateFormat('yyyy-MM-dd');
@@ -653,7 +680,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                 fromDateDisplay = startDateFormatDisplay;
                                 toDateDisplay = endDateFormatDisplay;
 
-                                getLectureList();
+                                getLectureList(true);
                                 Navigator.pop(context);
                               } else if (selectedDateFilter == "Custom range") {
                                 Navigator.pop(context);
@@ -699,7 +726,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                   var endDateFinal = outputFormat.format(endDateNew);
                                   fromDateApi = startDateFinal;
                                   toDateApi = endDateFinal;
-                                  getLectureList();
+                                  getLectureList(true);
                                   Navigator.pop(context);
                                 }
                               }
@@ -738,11 +765,12 @@ class _LectureScreenState extends BaseState<LectureScreen> {
   }
 
   showFacultyBottomSheet() {
+    print(listFaculty.length);
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: white,
       isScrollControlled: true,
-      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.88),
+      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.66),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
       elevation: 5,
@@ -766,7 +794,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                       ListView.builder(
                         itemCount: listFaculty.length,
                         shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
+                        physics: const AlwaysScrollableScrollPhysics(),
                         scrollDirection: Axis.vertical,
                         itemBuilder: (context, index) {
                           var getSet = listFaculty[index];
@@ -779,7 +807,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                   selectedFacultyId = getSet.id ?? '';
                                   selectedFaculty = "${getSet.firstName} ${getSet.lastName}";
                                 });
-                                getLectureList();
+                                getLectureList(true);
                                 Navigator.pop(context);
                               },
                               child: Column(
@@ -793,10 +821,15 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                       style: const TextStyle(
                                           fontWeight: FontWeight.w400,
                                           color: black,
-                                          fontSize: 14),
+                                          fontSize: 14
+                                      ),
                                     ),
                                   ),
-                                  const Divider(color: Colors.transparent,height: 0.7,thickness: 0.7,)
+                                  const Divider(
+                                    color: Colors.transparent,
+                                    height: 0.7,
+                                    thickness: 0.7,
+                                  )
                                 ],
                               ),
                             ),

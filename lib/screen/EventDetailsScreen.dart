@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
 import 'package:shivalik_institute/model/EventResponseModel.dart';
 
@@ -116,12 +115,11 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
                     children: [
                       Text(
                         checkValidString(getSet.description).replaceAll("<p>&nbsp;</p>", "").toString().replaceAll("<br />", ""),
-                        style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 16),
+                          style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 16),
                       )
                     ],
                   ),
                 ),
-
               ],
             ),
           ),

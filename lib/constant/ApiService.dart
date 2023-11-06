@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shivalik_institute/model/AddHolidayResponseModel.dart';
 import 'package:shivalik_institute/model/CaseStudyResponseModel.dart';
 import 'package:shivalik_institute/model/DocumentResponseModel.dart';
 import 'package:shivalik_institute/model/EventResponseModel.dart';
@@ -286,6 +287,51 @@ class ApiService {
     if (response.statusCode == 200) {
       final dynamic data = json.decode(response.body);
       return DocumentResponseModel.fromJson(data);
+    } else {
+      throw Exception('Failed to load users');
+    }
+  }
+
+  static Future<CommonResponseModel> saveHolidayAddData(Map<String, String> jsonBody) async {
+
+    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+
+    final response = await http.post(Uri.parse(holidayAddUrl),body: jsonBody);
+    if (response.statusCode == 200) {
+      final dynamic data = json.decode(response.body);
+      return CommonResponseModel.fromJson(data);
+    } else {
+      throw Exception('Failed to load users');
+    }
+  }
+
+  static Future<AddHolidayResponseModel> addHolidayData(Map<String, String> jsonBody) async {
+
+    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+
+    final response = await http.post(Uri.parse(updateHolidayAddUrl),body: jsonBody);
+    if (response.statusCode == 200) {
+      final dynamic data = json.decode(response.body);
+      return AddHolidayResponseModel.fromJson(data);
+    } else {
+      throw Exception('Failed to load users');
+    }
+  }
+
+  static Future<CommonResponseModel> deleteHolidayAddData(Map<String, String> jsonBody) async {
+
+    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+
+    final response = await http.post(Uri.parse(deelteHolidayAddUrl),body: jsonBody);
+    if (response.statusCode == 200) {
+      final dynamic data = json.decode(response.body);
+      return CommonResponseModel.fromJson(data);
     } else {
       throw Exception('Failed to load users');
     }

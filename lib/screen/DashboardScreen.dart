@@ -359,19 +359,22 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, LectureScreen(ModuleList(id: ""), "upcoming_class"));
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Lectures" ,
-                                style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                          children: const [
+                            Padding(
+                              padding: EdgeInsets.all(6.0),
+                              child: Text("Lectures" ,
+                                  style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                            ),
                             Divider(
                               thickness: 0.5,
                               endIndent: 0,
                               indent: 0,
                               color: grayLight,
                             ),
-                            Gap(12)
+
                           ],
                         ),
                       ),
@@ -380,19 +383,22 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const EventsScreen());
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Events" ,
-                                style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                          children: const [
+                            Padding(
+                              padding: EdgeInsets.all(6.0),
+                              child: Text("Events" ,
+                                  style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                            ),
                             Divider(
                               thickness: 0.5,
                               endIndent: 0,
                               indent: 0,
                               color: grayLight,
                             ),
-                            Gap(12)
+
                           ],
                         ),
                       ),
@@ -401,19 +407,22 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const ResourceCenterScreen());
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Resource Center" ,
-                                style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                          children: const [
+                            Padding(
+                              padding: EdgeInsets.all(6.0),
+                              child: Text("Resource Center" ,
+                                  style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                            ),
                             Divider(
                               thickness: 0.5,
                               endIndent: 0,
                               indent: 0,
                               color: grayLight,
                             ),
-                            Gap(12)
+
                           ],
                         ),
                       ),
@@ -422,19 +431,22 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const HolidayScreen());
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Holiday" ,
-                                style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                          children: const [
+                            Padding(
+                              padding: EdgeInsets.all(6.0),
+                              child: Text("Holiday" ,
+                                  style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                            ),
                             Divider(
                               thickness: 0.5,
                               endIndent: 0,
                               indent: 0,
                               color: grayLight,
                             ),
-                            Gap(12)
+
                           ],
                         ),
                       ),
@@ -443,19 +455,22 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const CaseStudyScreen());
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Case Study" ,
-                                style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                          children: const [
+                            Padding(
+                              padding: EdgeInsets.all(6.0),
+                              child: Text("Case Study" ,
+                                  style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                            ),
                             Divider(
                               thickness: 0.5,
                               endIndent: 0,
                               indent: 0,
                               color: grayLight,
                             ),
-                            Gap(12)
+
                           ],
                         ),
                       ),
@@ -464,19 +479,21 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const TestimonialsScreen());
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Testimonials" ,
-                                style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                          children: const [
+                            Padding(
+                              padding: EdgeInsets.all(6.0),
+                              child: Text("Testimonials" ,
+                                  style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                            ),
                             Divider(
                               thickness: 0.5,
                               endIndent: 0,
                               indent: 0,
                               color: grayLight,
                             ),
-                            Gap(12)
                           ],
                         ),
                       ),
@@ -485,19 +502,21 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const ManagementScreen());
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Management" ,
-                                style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                          children: const [
+                            Padding(
+                              padding: EdgeInsets.all(6.0),
+                              child: Text("Management" ,
+                                  style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                            ),
                             Divider(
                               thickness: 0.5,
                               endIndent: 0,
                               indent: 0,
                               color: grayLight,
                             ),
-                            Gap(12)
                           ],
                         ),
                       ),
