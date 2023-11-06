@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:shivalik_institute/constant/api_end_point.dart';
 import 'package:shivalik_institute/model/CommonResponseModel.dart';
-import 'package:shivalik_institute/viewmodels/LoginViewModel.dart';
+import 'package:shivalik_institute/viewmodels/CommonViewModel.dart';
 import '../common_widget/common_widget.dart';
 import '../constant/colors.dart';
 import '../utils/app_utils.dart';
@@ -46,7 +47,7 @@ class _LoginWithOTPScreenState extends BaseState<LoginWithOTPScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final loginViewModel = Provider.of<LoginViewModel>(context);
+    final loginViewModel = Provider.of<CommonViewModel>(context);
 
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: grayLight,
@@ -132,16 +133,17 @@ class _LoginWithOTPScreenState extends BaseState<LoginWithOTPScreen> {
                                   'country_code': "+91",
                                   'email': "",
                                   'mobile_no' : contact,
-                                  'password' : ""
+                                  'password' : "",
+                                  "from_app" : FROM_APP
                                 };
                                 await loginViewModel.generateOTP(jsonBody);
-                                CommonResponseModel value = await loginViewModel.response;
+                                CommonResponseModel value = loginViewModel.response;
                                 if (value.success == "1")
                                   {
                                     startActivity(context, VerifyOTPScreen(mobileNumber: contact));
                                     showToast(value.message, context);
                                   }
-                                else
+                                else if (value.success == "0")
                                   {
                                     showToast(value.message, context);
                                   }

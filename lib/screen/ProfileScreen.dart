@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -8,20 +10,25 @@ import 'package:shivalik_institute/model/CityResponseModel.dart';
 import 'package:shivalik_institute/model/CountryResponseModel.dart';
 import 'package:shivalik_institute/model/CourseResponseModel.dart';
 import 'package:shivalik_institute/screen/LoginWithOtpScreen.dart';
+import 'package:shivalik_institute/utils/app_utils.dart';
+import 'package:shivalik_institute/viewmodels/UserViewModel.dart';
 
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
+import '../model/CommonResponseModel.dart';
 import '../model/StateViewResponseModel.dart';
+import '../model/UserProfileResponseModel.dart';
 import '../utils/base_class.dart';
 import '../utils/session_manager_methods.dart';
 import '../viewmodels/BatchViewModel.dart';
 import '../viewmodels/CityViewModel.dart';
+import '../viewmodels/CommonViewModel.dart';
 import '../viewmodels/CountryViewModel.dart';
 import '../viewmodels/CourseViewModel.dart';
 import '../viewmodels/StateViewModel.dart';
-import 'no_data_new.dart';
+import '../common_widget/no_data_new.dart';
 
 class ProfileScreen extends StatefulWidget {
 
@@ -32,22 +39,26 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends BaseState<ProfileScreen> {
 
   bool isLoading = false;
-  bool isSelected = false;
+  bool isCashSelected = false;
   bool isChequeSelected = false;
-  bool isenrollCourseSelected = false;
-  bool isnetSelected = false;
-  bool isholdSeatSelected = false;
+  bool isEnrollCourseSelected = false;
+  bool isNetSelected = false;
+  bool isHoldSeatSelected = false;
   var selectGender = "";
   String _countryId = "";
   String _stateId = "";
   String _cityId = "";
-  final TextEditingController _nameController = TextEditingController();
+  String _batchId = "";
+  String _courseId = "";
+  Details userGetSet = Details();
+  final TextEditingController _courseNameController = TextEditingController();
   final TextEditingController _prefixController = TextEditingController();
-  final TextEditingController _fnameController = TextEditingController();
-  final TextEditingController _lnameController = TextEditingController();
+  final TextEditingController _fNameController = TextEditingController();
+  final TextEditingController _lNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
@@ -64,20 +75,75 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
   final TextEditingController _chequeController = TextEditingController();
   final TextEditingController _enrollController = TextEditingController();
 
+  List<BatchList> listBatches = [];
+  List<CourseList> listCourse = [];
+
+  void setData(Details getSet) {
+    userGetSet = getSet;
+
+    _prefixController.text = getSet.prefixName ?? "";
+    _fNameController.text = getSet.firstName ?? "";
+    _lNameController.text = getSet.lastName ?? "";
+    _emailController.text = getSet.email ?? "";
+    _contactController.text = getSet.contactNo ?? "";
+    _genderController.text = toDisplayCase(getSet.gender ?? "");
+    _ageController.text = getSet.age ?? '';
+    _countryController.text = getSet.countryName ?? "";
+    _stateController.text = getSet.stateName ?? "";
+    _cityController.text = getSet.cityName ?? "";
+    _addressController.text = getSet.address ?? "";
+    _educationController.text = getSet.highestEducation ?? "";
+    _designationController.text = getSet.designation ?? "";
+    _pendingFeesController.text = getSet.pendingFees.toString() ?? "";
+    _paidController.text = getSet.paidFees.toString() ?? "";
+    _experienceController.text = getSet.yearsOfExperience.toString() ?? "";
+    _cashController.text = getSet.paymentModeCashAmount.toString() ?? "";
+    _holdSeatController.text = getSet.holdingSeatDesc.toString() ?? "";
+    _netController.text = getSet.paymentModeNetbankingAmount.toString() ?? "";
+    _chequeController.text = getSet.paymentModeChequeAmount.toString() ?? "";
+    _enrollController.text = getSet.enrolledInCourseDesc.toString() ?? "";
+
+    isCashSelected = getSet.paymentModeCash == 1 ? true : false;
+    isChequeSelected = getSet.paymentModeCheque == 1 ? true : false;
+    isEnrollCourseSelected = getSet.enrolledInCourse == 1 ? true : false;
+    isNetSelected = getSet.paymentModeNetbanking == 1 ? true : false;
+    isHoldSeatSelected = getSet.holdingSeat == 1 ? true : false;
+
+    _countryId = getSet.country ?? '';
+    _stateId = getSet.state ?? '';
+    _cityId = getSet.city ?? '';
+    _batchId = getSet.batchId ?? '';
+
+    _courseId = getSet.courseId ?? '';
+
+    print("_courseId === ${_courseId}");
+
+    for (var element in listBatches) {
+      if (element.id == _batchId)
+      {
+        _batchController.text = "${element.name} - ${element.formatedDateTime}";
+      }
+    }
+
+    for (var element in listCourse) {
+      if (element.id == _courseId)
+      {
+        _courseNameController.text = element.name ?? '';
+      }
+    }
+
+  }
 
   @override
   void initState() {
-    getContryData();
-    getstateData();
-    getcityData();
-    getbatchData();
-    getCourseData();
-
+    getUserData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final commonViewModel = Provider.of<CommonViewModel>(context);
 
     return WillPopScope(
         child: Scaffold(
@@ -93,10 +159,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
               child: getBackArrow(),
             ),
             titleSpacing: 0,
-            title: Text("Profile",
-              textAlign: TextAlign.start,
-              style: getTitleTextStyle(),
-            ),
+            title: getTitle("Profile"),
             actions: [
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
@@ -117,563 +180,628 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
               const Gap(10)
             ],
           ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 18.0, right: 18),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(height: 22,),
-                  Consumer<CourseViewModel>(
-                    builder: (context, value, child) {
-                      return  Stack(
-                        alignment: Alignment.centerRight,
+          body: Consumer<UserViewModel>(
+            builder: (context, value, child) {
+              if (value.isLoading)
+                {
+                  return const LoadingWidget();
+                }
+              else
+                {
+                  setData(value.response.details ?? Details());
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 18.0, right: 18),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Container(height: 22,),
+                          Consumer<CourseViewModel>(
+                            builder: (context, value, child) {
+                              return  Stack(
+                                alignment: Alignment.centerRight,
+                                children: [
+                                  TextField(
+                                    onTap: (){
+                                      openCourseBottomSheet(value.response.courseList ?? []);
+                                    },
+                                    readOnly: true,
+                                    cursorColor: black,
+                                    textCapitalization: TextCapitalization.words,
+                                    controller: _courseNameController,
+                                    keyboardType: TextInputType.text,
+                                    style: getTextFiledStyle(),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Course*',
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: value.isLoading,
+                                    child: Container(
+                                      alignment: Alignment.centerRight,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      child: const Padding(
+                                        padding: EdgeInsets.only(top: 10,bottom: 10),
+                                        child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+                          ),
+                          Container(height: 18,),
                           TextField(
                             onTap: (){
-                              openCourseBottomsheet(value.response.courseList ?? []);
+                              openPrefixBottomsheet();
                             },
                             readOnly: true,
                             cursorColor: black,
                             textCapitalization: TextCapitalization.words,
-                            controller: _nameController,
+                            controller: _prefixController,
                             keyboardType: TextInputType.text,
                             style: getTextFiledStyle(),
                             decoration: const InputDecoration(
-                              labelText: 'Course*',
+                              labelText: 'Select Prefix*',
                             ),
                           ),
-                          Visibility(
-                            visible: value.isLoading,
-                            child: Container(
-                              alignment: Alignment.centerRight,
-                              margin: EdgeInsets.only(right: 12),
-                              child: const Padding(
-                                padding: EdgeInsets.only(top: 10,bottom: 10),
-                                child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
-                              ),
-                            ),
-                          )
-                        ],
-                      );
-                    },
-                  ),
-                  Container(height: 18,),
-                  TextField(
-                    onTap: (){
-                      openPrefixBottomsheet();
-                    },
-                    readOnly: true,
-                    cursorColor: black,
-                    textCapitalization: TextCapitalization.words,
-                    controller: _fnameController,
-                    keyboardType: TextInputType.text,
-                    style: getTextFiledStyle(),
-                    decoration: const InputDecoration(
-                      labelText: 'Select Prefix*',
-                    ),
-                  ),
-                  Container(height: 18,),
-                  TextField(
-                    onTap: (){
-
-                    },
-                    cursorColor: black,
-                    textCapitalization: TextCapitalization.words,
-                    controller: _lnameController,
-                    keyboardType: TextInputType.text,
-                    style: getTextFiledStyle(),
-                    decoration: const InputDecoration(
-                      labelText: 'First Name*',
-                    ),
-                  ),
-                  Container(height: 18,),
-                  TextField(
-                    onTap: (){
-
-                    },
-                    cursorColor: black,
-                    textCapitalization: TextCapitalization.words,
-                    controller: _prefixController,
-                    keyboardType: TextInputType.text,
-                    style: getTextFiledStyle(),
-                    decoration: const InputDecoration(
-                      labelText: 'Last Name*',
-                    ),
-                  ),
-                  Container(height: 18,),
-                  TextField(
-                    onTap: (){
-
-                    },
-                    cursorColor: black,
-                    textCapitalization: TextCapitalization.words,
-                    controller: _emailController,
-                    keyboardType: TextInputType.text,
-                    style: getTextFiledStyle(),
-                    decoration: const InputDecoration(
-                      labelText: 'Email.*',
-                    ),
-                  ),
-                  Container(height: 18,),
-                  TextField(
-                    onTap: (){
-
-                    },
-                    cursorColor: black,
-                    textCapitalization: TextCapitalization.words,
-                    controller: _contactController,
-                    keyboardType: TextInputType.text,
-                    style: getTextFiledStyle(),
-                    decoration: const InputDecoration(
-                      labelText: 'Contact No.*',
-                    ),
-                  ),
-                  Container(height: 18,),
-                  TextField(
-                    cursorColor: black,
-                    textCapitalization: TextCapitalization.words,
-                    controller: _genderController,
-                    keyboardType: TextInputType.text,
-                    style: getTextFiledStyle(),
-                    readOnly: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Gender',
-                    ),
-                    onTap: () {
-                      showGenderActionDialog();
-                    },
-                  ),
-                  Container(height: 18,),
-                  Consumer<CountryViewModel>(
-                    builder: (context, value, child) {
-                      return Stack(
-                        alignment: Alignment.centerRight,
-                        children: [
+                          Container(height: 18,),
                           TextField(
                             onTap: (){
-                              openCountryBottomsheet(value.response.countries ?? []);
+
                             },
-                            readOnly: true,
                             cursorColor: black,
                             textCapitalization: TextCapitalization.words,
-                            controller: _countryController,
+                            controller: _fNameController,
                             keyboardType: TextInputType.text,
                             style: getTextFiledStyle(),
                             decoration: const InputDecoration(
-                              labelText: 'Country*',
+                              labelText: 'First Name*',
                             ),
                           ),
-                          Visibility(
-                            visible: value.isLoading,
-                            child: Container(
-                              alignment: Alignment.centerRight,
-                              margin: EdgeInsets.only(right: 12),
-                              child: const Padding(
-                                padding: EdgeInsets.only(top: 10,bottom: 10),
-                                child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
-                              ),
-                            ),
-                          )
-                        ],
-                      );
-                    },
-                  ),
-                  Container(height: 18,),
-                  Consumer<StateViewModel>(
-                    builder: (context, value, child) {
-                      return Stack(
-                        alignment: Alignment.centerRight,
-                        children: [
+                          Container(height: 18,),
                           TextField(
                             onTap: (){
-                              openStateBottomsheet(value.response.states ?? []);
+
                             },
-                            readOnly: true,
                             cursorColor: black,
                             textCapitalization: TextCapitalization.words,
-                            controller: _stateController,
+                            controller: _lNameController,
                             keyboardType: TextInputType.text,
                             style: getTextFiledStyle(),
                             decoration: const InputDecoration(
-                              labelText: 'State*',
+                              labelText: 'Last Name*',
                             ),
                           ),
-                          Visibility(
-                            visible: value.isLoading,
-                            child: Container(
-                              alignment: Alignment.centerRight,
-                              margin: EdgeInsets.only(right: 12),
-                              child: const Padding(
-                                padding: EdgeInsets.only(top: 10,bottom: 10),
-                                child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
-                              ),
-                            ),
-                          )
-                        ],
-                      );
-                    },
-                  ),
-                  Container(height: 18,),
-                  Consumer<CityViewModel>(
-                    builder: (context, value, child) {
-                      return Stack(
-                        alignment: Alignment.centerRight,
-                        children: [
+                          Container(height: 18,),
                           TextField(
                             onTap: (){
-                              openCityBottomsheet(value.response.cities ?? []);
+
                             },
-                            readOnly: true,
                             cursorColor: black,
                             textCapitalization: TextCapitalization.words,
-                            controller: _cityController,
+                            controller: _emailController,
                             keyboardType: TextInputType.text,
                             style: getTextFiledStyle(),
                             decoration: const InputDecoration(
-                              labelText: 'City*',
+                              labelText: 'Email.*',
                             ),
                           ),
-                          Visibility(
-                            visible: value.isLoading,
-                            child: Container(
-                              alignment: Alignment.centerRight,
-                              margin: EdgeInsets.only(right: 12),
-                              child: const Padding(
-                                padding: EdgeInsets.only(top: 10,bottom: 10),
-                                child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
-                              ),
-                            ),
-                          )
-                        ],
-                      );
-                    },
-                  ),
-                  Container(height: 18,),
-                  TextField(
-                    cursorColor: black,
-                    textCapitalization: TextCapitalization.words,
-                    controller: _addressController,
-                    keyboardType: TextInputType.text,
-                    readOnly: false,
-                    maxLines: 3,
-                    style: getTextFiledStyle(),
-                    decoration: const InputDecoration(
-                      alignLabelWithHint: true,
-                      labelText: 'Address*',
-                    ),
-                  ),
-                  Container(height: 18,),
-                  TextField(
-                    cursorColor: black,
-                    textCapitalization: TextCapitalization.words,
-                    controller: _educationController,
-                    keyboardType: TextInputType.text,
-                    style: getTextFiledStyle(),
-                    decoration: const InputDecoration(
-                      labelText: 'Highest Education*',
-                    ),
-                  ),
-                  Container(height: 18,),
-                  TextField(
-                    cursorColor: black,
-                    textCapitalization: TextCapitalization.words,
-                    controller: _designationController,
-                    keyboardType: TextInputType.text,
-                    style: getTextFiledStyle(),
-                    decoration: const InputDecoration(
-                      labelText: 'Current Designation & Organization',
-                    ),
-                  ),
-                  Container(height: 18,),
-                  TextField(
-                    cursorColor: black,
-                    textCapitalization: TextCapitalization.words,
-                    controller: _pendingFeesController,
-                    keyboardType: TextInputType.number,
-                    style: getTextFiledStyle(),
-                    decoration: const InputDecoration(
-                      labelText: 'Pending Fees.',
-                    ),
-                  ),
-                  Container(height: 18,),
-                  TextField(
-                    cursorColor: black,
-                    textCapitalization: TextCapitalization.words,
-                    controller: _paidController,
-                    keyboardType: TextInputType.number,
-                    style: getTextFiledStyle(),
-                    decoration: const InputDecoration(
-                      labelText: 'Paid Fees *',
-                    ),
-                  ),
-                  Container(height: 18,),
-                  TextField(
-                    cursorColor: black,
-                    textCapitalization: TextCapitalization.words,
-                    controller: _experienceController,
-                    keyboardType: TextInputType.number,
-                    style: getTextFiledStyle(),
-                    decoration: const InputDecoration(
-                      labelText: 'Years of Experience (Real Estate). *',
-                    ),
-                  ),
-                  Container(height: 18,),
-                  Consumer<BatchViewModel>(
-                    builder: (context, value, child) {
-                      return Stack(
-                        alignment: Alignment.centerRight,
-                        children: [
+                          Container(height: 18,),
                           TextField(
-                            onTap: (){
-                              openBatchBottomsheet(value.response.batchList ?? []);
-                            },
-                            readOnly: true,
                             cursorColor: black,
                             textCapitalization: TextCapitalization.words,
-                            controller: _batchController,
+                            controller: _contactController,
                             keyboardType: TextInputType.text,
                             style: getTextFiledStyle(),
                             decoration: const InputDecoration(
-                              labelText: 'Select Batch',
+                              labelText: 'Contact No.*',
                             ),
                           ),
+                          Container(height: 18,),
+                          TextField(
+                            cursorColor: black,
+                            textCapitalization: TextCapitalization.words,
+                            controller: _genderController,
+                            keyboardType: TextInputType.text,
+                            style: getTextFiledStyle(),
+                            readOnly: true,
+                            decoration: const InputDecoration(
+                              labelText: 'Gender',
+                            ),
+                            onTap: () {
+                              showGenderActionDialog();
+                            },
+                          ),
+                          Container(height: 18,),
+                          TextField(
+                            cursorColor: black,
+                            controller: _ageController,
+                            keyboardType: TextInputType.number,
+                            style: getTextFiledStyle(),
+                            decoration: const InputDecoration(
+                              labelText: 'Gender',
+                            ),
+                          ),
+                          Container(height: 18,),
+                          Consumer<CountryViewModel>(
+                            builder: (context, value, child) {
+                              return Stack(
+                                alignment: Alignment.centerRight,
+                                children: [
+                                  TextField(
+                                    onTap: (){
+                                      openCountryBottomSheet(value.response.countries ?? []);
+                                    },
+                                    readOnly: true,
+                                    cursorColor: black,
+                                    textCapitalization: TextCapitalization.words,
+                                    controller: _countryController,
+                                    keyboardType: TextInputType.text,
+                                    style: getTextFiledStyle(),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Country*',
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: value.isLoading,
+                                    child: Container(
+                                      alignment: Alignment.centerRight,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      child: const Padding(
+                                        padding: EdgeInsets.only(top: 10,bottom: 10),
+                                        child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+                          ),
+                          Container(height: 18,),
+                          Consumer<StateViewModel>(
+                            builder: (context, value, child) {
+                              return Stack(
+                                alignment: Alignment.centerRight,
+                                children: [
+                                  TextField(
+                                    onTap: (){
+                                      openStateBottomSheet(value.response.states ?? []);
+                                    },
+                                    readOnly: true,
+                                    cursorColor: black,
+                                    textCapitalization: TextCapitalization.words,
+                                    controller: _stateController,
+                                    keyboardType: TextInputType.text,
+                                    style: getTextFiledStyle(),
+                                    decoration: const InputDecoration(
+                                      labelText: 'State*',
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: value.isLoading,
+                                    child: Container(
+                                      alignment: Alignment.centerRight,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      child: const Padding(
+                                        padding: EdgeInsets.only(top: 10,bottom: 10),
+                                        child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+                          ),
+                          Container(height: 18,),
+                          Consumer<CityViewModel>(
+                            builder: (context, value, child) {
+                              return Stack(
+                                alignment: Alignment.centerRight,
+                                children: [
+                                  TextField(
+                                    onTap: (){
+                                      openCityBottomSheet(value.response.cities ?? []);
+                                    },
+                                    readOnly: true,
+                                    cursorColor: black,
+                                    textCapitalization: TextCapitalization.words,
+                                    controller: _cityController,
+                                    keyboardType: TextInputType.text,
+                                    style: getTextFiledStyle(),
+                                    decoration: const InputDecoration(
+                                      labelText: 'City*',
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: value.isLoading,
+                                    child: Container(
+                                      alignment: Alignment.centerRight,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      child: const Padding(
+                                        padding: EdgeInsets.only(top: 10,bottom: 10),
+                                        child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+                          ),
+                          Container(height: 18,),
+                          TextField(
+                            cursorColor: black,
+                            textCapitalization: TextCapitalization.words,
+                            controller: _addressController,
+                            keyboardType: TextInputType.text,
+                            readOnly: false,
+                            maxLines: 3,
+                            style: getTextFiledStyle(),
+                            decoration: const InputDecoration(
+                              alignLabelWithHint: true,
+                              labelText: 'Address*',
+                            ),
+                          ),
+                          Container(height: 18,),
+                          TextField(
+                            cursorColor: black,
+                            textCapitalization: TextCapitalization.words,
+                            controller: _educationController,
+                            keyboardType: TextInputType.text,
+                            style: getTextFiledStyle(),
+                            decoration: const InputDecoration(
+                              labelText: 'Highest Education*',
+                            ),
+                          ),
+                          Container(height: 18,),
+                          TextField(
+                            cursorColor: black,
+                            textCapitalization: TextCapitalization.words,
+                            controller: _designationController,
+                            keyboardType: TextInputType.text,
+                            style: getTextFiledStyle(),
+                            decoration: const InputDecoration(
+                              labelText: 'Current Designation & Organization',
+                            ),
+                          ),
+                          Container(height: 18,),
+                          TextField(
+                            cursorColor: black,
+                            textCapitalization: TextCapitalization.words,
+                            controller: _pendingFeesController,
+                            keyboardType: TextInputType.number,
+                            style: getTextFiledStyle(),
+                            decoration: const InputDecoration(
+                              labelText: 'Pending Fees.',
+                            ),
+                          ),
+                          Container(height: 18,),
+                          TextField(
+                            cursorColor: black,
+                            textCapitalization: TextCapitalization.words,
+                            controller: _paidController,
+                            keyboardType: TextInputType.number,
+                            style: getTextFiledStyle(),
+                            decoration: const InputDecoration(
+                              labelText: 'Paid Fees *',
+                            ),
+                          ),
+                          Container(height: 18,),
+                          TextField(
+                            cursorColor: black,
+                            textCapitalization: TextCapitalization.words,
+                            controller: _experienceController,
+                            keyboardType: TextInputType.number,
+                            style: getTextFiledStyle(),
+                            decoration: const InputDecoration(
+                              labelText: 'Years of Experience (Real Estate). *',
+                            ),
+                          ),
+                          Container(height: 18,),
+                          Consumer<BatchViewModel>(
+                            builder: (context, value, child) {
+                              return Stack(
+                                alignment: Alignment.centerRight,
+                                children: [
+                                  TextField(
+                                    onTap: (){
+                                      openBatchBottomSheet(value.response.batchList ?? []);
+                                    },
+                                    readOnly: true,
+                                    cursorColor: black,
+                                    textCapitalization: TextCapitalization.words,
+                                    controller: _batchController,
+                                    keyboardType: TextInputType.text,
+                                    style: getTextFiledStyle(),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Select Batch',
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: value.isLoading,
+                                    child: Container(
+                                      alignment: Alignment.centerRight,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      child: const Padding(
+                                        padding: EdgeInsets.only(top: 10,bottom: 10),
+                                        child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+                          ),
+                          Container(height: 22,),
+                          const Text("Mode Of Payment" ,
+                              style: TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w600),textAlign: TextAlign.center),
+                          Container(height: 18,),
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: (){
+                              setState(() {
+                                isCashSelected = !isCashSelected;
+                              });
+                            },
+                            child: Row(
+                              children: [
+                                isCashSelected
+                                    ? Image.asset('assets/images/ic_check.png', height: 20, width: 20,)
+                                    : Image.asset('assets/images/ic_uncheckbox_blue.png',height: 20, width: 20,),
+                                Container(width: 12,),
+                                const Text("Cash" ,
+                                    style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                              ],
+                            ),
+                          ),
+                          Container(height: 18,),
                           Visibility(
-                            visible: value.isLoading,
-                            child: Container(
-                              alignment: Alignment.centerRight,
-                              margin: EdgeInsets.only(right: 12),
-                              child: const Padding(
-                                padding: EdgeInsets.only(top: 10,bottom: 10),
-                                child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
+                            visible: isCashSelected,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 12.0),
+                              child: TextField(
+                                cursorColor: black,
+                                textCapitalization: TextCapitalization.words,
+                                controller: _cashController,
+                                keyboardType: TextInputType.number,
+                                style: getTextFiledStyle(),
+                                decoration: const InputDecoration(
+                                  labelText: 'Amount*',
+                                ),
                               ),
                             ),
-                          )
-                        ],
-                      );
-                    },
-                  ),
-                  Container(height: 22,),
-                  Text("Mode Of Payment" ,
-                      style: TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w600),textAlign: TextAlign.center),
-                  Container(height: 18,),
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: (){
-                      setState(() {
-                        isSelected = !isSelected;
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        isSelected
-                            ? Image.asset('assets/images/ic_check.png', height: 20, width: 20,)
-                            : Image.asset('assets/images/ic_uncheckbox_blue.png',height: 20, width: 20,),
-                        Container(width: 12,),
-                        Text("Cash" ,
-                            style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
-                      ],
-                    ),
-                  ),
-                  Container(height: 18,),
-                  Visibility(
-                    visible: isSelected,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: TextField(
-                        cursorColor: black,
-                        textCapitalization: TextCapitalization.words,
-                        controller: _cashController,
-                        keyboardType: TextInputType.number,
-                        style: getTextFiledStyle(),
-                        decoration: const InputDecoration(
-                          labelText: 'Amount*',
-                        ),
-                      ),
-                    ),
-                  ),
-
-
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: (){
-                      setState(() {
-                        isChequeSelected = !isChequeSelected;
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        isChequeSelected
-                            ? Image.asset('assets/images/ic_check.png', height: 20, width: 20,)
-                            : Image.asset('assets/images/ic_uncheckbox_blue.png',height: 20, width: 20,),
-                        Container(width: 12,),
-                        Text("Cheque" ,
-                            style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
-                      ],
-                    ),
-                  ),
-                  Container(height: 18,),
-                  Visibility(
-                    visible: isChequeSelected,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: TextField(
-                        cursorColor: black,
-                        textCapitalization: TextCapitalization.words,
-                        controller: _chequeController,
-                        keyboardType: TextInputType.number,
-                        style: getTextFiledStyle(),
-                        decoration: const InputDecoration(
-                          labelText: 'Amount*',
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: (){
-                      setState(() {
-                        isnetSelected = !isnetSelected;
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        isnetSelected
-                            ? Image.asset('assets/images/ic_check.png', height: 20, width: 20,)
-                            : Image.asset('assets/images/ic_uncheckbox_blue.png',height: 20, width: 20,),
-                        Container(width: 12,),
-                        Text("Net Banking" ,
-                            style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
-                      ],
-                    ),
-                  ),
-                  Container(height: 18,),
-                  Visibility(
-                    visible: isnetSelected,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: TextField(
-                        cursorColor: black,
-                        textCapitalization: TextCapitalization.words,
-                        controller: _netController,
-                        keyboardType: TextInputType.number,
-                        style: getTextFiledStyle(),
-                        decoration: const InputDecoration(
-                          labelText: 'Amount*',
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: (){
-                      setState(() {
-                        isholdSeatSelected = !isholdSeatSelected;
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        isholdSeatSelected
-                            ? Image.asset('assets/images/ic_check.png', height: 20, width: 20,)
-                            : Image.asset('assets/images/ic_uncheckbox_blue.png',height: 20, width: 20,),
-                        Container(width: 12,),
-                        Text("Holding Seat" ,
-                            style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
-                      ],
-                    ),
-                  ),
-                  Container(height: 18,),
-                  Visibility(
-                    visible: isholdSeatSelected,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: TextField(
-                        cursorColor: black,
-                        textCapitalization: TextCapitalization.words,
-                        controller: _holdSeatController,
-                        keyboardType: TextInputType.text,
-                        style: getTextFiledStyle(),
-                        decoration: const InputDecoration(
-                          labelText: '',
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: (){
-                      setState(() {
-                        isenrollCourseSelected = !isenrollCourseSelected;
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        isenrollCourseSelected
-                            ? Image.asset('assets/images/ic_check.png', height: 20, width: 20,)
-                            : Image.asset('assets/images/ic_uncheckbox_blue.png',height: 20, width: 20,),
-                        Container(width: 12,),
-                        Text("Enrolled Course" ,
-                            style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
-                      ],
-                    ),
-                  ),
-                  Container(height: 18,),
-                  Visibility(
-                    visible: isenrollCourseSelected,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: TextField(
-                        cursorColor: black,
-                        textCapitalization: TextCapitalization.words,
-                        controller: _enrollController,
-                        keyboardType: TextInputType.text,
-                        style: getTextFiledStyle(),
-                        decoration: const InputDecoration(
-                          labelText: '',
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  Container(
-                    margin: const EdgeInsets.only(top: 30,left: 8, right: 8),
-                    width: double.infinity,
-                    child: TextButton(
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(kBorderRadius),
-                              ),
-                            ),
-                            backgroundColor: MaterialStateProperty.all<Color>(black)
-                        ),
-                        onPressed: () async {
-                          FocusScope.of(context).requestFocus(FocusNode());
-                        },
-                        child: isLoading
-                            ? const Padding(
-                          padding: EdgeInsets.only(top: 10,bottom: 10),
-                          child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: white,strokeWidth: 2)),
-                        )
-                            : const Padding(
-                          padding: EdgeInsets.only(top: 10,bottom: 10),
-                          child: Text(
-                            "Submit",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w400),
                           ),
-                        )
-                    ),
-                  ),
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: (){
+                              setState(() {
+                                isChequeSelected = !isChequeSelected;
+                              });
+                            },
+                            child: Row(
+                              children: [
+                                isChequeSelected
+                                    ? Image.asset('assets/images/ic_check.png', height: 20, width: 20,)
+                                    : Image.asset('assets/images/ic_uncheckbox_blue.png',height: 20, width: 20,),
+                                Container(width: 12,),
+                                const Text("Cheque" ,
+                                    style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                              ],
+                            ),
+                          ),
+                          Container(height: 18,),
+                          Visibility(
+                            visible: isChequeSelected,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 12.0),
+                              child: TextField(
+                                cursorColor: black,
+                                textCapitalization: TextCapitalization.words,
+                                controller: _chequeController,
+                                keyboardType: TextInputType.number,
+                                style: getTextFiledStyle(),
+                                decoration: const InputDecoration(
+                                  labelText: 'Amount*',
+                                ),
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: (){
+                              setState(() {
+                                isNetSelected = !isNetSelected;
+                              });
+                            },
+                            child: Row(
+                              children: [
+                                isNetSelected
+                                    ? Image.asset('assets/images/ic_check.png', height: 20, width: 20,)
+                                    : Image.asset('assets/images/ic_uncheckbox_blue.png',height: 20, width: 20,),
+                                Container(width: 12,),
+                                const Text("Net Banking" ,
+                                    style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                              ],
+                            ),
+                          ),
+                          Container(height: 18,),
+                          Visibility(
+                            visible: isNetSelected,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 12.0),
+                              child: TextField(
+                                cursorColor: black,
+                                textCapitalization: TextCapitalization.words,
+                                controller: _netController,
+                                keyboardType: TextInputType.number,
+                                style: getTextFiledStyle(),
+                                decoration: const InputDecoration(
+                                  labelText: 'Amount*',
+                                ),
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: (){
+                              setState(() {
+                                isHoldSeatSelected = !isHoldSeatSelected;
+                              });
+                            },
+                            child: Row(
+                              children: [
+                                isHoldSeatSelected
+                                    ? Image.asset('assets/images/ic_check.png', height: 20, width: 20,)
+                                    : Image.asset('assets/images/ic_uncheckbox_blue.png',height: 20, width: 20,),
+                                Container(width: 12,),
+                                const Text("Holding Seat" ,
+                                    style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                              ],
+                            ),
+                          ),
+                          Container(height: 18,),
+                          Visibility(
+                            visible: isHoldSeatSelected,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 12.0),
+                              child: TextField(
+                                cursorColor: black,
+                                textCapitalization: TextCapitalization.words,
+                                controller: _holdSeatController,
+                                keyboardType: TextInputType.text,
+                                style: getTextFiledStyle(),
+                                decoration: const InputDecoration(
+                                  labelText: '',
+                                ),
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: (){
+                              setState(() {
+                                isEnrollCourseSelected = !isEnrollCourseSelected;
+                              });
+                            },
+                            child: Row(
+                              children: [
+                                isEnrollCourseSelected
+                                    ? Image.asset('assets/images/ic_check.png', height: 20, width: 20,)
+                                    : Image.asset('assets/images/ic_uncheckbox_blue.png',height: 20, width: 20,),
+                                Container(width: 12,),
+                                const Text("Enrolled Course" ,
+                                    style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                              ],
+                            ),
+                          ),
+                          Container(height: 18,),
+                          Visibility(
+                            visible: isEnrollCourseSelected,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 12.0),
+                              child: TextField(
+                                cursorColor: black,
+                                textCapitalization: TextCapitalization.words,
+                                controller: _enrollController,
+                                keyboardType: TextInputType.text,
+                                style: getTextFiledStyle(),
+                                decoration: const InputDecoration(
+                                  labelText: '',
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(top: 30,left: 8, right: 8),
+                            width: double.infinity,
+                            child: TextButton(
+                                style: ButtonStyle(
+                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(kBorderRadius),
+                                      ),
+                                    ),
+                                    backgroundColor: MaterialStateProperty.all<Color>(black)
+                                ),
+                                onPressed: () async {
+                                  FocusScope.of(context).requestFocus(FocusNode());
 
-                  Container(height: 18,),
-                ],
-              ),
-            ),
+                                  print("_courseId PASSING == ${_courseId}");
+
+                                  Map<String, String> jsonBody = {
+                                    'user_type': "3",
+                                    'batch_id': _batchId,
+                                    'course_id': _courseId,
+                                    'is_active': "1",
+                                    'gender': _genderController.value.text,
+                                    'prefix_name': _prefixController.value.text,
+                                    'first_name': _fNameController.value.text,
+                                    'last_name': _lNameController.value.text,
+                                    'email': _emailController.value.text,
+                                    'contact_no': _contactController.value.text,
+                                    'date_of_birth': userGetSet.dateOfBirth ?? '',
+                                    'highest_education': _educationController.value.text,
+                                    'college_name': userGetSet.collegeName ?? '',
+                                    'designation': _designationController.value.text,
+                                    'paid_fees': _paidController.value.text,
+                                    'pending_fees': _pendingFeesController.value.text,
+                                    'years_of_experience': _experienceController.value.text,
+                                    'id': sessionManager.getUserId() ?? '',
+                                    'age': _ageController.value.text,
+                                    'address': _addressController.value.text,
+                                    'family_background': '',
+                                    'city': _cityId,
+                                    'country': _countryId,
+                                    'state': _stateId,
+                                    'document_submitted': jsonEncode(userGetSet.documentSubmitted),
+                                    'payment_details': (userGetSet.paymentDetails ?? ""),
+                                    'payment_mode': (userGetSet.paymentMode ?? ""),
+                                    'payment_mode_cash': isCashSelected ? "1" : "0",
+                                    'payment_mode_cheque': isChequeSelected ? "1" : "0",
+                                    'payment_mode_netbanking': isNetSelected ? "1" : "0",
+                                    'holding_seat': isHoldSeatSelected ? "1" : "0",
+                                    'enrolled_in_course': isEnrollCourseSelected ? "1" : "0",
+                                    'enrolled_in_course_desc': _enrollController.value.text,
+                                    'holding_seat_desc': _holdSeatController.value.text,
+                                    'payment_mode_netbanking_amount': _netController.value.text,
+                                    'payment_mode_cheque_amount': _chequeController.value.text,
+                                    'payment_mode_cash_amount': _cashController.value.text,
+                                  };
+                                  await commonViewModel.saveUserData(jsonBody);
+                                  CommonResponseModel value = commonViewModel.response;
+                                  if (value.success == "1")
+                                  {
+                                    showToast(value.message, context);
+                                    Navigator.pop(context);
+                                  }
+                                  else
+                                  {
+                                    showToast(value.message, context);
+                                  }
+                                },
+                                child: commonViewModel.isLoading
+                                    ? const Padding(
+                                  padding: EdgeInsets.only(top: 10,bottom: 10),
+                                  child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: white,strokeWidth: 2)),
+                                )
+                                    : const Padding(
+                                  padding: EdgeInsets.only(top: 10,bottom: 10),
+                                  child: Text(
+                                    "Submit",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w400),
+                                  ),
+                                )
+                            ),
+                          ),
+                          Container(height: 18,),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+            },
           ),
         ),
       onWillPop: () {
@@ -688,8 +816,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     widget is ProfileScreen;
   }
 
-  void openCourseBottomsheet(List<CourseList> courseList) {
-    print(courseList.length);
+  void openCourseBottomSheet(List<CourseList> courseList) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -703,7 +830,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       isDismissible: true,
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (context, updateState) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Wrap(
@@ -733,22 +860,35 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                         shrinkWrap: true,
                         physics: const BouncingScrollPhysics(),
                         itemBuilder: ( context, index, ) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(courseList[index].name ?? "" ,
-                                style: const TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
-                                const Divider(
-                                  thickness: 0.5,
-                                  endIndent: 0,
-                                  indent: 0,
-                                  color: grayLight,
-                                ),
-                                const Gap(20)
-                              ],
+                          return GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () {
+                              setState(() {
+                                _courseId = courseList[index].id ?? '';
+                                _courseNameController.text = courseList[index].name ?? '';
+                              });
+                              
+                              print("SELECTED COURSE === ${_courseId}");
+                              
+                              Navigator.pop(context);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(courseList[index].name ?? "" ,
+                                  style: const TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                                  const Divider(
+                                    thickness: 0.5,
+                                    endIndent: 0,
+                                    indent: 0,
+                                    color: grayLight,
+                                  ),
+                                  const Gap(20)
+                                ],
+                              ),
                             ),
                           );
                         },
@@ -764,7 +904,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     );
   }
 
-  void openCountryBottomsheet(List<Countries> list) {
+  void openCountryBottomSheet(List<Countries> list) {
     showModalBottomSheet<void>(
       isScrollControlled: true,
       isDismissible: true,
@@ -777,7 +917,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       ),
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (context, updateState) {
             return ConstrainedBox(
               constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.88),
               child: SingleChildScrollView(
@@ -815,7 +955,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                                   _countryId = list[index].id.toString();
                                   _countryController.text = list[index].name.toString();
                                   Navigator.of(context).pop();
-                                  getstateData();
+                                  getStateData();
                                 });
                               },
                               child: Column(
@@ -851,7 +991,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     );
   }
 
-  void openStateBottomsheet(List<States> list) {
+  void openStateBottomSheet(List<States> list) {
     showModalBottomSheet<void>(
       isScrollControlled: true,
       isDismissible: true,
@@ -864,7 +1004,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       ),
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (context, updateState) {
             return ConstrainedBox(
               constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.88),
               child: SingleChildScrollView(
@@ -902,7 +1042,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                                   _stateId = list[index].id.toString();
                                   _stateController.text = list[index].name.toString();
                                   Navigator.of(context).pop();
-                                  getcityData();
+                                  getCityData();
                                 });
                               },
                               child: Column(
@@ -938,7 +1078,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     );
   }
 
-  void openCityBottomsheet(List<Cities> list) {
+  void openCityBottomSheet(List<Cities> list) {
     showModalBottomSheet<void>(
       isScrollControlled: true,
       isDismissible: true,
@@ -951,7 +1091,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       ),
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (context, updateState) {
             return ConstrainedBox(
               constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.88),
               child: SingleChildScrollView(
@@ -982,23 +1122,31 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                           shrinkWrap: true,
                           physics: const BouncingScrollPhysics(),
                           itemBuilder: ( context, index, ) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, right: 18, top: 8, bottom: 8),
-                                  child: Text(list[index].name ?? "" ,
-                                      style: const TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
-                                ),
-                                const Divider(
-                                  thickness: 0.5,
-                                  endIndent: 22,
-                                  indent: 22,
-                                  color: grayLight,
-                                ),
+                            return GestureDetector(
+                              onTap: () {
+                                setState((){
+                                  _cityId = list[index].id ?? '';
+                                  _cityController.text = list[index].name ?? '';
+                                });
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, right: 18, top: 8, bottom: 8),
+                                    child: Text(list[index].name ?? "" ,
+                                        style: const TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                                  ),
+                                  const Divider(
+                                    thickness: 0.5,
+                                    endIndent: 22,
+                                    indent: 22,
+                                    color: grayLight,
+                                  ),
 
-                              ],
+                                ],
+                              ),
                             );
                           },
                         ),
@@ -1014,7 +1162,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     );
   }
 
-  void openBatchBottomsheet(List<BatchList> list) {
+  void openBatchBottomSheet(List<BatchList> list) {
     showModalBottomSheet<void>(
       isScrollControlled: true,
       isDismissible: true,
@@ -1027,7 +1175,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       ),
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (context, updateState) {
             return ConstrainedBox(
               constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.88),
               child: SingleChildScrollView(
@@ -1056,25 +1204,35 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                           itemCount: list.length,
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: ( context, index, ) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 18.0, right: 18, top: 8, bottom: 8),
-                                  child: Text(list[index].formatedDateTime ?? "" ,
-                                      style: const TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
-                                ),
-                                const Divider(
-                                  thickness: 0.5,
-                                  endIndent: 22,
-                                  indent: 22,
-                                  color: grayLight,
-                                ),
+                            return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                setState((){
+                                  _batchId = list[index].id ?? '';
+                                  _batchController.text = "${list[index].name ?? "" } - ${list[index].formatedDateTime ?? "" }";
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, right: 18, top: 8, bottom: 8),
+                                    child: Text("${list[index].name ?? "" } - ${list[index].formatedDateTime ?? "" }",
+                                        style: const TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                                  ),
+                                  const Divider(
+                                    thickness: 0.5,
+                                    endIndent: 22,
+                                    indent: 22,
+                                    color: grayLight,
+                                  ),
 
-                              ],
+                                ],
+                              ),
                             );
                           },
                         ),
@@ -1104,7 +1262,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       isDismissible: true,
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (context, updateState) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Wrap(
@@ -1230,17 +1388,32 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     Provider.of<CountryViewModel>(context,listen: false).countryData();
   }
 
-  void getCourseData() {
+  Future<void> getCourseData() async {
     Map<String, String> jsonBody = {
       'page': "",
       'limit': "",
       'search' :"",
       'from_app' : FROM_APP
     };
-    Provider.of<CourseViewModel>(context,listen: false).courseData(jsonBody);
+
+    CourseViewModel courseViewModel = Provider.of<CourseViewModel>(context,listen: false);
+    await courseViewModel.courseData(jsonBody);
+
+    if (courseViewModel.response.success == '1')
+      {
+        CourseResponseModel getSet = courseViewModel.response;
+        listCourse = getSet.courseList ?? [];
+
+        for (var element in listCourse) {
+          if (element.id == _courseId)
+          {
+            _courseNameController.text = element.name ?? '';
+          }
+        }
+      }
   }
 
-  void getstateData() {
+  void getStateData() {
     Map<String, String> jsonBody = {
       'country_id' : _countryId,
       'from_app' : FROM_APP
@@ -1248,7 +1421,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     Provider.of<StateViewModel>(context,listen: false).stateData(jsonBody);
   }
 
-  void getcityData() {
+  void getCityData() {
     Map<String, String> jsonBody = {
       'state_id' : _stateId,
       'from_app' : FROM_APP
@@ -1256,8 +1429,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     Provider.of<CityViewModel>(context,listen: false).cityData(jsonBody);
   }
 
-  void getbatchData() {
-
+  Future<void> getBatchData() async {
     Map<String, String> jsonBody = {
       'limit' : "",
       'page' : "",
@@ -1265,7 +1437,54 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       'status' : "1",
       'from_app' : FROM_APP
     };
-    Provider.of<BatchViewModel>(context,listen: false).batchData(jsonBody);
+    BatchViewModel batchViewModel = Provider.of<BatchViewModel>(context,listen: false);
+    await batchViewModel.batchData(jsonBody);
+
+    if (batchViewModel.response.success == '1')
+      {
+        print("IS IN SIDE IF");
+        print(batchViewModel.response.success);
+        BatchResponseModel getSet = batchViewModel.response;
+        listBatches = getSet.batchList ?? [];
+
+        print(listBatches.length);
+        print(_batchId);
+
+        for (var element in listBatches) {
+          if (element.id == _batchId)
+          {
+            _batchController.text = "${element.name} - ${element.formatedDateTime}";
+          }
+        }
+      }
+
+  }
+
+  Future<void> getUserData() async {
+    Map<String, String> jsonBody = {
+      'user_id':sessionManager.getUserId() ?? '',
+      "user_type":'3'
+    };
+
+    UserViewModel userViewModel = Provider.of<UserViewModel>(context,listen: false);
+    await userViewModel.getUserDetails(jsonBody);
+
+    if (userViewModel.response.success == '1')
+      {
+        getContryData();
+        getStateData();
+        getCityData();
+        getBatchData();
+        getCourseData();
+      }
+    else
+      {
+        getContryData();
+        getStateData();
+        getCityData();
+        getBatchData();
+        getCourseData();
+      }
 
   }
 
@@ -1404,5 +1623,9 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       },
     );
   }
+
+
+
+
 
 }

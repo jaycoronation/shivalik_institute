@@ -11,7 +11,7 @@ class ModuleResponseModel {
       String? success, 
       String? message, 
       String? totalRecords, 
-      List<List>? list,}){
+      List<ModuleList>? list,}){
     _success = success;
     _message = message;
     _totalRecords = totalRecords;
@@ -25,18 +25,18 @@ class ModuleResponseModel {
     if (json['list'] != null) {
       _list = [];
       json['list'].forEach((v) {
-        _list?.add(List.fromJson(v));
+        _list?.add(ModuleList.fromJson(v));
       });
     }
   }
   String? _success;
   String? _message;
   String? _totalRecords;
-  List<List>? _list;
+  List<ModuleList>? _list;
 ModuleResponseModel copyWith({  String? success,
   String? message,
   String? totalRecords,
-  List<List>? list,
+  List<ModuleList>? list,
 }) => ModuleResponseModel(  success: success ?? _success,
   message: message ?? _message,
   totalRecords: totalRecords ?? _totalRecords,
@@ -45,7 +45,7 @@ ModuleResponseModel copyWith({  String? success,
   String? get success => _success;
   String? get message => _message;
   String? get totalRecords => _totalRecords;
-  List<List>? get list => _list;
+  List<ModuleList>? get list => _list;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -75,10 +75,10 @@ ModuleResponseModel copyWith({  String? success,
 /// activities : [{"activity_id":"58","title":"In class presentation (PPT)","module_id":"2","timestamp":"1698937271"},{"activity_id":"59","title":"Projects / Personality – Case studies","module_id":"2","timestamp":"1698937271"}]
 /// is_complete : 0
 
-List listFromJson(String str) => List.fromJson(json.decode(str));
-String listToJson(List data) => json.encode(data.toJson());
-class List {
-  List({
+ModuleList listFromJson(String str) => ModuleList.fromJson(json.decode(str));
+String listToJson(ModuleList data) => json.encode(data.toJson());
+class ModuleList {
+  ModuleList({
       String? id, 
       String? moduleName, 
       String? description, 
@@ -89,9 +89,9 @@ class List {
       String? createdAt, 
       String? updatedAt, 
       String? deletedAt, 
-      String? status, 
-      List<Topics>? topics, 
-      List<Activities>? activities, 
+      String? status,
+    List<Topics>? topics,
+    List<Activities>? activities,
       num? isComplete,}){
     _id = id;
     _moduleName = moduleName;
@@ -109,7 +109,7 @@ class List {
     _isComplete = isComplete;
 }
 
-  List.fromJson(dynamic json) {
+  ModuleList.fromJson(dynamic json) {
     _id = json['id'];
     _moduleName = json['module_name'];
     _description = json['description'];
@@ -149,7 +149,7 @@ class List {
   List<Topics>? _topics;
   List<Activities>? _activities;
   num? _isComplete;
-List copyWith({  String? id,
+ModuleList copyWith({  String? id,
   String? moduleName,
   String? description,
   String? duration,
@@ -163,7 +163,7 @@ List copyWith({  String? id,
   List<Topics>? topics,
   List<Activities>? activities,
   num? isComplete,
-}) => List(  id: id ?? _id,
+}) => ModuleList(  id: id ?? _id,
   moduleName: moduleName ?? _moduleName,
   description: description ?? _description,
   duration: duration ?? _duration,

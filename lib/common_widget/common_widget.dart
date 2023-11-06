@@ -7,10 +7,10 @@ import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as tab;
 Widget getBackArrow(){
   return Container(
     alignment: Alignment.centerLeft,
-    margin: const EdgeInsets.only(left: 0,right:0,top: 4,bottom: 4),
+    margin: const EdgeInsets.only(left: 4,right: 4,top: 4,bottom: 4),
     child: Padding(
-      padding: const EdgeInsets.only(left: 18.0),
-      child: Image.asset('assets/images/ic_back_button.png', width: 22, height: 22,color: black,),
+      padding: const EdgeInsets.all(16.0),
+      child: Image.asset('assets/images/ic_back_button.png', width: 48, height: 48,),
     ),
   );
 }
@@ -21,7 +21,7 @@ Widget getTitle(String title){
   return Text(
     title,
     textAlign: TextAlign.start,
-    style: const TextStyle(fontWeight: FontWeight.w700, color: black, fontSize: 18),
+    style: const TextStyle(fontWeight: FontWeight.w600, color: black, fontSize: 18),
   );
 }
 
