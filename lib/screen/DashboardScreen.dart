@@ -458,7 +458,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                           ),
                           Container(height: 12,),
                           SizedBox(
-                            height: 130,
+                            height: 140,
                             child: ListView.builder(
                               itemCount: listModule.length,
                               scrollDirection: Axis.horizontal,
@@ -505,7 +505,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                           ),
                           Container(height: 12,),
                           SizedBox(
-                            height: 130,
+                            height: 140,
                             child: ListView.builder(
                               itemCount: listModule.length,
                               scrollDirection: Axis.horizontal,
