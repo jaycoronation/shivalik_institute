@@ -863,7 +863,9 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                                     showToast(value.message, context);
                                   }
                                 },*/
-                                onPressed: () { saveData(); },
+                                onPressed: () {
+                                  saveData();
+                                  },
                                 child: _isLoading
                                     ? const Padding(
                                         padding: EdgeInsets.only(top: 10,bottom: 10),

@@ -112,7 +112,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                   child: Image.asset('assets/images/ic_user_placeholder.png',),
                 ),
               ),*/
-
               Padding(
                 padding: const EdgeInsets.only(right: 16.0),
                 child: InkWell(
@@ -543,7 +542,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               },
                             ),
                           ),
-
                           Visibility(
                             visible: value.response.upcomingEvents!.isNotEmpty,
                             child: Column(
@@ -638,7 +636,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                             ),
                           ),
                           Container(height: 18,),
-
                           Container(
                             padding: const EdgeInsets.only(left: 18, right: 18),
                             alignment: Alignment.centerLeft,
@@ -646,7 +643,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w600),),
                           ),
                           Container(height: 12,),
-
                           SizedBox(
                             height: 286,
                             child: AnimationLimiter(
@@ -718,9 +714,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               ),
                             ),
                           ),
-
                           Container(height: 18,),
-
                           Padding(
                             padding: EdgeInsets.only(left: 16, right: 16),
                               child: Row(
