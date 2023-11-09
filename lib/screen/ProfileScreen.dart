@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
+import 'package:http/http.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/model/BatchResponseModel.dart';
 import 'package:shivalik_institute/model/CityResponseModel.dart';
@@ -12,6 +15,8 @@ import 'package:shivalik_institute/model/CourseResponseModel.dart';
 import 'package:shivalik_institute/screen/LoginWithOtpScreen.dart';
 import 'package:shivalik_institute/utils/app_utils.dart';
 import 'package:shivalik_institute/viewmodels/UserViewModel.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:http/http.dart' as http;
 
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
@@ -39,6 +44,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends BaseState<ProfileScreen> {
 
   bool isLoading = false;
+  bool _isLoading = false;
   bool isCashSelected = false;
   bool isChequeSelected = false;
   bool isEnrollCourseSelected = false;
@@ -51,6 +57,9 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
   String _batchId = "";
   String _courseId = "";
   Details userGetSet = Details();
+  var pickImgPath = "";
+  var file = File("");
+  var passPickImgPath = "";
   final TextEditingController _courseNameController = TextEditingController();
   final TextEditingController _prefixController = TextEditingController();
   final TextEditingController _fNameController = TextEditingController();
@@ -80,7 +89,6 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
 
   void setData(Details getSet) {
     userGetSet = getSet;
-
     _prefixController.text = getSet.prefixName ?? "";
     _fNameController.text = getSet.firstName ?? "";
     _lNameController.text = getSet.lastName ?? "";
@@ -102,6 +110,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     _netController.text = getSet.paymentModeNetbankingAmount.toString() ?? "";
     _chequeController.text = getSet.paymentModeChequeAmount.toString() ?? "";
     _enrollController.text = getSet.enrolledInCourseDesc.toString() ?? "";
+    _courseNameController.text = getSet.courseName.toString() ?? "";
 
     isCashSelected = getSet.paymentModeCash == 1 ? true : false;
     isChequeSelected = getSet.paymentModeCheque == 1 ? true : false;
@@ -114,9 +123,9 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     _cityId = getSet.city ?? '';
     _batchId = getSet.batchId ?? '';
 
-    _courseId = getSet.courseId ?? '';
+     _courseId = getSet.courseId ?? '';
 
-    print("_courseId === ${_courseId}");
+     print("_courseId === ${_courseId}");
 
     for (var element in listBatches) {
       if (element.id == _batchId)
@@ -188,7 +197,6 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                 }
               else
                 {
-                  setData(value.response.details ?? Details());
                   return SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 18.0, right: 18),
@@ -197,6 +205,54 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(height: 22,),
+                          GestureDetector(
+                            onTap: () {
+                              showFilePickerActionDialog();
+                            },
+                            child:  Center(
+                              child: Column(
+                                children: [
+                                  Stack(
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.center,
+                                        width: 120,
+                                        height: 120,
+                                        child: CircleAvatar(
+                                          maxRadius: 120,
+                                          backgroundColor: grayLight,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(1),
+                                            child: ClipOval(
+                                                child: file.path.isNotEmpty
+                                                    ? Image.file(file,height: 150,width: 120, fit: BoxFit.cover,)
+                                                    : userGetSet.profilePic.toString().isEmpty
+                                                    ? Image.asset('assets/images/ic_user_placeholder.png',height: 120,width: 120,)
+                                                    : Image.network(userGetSet.profilePic.toString(),height: 120,width: 120,)
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                          right: 0,
+                                          bottom: 12,
+                                          child: Container(
+                                              decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                color: grayLight,
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(6.0),
+                                                child: Image.asset('assets/images/ic_edit.png', height: 18, width: 18,),
+                                              )
+                                          )
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Container(height: 26,),
                           Consumer<CourseViewModel>(
                             builder: (context, value, child) {
                               return  Stack(
@@ -262,9 +318,6 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                           ),
                           Container(height: 18,),
                           TextField(
-                            onTap: (){
-
-                            },
                             cursorColor: black,
                             textCapitalization: TextCapitalization.words,
                             controller: _lNameController,
@@ -276,9 +329,6 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                           ),
                           Container(height: 18,),
                           TextField(
-                            onTap: (){
-
-                            },
                             cursorColor: black,
                             textCapitalization: TextCapitalization.words,
                             controller: _emailController,
@@ -321,7 +371,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                             keyboardType: TextInputType.number,
                             style: getTextFiledStyle(),
                             decoration: const InputDecoration(
-                              labelText: 'Gender',
+                              labelText: 'Age',
                             ),
                           ),
                           Container(height: 18,),
@@ -467,6 +517,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                           ),
                           Container(height: 18,),
                           TextField(
+                            readOnly: true,
                             cursorColor: black,
                             textCapitalization: TextCapitalization.words,
                             controller: _pendingFeesController,
@@ -478,6 +529,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                           ),
                           Container(height: 18,),
                           TextField(
+                            readOnly: true,
                             cursorColor: black,
                             textCapitalization: TextCapitalization.words,
                             controller: _paidController,
@@ -506,7 +558,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                                 children: [
                                   TextField(
                                     onTap: (){
-                                      openBatchBottomSheet(value.response.batchList ?? []);
+                                      // openBatchBottomSheet(value.response.batchList ?? []);
                                     },
                                     readOnly: true,
                                     cursorColor: black,
@@ -535,14 +587,29 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                           ),
                           Container(height: 22,),
                           const Text("Mode Of Payment" ,
-                              style: TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w600),textAlign: TextAlign.center),
+                              style: TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w600),textAlign: TextAlign.center
+                          ),
                           Container(height: 18,),
                           GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: (){
-                              setState(() {
-                                isCashSelected = !isCashSelected;
-                              });
+                              print("is OUTSIDE ${isCashSelected}");
+                                if (isCashSelected)
+                                  {
+
+                                    setState(() {
+                                      isCashSelected = false;
+                                    });
+                                    print("is in if ${isCashSelected}");
+                                  }
+                                else
+                                  {
+                                    setState(() {
+                                      isCashSelected = true;
+                                    });
+                                    print("is in else ${isCashSelected}");
+                                  }
+                              print("is OUTSIDE AFTER ${isCashSelected}");
                             },
                             child: Row(
                               children: [
@@ -576,8 +643,10 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                             behavior: HitTestBehavior.opaque,
                             onTap: (){
                               setState(() {
-                                isChequeSelected = !isChequeSelected;
+                                isChequeSelected = isChequeSelected ? false : true;
                               });
+                              print(isChequeSelected ? false : true);
+                              print(isChequeSelected);
                             },
                             child: Row(
                               children: [
@@ -724,11 +793,16 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                                     ),
                                     backgroundColor: MaterialStateProperty.all<Color>(black)
                                 ),
-                                onPressed: () async {
+                                /*onPressed: () async {
                                   FocusScope.of(context).requestFocus(FocusNode());
 
                                   print("_courseId PASSING == ${_courseId}");
 
+                                  final url = Uri.parse(MAIN_URL + saveUserDataUrl);
+
+                                  var request = MultipartRequest("POST", url);
+
+                                  print(_courseId);
                                   Map<String, String> jsonBody = {
                                     'user_type': "3",
                                     'batch_id': _batchId,
@@ -768,30 +842,40 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                                     'payment_mode_cheque_amount': _chequeController.value.text,
                                     'payment_mode_cash_amount': _cashController.value.text,
                                   };
+
+                                  request.fields['profile_pic'] = pickImgPath;
+
+                                  if (pickImgPath != "") {
+                                    request.files.add(await MultipartFile.fromPath('profile_pic', pickImgPath));
+                                  }
+                                  var response = await request.send();
+
                                   await commonViewModel.saveUserData(jsonBody);
                                   CommonResponseModel value = commonViewModel.response;
                                   if (value.success == "1")
                                   {
                                     showToast(value.message, context);
                                     Navigator.pop(context);
+                                    getUserData();
                                   }
                                   else
                                   {
                                     showToast(value.message, context);
                                   }
-                                },
-                                child: commonViewModel.isLoading
+                                },*/
+                                onPressed: () { saveData(); },
+                                child: _isLoading
                                     ? const Padding(
-                                  padding: EdgeInsets.only(top: 10,bottom: 10),
-                                  child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: white,strokeWidth: 2)),
-                                )
+                                        padding: EdgeInsets.only(top: 10,bottom: 10),
+                                        child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: white,strokeWidth: 2)),
+                                      )
                                     : const Padding(
-                                  padding: EdgeInsets.only(top: 10,bottom: 10),
-                                  child: Text(
-                                    "Submit",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w400),
-                                  ),
+                                      padding: EdgeInsets.only(top: 10,bottom: 10),
+                                      child: Text(
+                                        "Submit",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w400),
+                                      ),
                                 )
                             ),
                           ),
@@ -1471,6 +1555,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
 
     if (userViewModel.response.success == '1')
       {
+        setData(userViewModel.response.details ?? Details());
         getContryData();
         getStateData();
         getCityData();
@@ -1624,8 +1709,249 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     );
   }
 
+  void showFilePickerActionDialog() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: white,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+      elevation: 5,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        // we set up a container inside which
+        // we create center column and display text
+        return Wrap(
+          children: [
+            Padding(
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                        height: 2,
+                        width: 40,
+                        color: black,
+                        margin: const EdgeInsets.only(bottom: 12)),
+                    const Text(
+                      "Select Image From?",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 16, color:black,fontWeight: FontWeight.w600),
+                    ),
 
+                    InkWell(
+                      onTap: () async {
+                        Navigator.pop(context);
+                        pickImageFromCamera();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            left: 18, right: 18, top: 15, bottom: 15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Image.asset('assets/images/ic_camera.png',
+                                height: 26, width: 26),
+                            Container(width: 15),
+                            const Text(
+                              "Camera",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: black,
+                                  fontWeight: FontWeight.normal
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Divider(
+                      color: black,
+                      height: 1,
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        Navigator.pop(context);
+                        pickImageFromGallery();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            left: 18, right: 18, top: 15, bottom: 15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Image.asset('assets/images/ic_gallery.png',
+                                height: 26, width: 26),
+                            Container(width: 15),
+                            const Text(
+                              "Gallery",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: black,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+            )
+          ],
+        );
+      },
+    );
+  }
 
+  File fileNew = File("");
+  dynamic fileBytes;
 
+  Future<void> _cropImage(filePath) async {
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: filePath
+    );
+    if (croppedFile != null) {
+      setState(() {
+        pickImgPath = croppedFile.path;
+        file = File(pickImgPath);
+        print("_pickImage picImgPath crop ====>$pickImgPath");
+      });
+    }
+  }
+
+  Future<void> pickImageFromCamera() async {
+    try {
+      var pickedfiles =
+      await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 50);
+      if (pickedfiles != null) {
+        final filePath = pickedfiles.path;
+        File tempFile = File(filePath);
+        _cropImage(filePath);
+
+        print("_pickImage picImgPath ====>$pickImgPath");
+      } else {
+        print("No image is selected.");
+      }
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> pickImageFromGallery() async {
+    try {
+      var pickedfiles = await ImagePicker().pickImage(source: ImageSource.gallery,  imageQuality: 50);
+      if (pickedfiles != null) {
+        final filePath = pickedfiles.path;
+        File tempFile = File(filePath);
+        print("tempFile === ${tempFile}");
+        _cropImage(filePath);
+
+      } else {
+        print("No image is selected.");
+      }
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  saveData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    Map<String, String> jsonBody = {
+      'user_type': "3",
+      'batch_id': _batchId,
+      'course_id': _courseId,
+      'is_active': "1",
+      'gender': _genderController.value.text,
+      'prefix_name': _prefixController.value.text,
+      'first_name': _fNameController.value.text,
+      'last_name': _lNameController.value.text,
+      'email': _emailController.value.text,
+      'contact_no': _contactController.value.text,
+      'date_of_birth': userGetSet.dateOfBirth ?? '',
+      'highest_education': _educationController.value.text,
+      'college_name': userGetSet.collegeName ?? '',
+      'designation': _designationController.value.text,
+      'paid_fees': _paidController.value.text,
+      'pending_fees': _pendingFeesController.value.text,
+      'years_of_experience': _experienceController.value.text,
+      'id': sessionManager.getUserId() ?? '',
+      'age': _ageController.value.text,
+      'address': _addressController.value.text,
+      'family_background': '',
+      'city': _cityId,
+      'country': _countryId,
+      'state': _stateId,
+      'document_submitted': jsonEncode(userGetSet.documentSubmitted),
+      'payment_details': (userGetSet.paymentDetails ?? ""),
+      'payment_mode': (userGetSet.paymentMode ?? ""),
+      'payment_mode_cash': isCashSelected ? "1" : "0",
+      'payment_mode_cheque': isChequeSelected ? "1" : "0",
+      'payment_mode_netbanking': isNetSelected ? "1" : "0",
+      'holding_seat': isHoldSeatSelected ? "1" : "0",
+      'enrolled_in_course': isEnrollCourseSelected ? "1" : "0",
+      'enrolled_in_course_desc': _enrollController.value.text,
+      'holding_seat_desc': _holdSeatController.value.text,
+      'payment_mode_netbanking_amount': _netController.value.text,
+      'payment_mode_cheque_amount': _chequeController.value.text,
+      'payment_mode_cash_amount': _cashController.value.text,
+    };
+
+    print(jsonBody);
+
+    final url = Uri.parse(saveUserDataUrl);
+
+    // Map<String, String> headers = {"Access-Token": sessionManager.getAccessToken().toString().trim()};
+
+    http.MultipartRequest request = http.MultipartRequest('POST', url,);
+    if (pickImgPath.isNotEmpty)
+    {
+      request.files.add(await http.MultipartFile.fromPath('profile_pic', pickImgPath));
+    }
+    //request.headers.("Access-Token": sessionManager.getAccessToken().toString().trim())
+    request.fields.addAll(jsonBody);
+
+    http.StreamedResponse response = await request.send();
+    var responseBytes = await response.stream.toBytes();
+    var responseString = utf8.decode(responseBytes);
+    print("responseString == ${responseString}");
+    final statusCode = response.statusCode;
+
+    print(statusCode);
+
+    Map<String, dynamic> user = jsonDecode(responseString);
+    print(jsonEncode(user));
+    var apiData = CommonResponseModel.fromJson(user);
+
+    print(jsonEncode(apiData));
+
+    if (statusCode == 200 && apiData.success == "1")
+    {
+      showToast(apiData.message, context);
+      Navigator.pop(context, true);
+      getUserData();
+    }
+    else
+    {
+      setState(() {
+        _isLoading = false;
+      });
+      showToast(apiData.message, context);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
 }

@@ -275,7 +275,7 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                                    const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    Expanded(
                                                      flex: 2,
-                                                     child: Text(getSet?.moduleName ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                                     child: Text(getSet?.moduleName ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    ),
                                                  ],
                                                ),
@@ -291,7 +291,7 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                                    const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    Expanded(
                                                      flex: 2,
-                                                     child: Text("${getSet?.duration}hr",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                                     child: Text("${getSet?.duration}hr",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    ),
                                                  ],
                                                ),
@@ -307,7 +307,7 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                                    const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    Expanded(
                                                      flex: 2,
-                                                     child: Text(getSet.courseName ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                                     child: Text(getSet.courseName ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    ),
                                                  ],
                                                ),
@@ -323,7 +323,7 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                                    const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    Expanded(
                                                      flex: 2,
-                                                     child: Text(getSet?.status ?? "",style: TextStyle(color: getSet.status == "Completed" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w600),),
+                                                     child: Text(getSet?.status ?? "",style: TextStyle(color: getSet.status == "Completed" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    ),
                                                  ],
                                                )

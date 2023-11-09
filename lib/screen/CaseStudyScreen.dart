@@ -15,6 +15,7 @@ import '../common_widget/no_data_new.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../utils/base_class.dart';
+import 'CaseStudyDetailScreen.dart';
 
 class CaseStudyScreen extends StatefulWidget {
   const CaseStudyScreen({super.key});
@@ -240,34 +241,40 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
                           itemCount: listCaseStudy.length,
                           itemBuilder: (context, index) {
                             var getSet = listCaseStudy[index];
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: white,
-                                borderRadius: BorderRadius.circular(8),
+                            return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                startActivity(context, CaseStudyDetailScreen(listCaseStudy[index]));
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: white,
+                                  borderRadius: BorderRadius.circular(8),
 
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.network(getSet.coverImage ?? "",fit: BoxFit.cover,width: 100,height: 100),
-                                  ),
-                                  Gap(12),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(getSet.title ?? "",style: const TextStyle(color: black,fontSize: 16,fontWeight: FontWeight.w500),),
-                                      const Gap(6),
-                                      Text("${getSet.tagLine}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.network(getSet.coverImage ?? "",fit: BoxFit.cover,width: 100,height: 100),
+                                    ),
+                                    Gap(12),
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(getSet.title ?? "",style: const TextStyle(color: black,fontSize: 16,fontWeight: FontWeight.w500),),
+                                        const Gap(6),
+                                        Text("${getSet.tagLine}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
 
-                                    ],
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },

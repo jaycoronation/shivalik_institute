@@ -61,6 +61,7 @@ dependencies:
   flutter_expanded_tile: ^0.3.7
   cached_network_image:
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -86,12 +87,12 @@ flutter:
     - assets/images/
 
   fonts:
-    - family: Colfax
+    - family: Poppins
       fonts:
-        - asset: fonts/Colfax-Medium.otf
-        - asset: fonts/Colfax-Bold.otf
-        - asset: fonts/Colfax-Regular.otf
-        - asset: fonts/Colfax-Light.otf
+        - asset: fonts/Poppins/Poppins-Medium.ttf
+        - asset: fonts/Poppins/Poppins-Bold.ttf
+        - asset: fonts/Poppins/Poppins-Regular.ttf
+        - asset: fonts/Poppins/Poppins-Light.ttf
 
 
   # To add assets to your application, add an assets section, like this:

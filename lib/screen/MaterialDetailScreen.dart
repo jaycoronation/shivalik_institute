@@ -6,12 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
-import 'package:shivalik_institute/viewmodels/DocumentViewModel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common_widget/common_widget.dart';
@@ -19,45 +17,47 @@ import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../model/CommonResponseModel.dart';
 import '../model/LecturesResponseModel.dart';
+import '../model/MaterialDResponseModel.dart';
 import '../model/MaterialDetailResponseModel.dart';
 import '../model/ModuleResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../viewmodels/CommonViewModel.dart';
 import 'package:http/http.dart' as http;
-import '../viewmodels/LectureViewModel.dart';
+import '../viewmodels/MaterialDetailViewModel.dart';
 import '../viewmodels/MultipartApiViewModel.dart';
 
-class ResourceMaterialScreen extends StatefulWidget {
+class MaterialDetailScreen extends StatefulWidget {
   final ModuleList getSet;
   final LectureList classGetSet;
-  const ResourceMaterialScreen(this.getSet, this.classGetSet, {super.key});
+  const MaterialDetailScreen(this.getSet, this.classGetSet, {super.key});
 
   @override
-  BaseState<ResourceMaterialScreen> createState() => _ResourceMaterialScreenState();
+  BaseState<MaterialDetailScreen> createState() => _MaterialDetailScreenState();
 }
 
-class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
+class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
 
   String isForCoverPic = "coverPic";
   TextEditingController searchController = TextEditingController();
   String searchParam = "";
   bool searchVisibility = false;
-  bool _isLoading = false;
   bool isLoading = false;
   int _pageIndex = 1;
   bool _isSearchHideShow = false;
   final int _pageResult = 10;
-  List<MaterialData> listDocument = [];
+  List<MaterialDataList> listDocument = [];
+
   late ScrollController _scrollViewController;
   bool isScrollingDown = false;
   bool _isLastPage = false;
   bool _isLoadingMore = false;
+  bool _isLoading = false;
 
   @override
   void initState(){
     super.initState();
-    getClassesDocumentData(true);
+    getClassesDocumentData(true,);
 
     _scrollViewController = ScrollController();
     _scrollViewController.addListener(() {
@@ -97,225 +97,212 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
 
     return WillPopScope(
       child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            elevation: 0,
-            backgroundColor: appBg,
-            leading:  InkWell(
-              borderRadius: BorderRadius.circular(52),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          backgroundColor: appBg,
+          leading:  InkWell(
+            borderRadius: BorderRadius.circular(52),
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: getBackArrow(),
+          ),
+          titleSpacing: 0,
+          centerTitle: false,
+          title: getTitle("Material",),
+          actions: [
+            InkWell(
               onTap: () {
-                Navigator.pop(context);
+                setState(() {
+                  _isSearchHideShow = !_isSearchHideShow;
+                  searchController.text = "";
+                  searchParam = "";
+                });
               },
-              child: getBackArrow(),
-            ),
-            titleSpacing: 0,
-            centerTitle: false,
-            title: getTitle("Submisssions",),
-            actions: [
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    _isSearchHideShow = !_isSearchHideShow;
-                    searchController.text = "";
-                    searchParam = "";
-                  });
-                },
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  alignment: Alignment.center,
-                  child: Image.asset("assets/images/ic_search.png",
-                    width: 22, height: 22,
-                    color: black,
-                  ),
+              child: Container(
+                width: 32,
+                height: 32,
+                alignment: Alignment.center,
+                child: Image.asset("assets/images/ic_search.png",
+                  width: 22, height: 22,
+                  color: black,
                 ),
               ),
-              const Gap(12),
-            ],
-          ),
-          body: _isLoading
-              ? const LoadingWidget()
-              : listDocument.isNotEmpty
-              ? Padding(
-            padding: const EdgeInsets.only(left: 18.0, right: 18),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Visibility(
-                  visible: _isSearchHideShow,
-                  child: Stack(
-                    alignment: Alignment.centerRight,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 12),
-                        height: 50,
-                        child: TextField(
-                          cursorColor: black,
-                          controller: searchController,
-                          keyboardType: TextInputType.text,
-                          textCapitalization: TextCapitalization.words,
-                          textInputAction: TextInputAction.search,
-                          onSubmitted: (text) {
-                            if (text.isNotEmpty)
-                            {
-                              setState(() {
-                                searchParam = text;
-                              });
-                              getClassesDocumentData();
-                            }
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              searchParam = value;
-                            });
-                          },
-                          cursorHeight: 20,
-                          style: const TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16, height: 1.3),
-                          maxLines: 1,
-                          decoration: InputDecoration(
-                            alignLabelWithHint: true,
-                            prefixIcon: const Icon(
-                              Icons.search,
-                              color: lableHint,
-                            ),
-                            hintText: 'Search...',
-                            contentPadding: EdgeInsets.zero,
-                            border: OutlineInputBorder(
-                              borderSide: const BorderSide(width: 0, color: Colors.transparent),
-                              borderRadius: BorderRadius.circular(kBorderRadius),
-                            ),
-                            disabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(width: 0, color: Colors.transparent),
-                              borderRadius: BorderRadius.circular(kBorderRadius),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(width: 0, color: Colors.transparent),
-                              borderRadius: BorderRadius.circular(kBorderRadius),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(width: 0, color: Colors.transparent),
-                              borderRadius: BorderRadius.circular(kBorderRadius),
-                            ),
-                            errorBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(width: 0, color: Colors.transparent),
-                              borderRadius: BorderRadius.circular(kBorderRadius),
-                            ),
-                            floatingLabelAlignment: FloatingLabelAlignment.center,
-                            filled: true,
-                            fillColor: searchColor,
-                            hintStyle: const TextStyle(fontWeight: FontWeight.w400, color: lableHint, fontSize: 16, height: 25 / 15),
-                          ),
-                        ),
-                      ),
-                      Visibility(
-                        visible: searchParam.isNotEmpty,
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            FocusScope.of(context).unfocus();
-                            setState(() {
-                              searchController.clear();
-                              searchParam = "";
-                              listDocument = [];
-                            });
-                            getClassesDocumentData();
-                          },
-                          child: Container(
-                            width: 20,
-                            height: 20,
-                            margin: const EdgeInsets.only(right: 12),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: grayDark,
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(4.0),
-                              child: Icon(
-                                Icons.close,
-                                size: 12,
-                                color: white,
+            ),
+            const Gap(12),
+          ],
+        ),
+        body: _isLoading
+            ? const LoadingWidget()
+            : listDocument.isNotEmpty
+            ? Padding(
+                padding: const EdgeInsets.only(left: 18.0, right: 18),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Visibility(
+                      visible: _isSearchHideShow,
+                      child: Stack(
+                        alignment: Alignment.centerRight,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(top: 12),
+                            height: 50,
+                            child: TextField(
+                              cursorColor: black,
+                              controller: searchController,
+                              keyboardType: TextInputType.text,
+                              textCapitalization: TextCapitalization.words,
+                              textInputAction: TextInputAction.search,
+                              onSubmitted: (text) {
+                                if (text.isNotEmpty)
+                                {
+                                  setState(() {
+                                    searchParam = text;
+                                  });
+                                  getClassesDocumentData();
+                                }
+                              },
+                              onChanged: (value) {
+                                setState(() {
+                                  searchParam = value;
+                                });
+                              },
+                              cursorHeight: 20,
+                              style: const TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16, height: 1.3),
+                              maxLines: 1,
+                              decoration: InputDecoration(
+                                alignLabelWithHint: true,
+                                prefixIcon: const Icon(
+                                  Icons.search,
+                                  color: lableHint,
+                                ),
+                                hintText: 'Search...',
+                                contentPadding: EdgeInsets.zero,
+                                border: OutlineInputBorder(
+                                  borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(kBorderRadius),
+                                ),
+                                disabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(kBorderRadius),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(kBorderRadius),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(kBorderRadius),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(kBorderRadius),
+                                ),
+                                floatingLabelAlignment: FloatingLabelAlignment.center,
+                                filled: true,
+                                fillColor: searchColor,
+                                hintStyle: const TextStyle(fontWeight: FontWeight.w400, color: lableHint, fontSize: 16, height: 25 / 15),
                               ),
                             ),
                           ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                const Gap(12),
-                ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  itemCount: listDocument.length,
-                  physics: BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisExtent: 150, crossAxisSpacing: 10, mainAxisSpacing: 10),
-                      controller: _scrollViewController,
-                      physics: const BouncingScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: listDocument.length,
-                      itemBuilder: (context, indexInner) {
-                        var getSet = listDocument[index].documets?[indexInner] ?? Documets();
-                        return GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () async {
-                            await launchUrl(Uri.parse(getSet.fullPath ?? ""),mode: LaunchMode.externalApplication);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: white,
-                              borderRadius: BorderRadius.circular(8),
-
-                            ),
-                            child: Stack(
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Icon(Icons.file_copy_outlined,size: 28,),
-                                    Gap(18),
-                                    Text("${getSet.file}",style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
-                                  ],
+                          Visibility(
+                            visible: searchParam.isNotEmpty,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                FocusScope.of(context).unfocus();
+                                setState(() {
+                                  searchController.clear();
+                                  searchParam = "";
+                                  listDocument = [];
+                                });
+                                getClassesDocumentData();
+                              },
+                              child: Container(
+                                width: 20,
+                                height: 20,
+                                margin: const EdgeInsets.only(right: 12),
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: grayDark,
                                 ),
-                                Container(height: 12,),
-                                Positioned(
-                                  bottom: 5,
-                                  right: 5,
-                                  child: GestureDetector(
-                                    behavior: HitTestBehavior.opaque,
-                                    onTap: (){
-                                      showDeleteBottomsheet(getSet);
-                                    },
-                                    child: Image.asset("assets/images/ic_delete.png",
-                                      width: 22, height: 22,
-                                      color: black,
-                                    ),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(4.0),
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 12,
+                                    color: white,
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                )
-              ],
-            ),
-          )
-              : const MyNoDataNewWidget(msg: "Upload Submission",  img: ''),
-          floatingActionButton:  FloatingActionButton(
-            onPressed: () {
-              pickImageFromGallery();
-            },
-            child: const Icon(Icons.add),
-          ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const Gap(12),
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: listDocument.length,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return MediaQuery.removePadding(
+                            context: context,
+                            removeTop: true,
+                            removeBottom: true,
+                            child: GridView.builder(
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisExtent: 150, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                              controller: _scrollViewController,
+                              physics: const BouncingScrollPhysics(),
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: listDocument.length,
+                              itemBuilder: (context, indexInner) {
+                                // var getSet = listDocument[index].?[indexInner];
+                                return GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () async {
+                                    await launchUrl(Uri.parse(listDocument[index].fullPath ?? ""),mode: LaunchMode.externalApplication);
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: white,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Icon(Icons.file_copy_outlined,size: 28,),
+                                            const Gap(18),
+                                            Text("${listDocument[index].file.toString()}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
+                                          ],
+                                        ),
+                                        Container(height: 12,),
+
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : const MyNoDataNewWidget(msg: "No Material Found",  img: ''),
       ),
       onWillPop: () {
         Navigator.pop(context);
@@ -326,10 +313,10 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
 
   @override
   void castStatefulWidget() {
-    widget is ResourceMaterialScreen;
+    widget is MaterialDetailScreen;
   }
 
-  void showDeleteBottomsheet(Documets getSet) {
+  void showDeleteBottomsheet(MaterialData getSet) {
     final commonViewModel = Provider.of<CommonViewModel>(context,listen: false);
 
     showModalBottomSheet(
@@ -508,7 +495,7 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
 
         // Add other form data if needed
         request.fields['key'] = 'value';
-        request.fields['class_id'] = (widget as ResourceMaterialScreen).classGetSet.id ?? "";
+        request.fields['class_id'] = (widget as MaterialDetailScreen).classGetSet.id ?? "";
         request.fields['student_id'] = sessionManager.getUserId() ?? "";
         request.fields['document_type'] = 'worksheet';
 
@@ -518,14 +505,11 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
         {
           showToast(value.message, context);
           getClassesDocumentData();
-
         }
         else
         {
           showToast(value.message, context);
         }
-
-
       } else {
         // User canceled the picker
       }
@@ -534,6 +518,34 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
     }
   }
 
+/*
+  Future<void> getClassesDocumentData() async {
+    Map<String, String> jsonBody = {
+      'batch_id': "",
+      'class_id': (widget as MaterialDetailScreen).classGetSet.id ?? '',
+      'flag': "",
+      'limit': _pageResult.toString(),
+      'page': _pageIndex.toString(),
+      'search': searchParam,
+      'module_id': (widget as MaterialDetailScreen).getSet.id ?? '',
+      'status': "1",
+      'total': "0",
+      'student_id': "",
+      "type":"material",
+      'from_app' : FROM_APP
+    };
+    var materialViewModel = Provider.of<MaterialDetailViewModel>(context,listen: false);
+    await materialViewModel.getMaterialList(jsonBody);
+
+    if (materialViewModel.response.success == '1')
+    {
+      listDocument = materialViewModel.response.data ?? [];
+      print(jsonEncode(materialViewModel.response.data));
+      print(jsonEncode(listDocument));
+    }
+
+  }
+*/
 
   void getClassesDocumentData([bool isFirstTime = false, bool isFromClose = false]) async {
 
@@ -550,19 +562,19 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
 
-    final url = Uri.parse(materialListUrl);
+    final url = Uri.parse(materialDetailListUrl);
     Map<String, String> jsonBody = {
       'batch_id': "",
-      'class_id': (widget as ResourceMaterialScreen).classGetSet.id ?? '',
+      'class_id': (widget as MaterialDetailScreen).classGetSet.id ?? '',
       'flag': "",
       'limit': _pageResult.toString(),
       'page': _pageIndex.toString(),
       'search': searchParam,
-      'module_id': (widget as ResourceMaterialScreen).getSet.id ?? '',
+      'module_id': (widget as MaterialDetailScreen).getSet.id ?? '',
       'status': "1",
       'total': "0",
-      'student_id': sessionManager.getUserId() ?? '',
-      "type":"worksheet",
+      'student_id': "",
+      "type":"material",
       'from_app' : FROM_APP
     };
 
@@ -571,7 +583,7 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
 
     final body = response.body;
     Map<String, dynamic> order = jsonDecode(body);
-    var dataResponse = MaterialDetailResponseModel.fromJson(order);
+    var dataResponse = MaterialDResponseModel.fromJson(order);
 
     if (isFirstTime) {
       if (listDocument?.isNotEmpty ?? false) {
@@ -581,9 +593,9 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
 
     if (statusCode == 200) {
 
-      if (dataResponse.data?.isNotEmpty ?? false) {
-        List<MaterialData>? _tempList = [];
-        _tempList = dataResponse.data;
+      if (dataResponse.list?.isNotEmpty ?? false) {
+        List<MaterialDataList>? _tempList = [];
+        _tempList = dataResponse.list;
         listDocument?.addAll(_tempList!);
 
         if (_tempList?.isNotEmpty ?? false) {

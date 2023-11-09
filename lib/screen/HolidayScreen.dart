@@ -269,7 +269,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                                           const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                           Expanded(
                                             flex: 2,
-                                            child: Text(getSet.title ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                            child: Text(getSet.title ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
                                           ),
                                         ],
                                       ),
@@ -285,7 +285,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                                           const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                           Expanded(
                                             flex: 2,
-                                            child: Text("${getSet?.description}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                            child: Text("${getSet?.description}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
                                           ),
                                         ],
                                       ),
@@ -301,7 +301,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                                           const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                           Expanded(
                                             flex: 2,
-                                            child: Text(universalDateConverter("dd-MM-yyyy", "dd MMM,yyyy", getSet.holidayDate ?? ""),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                            child: Text(universalDateConverter("dd-MM-yyyy", "dd MMM,yyyy", getSet.holidayDate ?? ""),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
                                           ),
                                         ],
                                       ),
@@ -317,25 +317,25 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                                           const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                           Expanded(
                                             flex: 2,
-                                            child: Text(getSet.status == "1" ? "Active" : "InActive",style: TextStyle(color: getSet.status == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w600),),
+                                            child: Text(getSet.status == "1" ? "Active" : "InActive",style: TextStyle(color: getSet.status == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w400),),
                                           ),
                                         ],
                                       )
                                     ],
                                   ),
-                                  Positioned(
-                                    right: 5,
-                                    child: GestureDetector(
-                                      behavior: HitTestBehavior.opaque,
-                                      onTap: (){
-                                        showActionBottomsheet(listHoliday[index]);
-                                      },
-                                      child: Image.asset("assets/images/ic_dots.png",
-                                        width: 26, height: 26,
-                                        color: black,
-                                      ),
-                                    ),
-                                  ),
+                                  // Positioned(
+                                  //   right: 5,
+                                  //   child: GestureDetector(
+                                  //     behavior: HitTestBehavior.opaque,
+                                  //     onTap: (){
+                                  //       showActionBottomsheet(listHoliday[index]);
+                                  //     },
+                                  //     child: Image.asset("assets/images/ic_dots.png",
+                                  //       width: 26, height: 26,
+                                  //       color: black,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             );
@@ -354,12 +354,12 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
               }
             },
           ),
-          floatingActionButton:  FloatingActionButton(
-            onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>  AddHolidayScreen(HolidayList())));
-            },
-            child: const Icon(Icons.add),
-          ),
+          // floatingActionButton:  FloatingActionButton(
+          //   onPressed: () {
+          //       Navigator.push(context, MaterialPageRoute(builder: (context) =>  AddHolidayScreen(HolidayList())));
+          //   },
+          //   child: const Icon(Icons.add),
+          // ),
         ),
         onWillPop: () {
           Navigator.pop(context);

@@ -120,7 +120,9 @@ class Details {
       String? id, 
       String? courseId, 
       String? prefixName, 
-      String? firstName, 
+      String? batchName,
+      String? courseName,
+      String? firstName,
       String? lastName, 
       String? email, 
       String? contactNo, 
@@ -186,6 +188,8 @@ class Details {
     _id = id;
     _courseId = courseId;
     _prefixName = prefixName;
+    _batchName = batchName;
+    _courseName = courseName;
     _firstName = firstName;
     _lastName = lastName;
     _email = email;
@@ -255,6 +259,8 @@ class Details {
     _id = json['id'];
     _courseId = json['course_id'];
     _prefixName = json['prefix_name'];
+    _batchName = json['batch_name'];
+    _courseName = json['course_name'];
     _firstName = json['first_name'];
     _lastName = json['last_name'];
     _email = json['email'];
@@ -322,6 +328,8 @@ class Details {
   String? _id;
   String? _courseId;
   String? _prefixName;
+  String? _batchName;
+  String? _courseName;
   String? _firstName;
   String? _lastName;
   String? _email;
@@ -388,6 +396,8 @@ class Details {
 Details copyWith({  String? id,
   String? courseId,
   String? prefixName,
+  String? batchName,
+  String? courseName,
   String? firstName,
   String? lastName,
   String? email,
@@ -454,6 +464,8 @@ Details copyWith({  String? id,
 }) => Details(  id: id ?? _id,
   courseId: courseId ?? _courseId,
   prefixName: prefixName ?? _prefixName,
+  batchName: batchName ?? _batchName,
+  courseName: courseName ?? _courseName,
   firstName: firstName ?? _firstName,
   lastName: lastName ?? _lastName,
   email: email ?? _email,
@@ -521,6 +533,8 @@ Details copyWith({  String? id,
   String? get id => _id;
   String? get courseId => _courseId;
   String? get prefixName => _prefixName;
+  String? get batchName => _batchName;
+  String? get courseName => _courseName;
   String? get firstName => _firstName;
   String? get lastName => _lastName;
   String? get email => _email;
@@ -590,6 +604,8 @@ Details copyWith({  String? id,
     map['id'] = _id;
     map['course_id'] = _courseId;
     map['prefix_name'] = _prefixName;
+    map['batch_name'] = _batchName;
+    map['course_name'] = _courseName;
     map['first_name'] = _firstName;
     map['last_name'] = _lastName;
     map['email'] = _email;

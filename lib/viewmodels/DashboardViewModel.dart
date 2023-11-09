@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import '../constant/ApiService.dart';
-import '../model/CommonResponseModel.dart';
 import '../model/DashboardResponseModel.dart';
 
 class DashboardViewModel extends ChangeNotifier {
@@ -17,6 +16,7 @@ class DashboardViewModel extends ChangeNotifier {
     try {
       _response = await ApiService.dashboard(jsonBody);
     } catch (error) {
+      print(error);
       // Handle error, e.g., show an error message to the user
     } finally {
       _isLoading = false;

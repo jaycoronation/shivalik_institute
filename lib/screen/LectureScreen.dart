@@ -41,17 +41,14 @@ class _LectureScreenState extends BaseState<LectureScreen> {
   bool _isLoadingMore = false;
   ModuleList moduleGetSet = ModuleList();
   String filterType = "";
-
   String fromDateApi = "";
   String toDateApi = "";
   String selectedDateFilter = "Today";
   String dateSelectionChanged = "";
   String fromDateDisplay = "";
   String toDateDisplay = "";
-
   String selectedFaculty = '';
   String selectedFacultyId = '';
-
   List<String> dateFilterList = ["All", "Today", "Yesterday", "Last 7 Days", "Last 30 Days", "This Month", "Last Month", "Custom range"];
 
   @override
@@ -459,7 +456,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
     Map<String, String> jsonBody = {
       'batch_id': "",
       'faculty_id': selectedFacultyId,
-      'filter': filterType,
+      'filter': '',
       'filter_by_class_status': "",
       'filter_name': "Filter",
       'from_date_filter': fromDateApi,

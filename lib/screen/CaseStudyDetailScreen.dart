@@ -2,29 +2,31 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:shivalik_institute/model/EventResponseModel.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../common_widget/common_widget.dart';
 import '../constant/colors.dart';
+import '../model/CaseStudyResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 
-class EventsDetailsScreen extends StatefulWidget {
-  final EventList getSet;
-  const EventsDetailsScreen(this.getSet, {Key? key}) : super (key: key);
+class CaseStudyDetailScreen extends StatefulWidget {
+  final CaseStudyList getSet;
+  const CaseStudyDetailScreen(this.getSet, {Key? key}) : super (key: key);
 
   @override
-  BaseState<EventsDetailsScreen> createState() => _EventsDetailsScreen();
+  BaseState<CaseStudyDetailScreen> createState() => _CaseStudyDetailScreen();
 }
 
-class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
+class _CaseStudyDetailScreen extends BaseState<CaseStudyDetailScreen> {
 
-  EventList getSet = EventList();
+  CaseStudyList getSet = CaseStudyList();
 
   @override
   void initState(){
     super.initState();
 
-    getSet = (widget as EventsDetailsScreen).getSet;
+    getSet = (widget as CaseStudyDetailScreen).getSet;
   }
 
   @override
@@ -33,19 +35,19 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
         child: Scaffold(
           backgroundColor: appBg,
           appBar: AppBar(
-            toolbarHeight: kToolbarHeight,
             automaticallyImplyLeading: false,
-            backgroundColor: appBg,
             elevation: 0,
-            titleSpacing: 0,
-            centerTitle: false,
-            leading: InkWell(
+            backgroundColor: appBg,
+            leading:  InkWell(
               borderRadius: BorderRadius.circular(52),
               onTap: () {
                 Navigator.pop(context);
               },
               child: getBackArrow(),
             ),
+            titleSpacing: 0,
+            centerTitle: false,
+            title: getTitle("Case Study",),
           ),
           body: SingleChildScrollView(
             child: Column(
@@ -70,7 +72,7 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
                           children: [
                             Flexible(
                               child: Text(
-                                universalDateConverter("yyyy-MM-dd","yyyy-MM-dd", getSet.date.toString()),
+                                getSet.tagLine.toString(),
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontSize: 16,
@@ -91,7 +93,7 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
                   alignment: Alignment.center,
                   children: [
                     CachedNetworkImage(
-                        imageUrl: "${getSet.bannerImage}&h=500&zc=2",
+                        imageUrl: "${getSet.coverImage}&h=500&zc=2",
                         fit: BoxFit.cover,
                         width: MediaQuery.of(context).size.width,
                         errorWidget: (context, url, error) => Container(
@@ -108,18 +110,62 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
                   ],
                 ),
                 Container(
-                  margin: const EdgeInsets.fromLTRB(22, 32, 22, 12),
+                  margin: const EdgeInsets.fromLTRB(22, 32, 22, 22),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         checkValidString(getSet.description).replaceAll("<p>&nbsp;</p>", "").toString().replaceAll("<br />", ""),
-                          style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 16),
+                        style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 16),
                       )
                     ],
                   ),
                 ),
+                Padding(
+                  padding: EdgeInsets.only(right: 12,left: 12),
+                  child: Row(
+                    children: [
+                      Text("Published By:",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
+                       Gap(22),
+                      Image.network("${getSet.publishedBy}&w=124",),
+                    ],
+                  ),
+                ),
+                Container(height: 12,),
+                Padding(
+                  padding: EdgeInsets.only(right: 12,left: 12),
+                  child: Row(
+                    children: [
+                      Text("Affiliated With",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
+                      Gap(22),
+                      Image.network("${getSet.affiliatedWith}&w=124",),
+                    ],
+                  ),
+                ),
+                Container(height: 18,),
+                Visibility(
+                  visible: getSet.brochure!.isNotEmpty,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () async {
+                      await launchUrl(Uri.parse(getSet?.brochure ?? ""),mode: LaunchMode.externalApplication);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(left: 18),
+                      decoration: BoxDecoration(
+                        color: black,
+                        border: Border.all(
+                          width: 8,
+                          color: black,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child:   Text("Download Brochure",style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w400,color: white),),
+                    ),
+                  ),
+                ),
+                Container(height: 18,),
               ],
             ),
           ),
@@ -134,6 +180,6 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
 
   @override
   void castStatefulWidget() {
-    widget is EventsDetailsScreen;
+    widget is CaseStudyDetailScreen;
   }
 }

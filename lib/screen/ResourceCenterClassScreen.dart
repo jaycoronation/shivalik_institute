@@ -5,10 +5,6 @@ import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
-import 'package:shivalik_institute/screen/ModuleDetailsScreen.dart';
-import 'package:shivalik_institute/screen/ResourceMaterialScreen.dart';
-import 'package:shivalik_institute/viewmodels/ModuleViewModel.dart';
-
 import '../common_widget/common_widget.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
@@ -16,10 +12,13 @@ import '../model/LecturesResponseModel.dart';
 import '../model/ModuleResponseModel.dart';
 import '../utils/base_class.dart';
 import '../viewmodels/LectureViewModel.dart';
+import 'MaterialScreen.dart';
+import 'ResourceMaterialScreen.dart';
 
 class ResourceCenterClassScreen extends StatefulWidget {
   final ModuleList getSet;
-  const ResourceCenterClassScreen(this.getSet, {super.key});
+  final bool isForSubmission;
+  const ResourceCenterClassScreen(this.getSet, this.isForSubmission, {super.key});
 
   @override
   BaseState<ResourceCenterClassScreen> createState() => _ResourceCenterClassScreenState();
@@ -94,7 +93,7 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
             ),
             titleSpacing: 0,
             centerTitle: false,
-            title: getTitle("Modules",),
+            title: getTitle("Resource Center",),
             actions: [
               InkWell(
                 onTap: () {
@@ -237,7 +236,7 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
                         const Gap(12),
                         Expanded(
                           child: GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisExtent: 130, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisExtent: 162, crossAxisSpacing: 10, mainAxisSpacing: 10),
                             controller: _scrollViewController,
                             physics: const BouncingScrollPhysics(),
                             scrollDirection: Axis.vertical,
@@ -248,7 +247,14 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
                               return GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  startActivity(context, ResourceMaterialScreen((widget as ResourceCenterClassScreen).getSet, listClasses[index]));
+                                  if ((widget as ResourceCenterClassScreen).isForSubmission)
+                                    {
+                                      startActivity(context, ResourceMaterialScreen((widget as ResourceCenterClassScreen).getSet,listClasses[index]));
+                                    }
+                                  else
+                                    {
+                                      startActivity(context, MaterialScreen((widget as ResourceCenterClassScreen).getSet, listClasses[index]));
+                                    }
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(bottom: 12),
@@ -264,7 +270,7 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
                                     children: [
                                       Icon(Icons.folder_copy_outlined,size: 28,),
                                       Gap(12),
-                                      Text("${getSet.session1Topic} ${getSet.session2Topic}",style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w600),)
+                                      Text("${getSet.session1Topic}, ${getSet.session2Topic}",style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
                                     ],
                                   ),
                                 ),
@@ -305,7 +311,7 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
       'module_id': (widget as ResourceCenterClassScreen).getSet.id ?? '',
       'status': "1",
       'total': "0",
-      'student_id': "",
+      'student_id': sessionManager.getUserId() ?? '',
       'from_app' : FROM_APP
     };
     var moduleViewModel = Provider.of<LectureViewModel>(context,listen: false);

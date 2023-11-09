@@ -1,43 +1,43 @@
 import 'dart:convert';
 /// success : "1"
 /// message : "List Found"
-/// total_records : "1"
-/// list : [{"id":"5","class_id":"2","student_id":"7","document_type":"worksheet","file_type":"png","file":"1699094737ic_sire_logo.png","caption":"","is_active":"1","created_at":"2023-11-04","updated_at":"","deleted_at":"","full_path":"http://shivalik.institute/api/assets/uploads/class_material/1699094737ic_sire_logo.png","class_data":{"class_no":"2","module_id":"2"},"student_data":{"first_name":"Priya","last_name":"Gohil"},"module_data":{"name":"Introduction to Real Estate","description":"Gain a foundational understanding of the dynamic world of real estate\r\nof reforms in the field of Real Estate","duration":"6"}}]
+/// total_records : "2"
+/// list : [{"id":"22","class_id":"5","student_id":"","document_type":"material","file_type":"png","file":"1699446147ic_md.png","caption":"","is_active":"1","created_at":"2023-11-08","updated_at":"","deleted_at":"","full_path":"http://shivalik.institute/api/assets/uploads/class_material/1699446147ic_md.png","is_pending":"1","class_data":{"class_no":"2","module_id":"2"},"student_data":"","module_data":{"name":"Introduction to Real Estate","description":"Gain a foundational understanding of the dynamic world of real estate\r\nof reforms in the field of Real Estate","duration":"6"}},{"id":"17","class_id":"5","student_id":"","document_type":"material","file_type":"pdf","file":"1699422729dummy.pdf","caption":"","is_active":"1","created_at":"2023-11-08","updated_at":"","deleted_at":"","full_path":"http://shivalik.institute/api/assets/uploads/class_material/1699422729dummy.pdf","is_pending":"1","class_data":{"class_no":"2","module_id":"2"},"student_data":"","module_data":{"name":"Introduction to Real Estate","description":"Gain a foundational understanding of the dynamic world of real estate\r\nof reforms in the field of Real Estate","duration":"6"}}]
 
-DocumentResponseModel documentResponseModelFromJson(String str) => DocumentResponseModel.fromJson(json.decode(str));
-String documentResponseModelToJson(DocumentResponseModel data) => json.encode(data.toJson());
-class DocumentResponseModel {
-  DocumentResponseModel({
+MaterialDResponseModel materialDResponseModelFromJson(String str) => MaterialDResponseModel.fromJson(json.decode(str));
+String materialDResponseModelToJson(MaterialDResponseModel data) => json.encode(data.toJson());
+class MaterialDResponseModel {
+  MaterialDResponseModel({
       String? success, 
       String? message, 
       String? totalRecords, 
-      List<DocumentList>? list,}){
+      List<MaterialDataList>? list,}){
     _success = success;
     _message = message;
     _totalRecords = totalRecords;
     _list = list;
 }
 
-  DocumentResponseModel.fromJson(dynamic json) {
+  MaterialDResponseModel.fromJson(dynamic json) {
     _success = json['success'];
     _message = json['message'];
     _totalRecords = json['total_records'];
     if (json['list'] != null) {
       _list = [];
       json['list'].forEach((v) {
-        _list?.add(DocumentList.fromJson(v));
+        _list?.add(MaterialDataList.fromJson(v));
       });
     }
   }
   String? _success;
   String? _message;
   String? _totalRecords;
-  List<DocumentList>? _list;
-DocumentResponseModel copyWith({  String? success,
+ List<MaterialDataList>? _list;
+MaterialDResponseModel copyWith({  String? success,
   String? message,
   String? totalRecords,
-  List<DocumentList>? list,
-}) => DocumentResponseModel(  success: success ?? _success,
+List<MaterialDataList>? list,
+}) => MaterialDResponseModel(  success: success ?? _success,
   message: message ?? _message,
   totalRecords: totalRecords ?? _totalRecords,
   list: list ?? _list,
@@ -45,7 +45,7 @@ DocumentResponseModel copyWith({  String? success,
   String? get success => _success;
   String? get message => _message;
   String? get totalRecords => _totalRecords;
-  List<DocumentList>? get list => _list;
+  List<MaterialDataList>? get list => _list;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -60,26 +60,27 @@ DocumentResponseModel copyWith({  String? success,
 
 }
 
-/// id : "5"
-/// class_id : "2"
-/// student_id : "7"
-/// document_type : "worksheet"
+/// id : "22"
+/// class_id : "5"
+/// student_id : ""
+/// document_type : "material"
 /// file_type : "png"
-/// file : "1699094737ic_sire_logo.png"
+/// file : "1699446147ic_md.png"
 /// caption : ""
 /// is_active : "1"
-/// created_at : "2023-11-04"
+/// created_at : "2023-11-08"
 /// updated_at : ""
 /// deleted_at : ""
-/// full_path : "http://shivalik.institute/api/assets/uploads/class_material/1699094737ic_sire_logo.png"
+/// full_path : "http://shivalik.institute/api/assets/uploads/class_material/1699446147ic_md.png"
+/// is_pending : "1"
 /// class_data : {"class_no":"2","module_id":"2"}
-/// student_data : {"first_name":"Priya","last_name":"Gohil"}
+/// student_data : ""
 /// module_data : {"name":"Introduction to Real Estate","description":"Gain a foundational understanding of the dynamic world of real estate\r\nof reforms in the field of Real Estate","duration":"6"}
 
-DocumentList listFromJson(String str) => DocumentList.fromJson(json.decode(str));
-String listToJson(DocumentList data) => json.encode(data.toJson());
-class DocumentList {
-  DocumentList({
+MaterialDataList listFromJson(String str) => MaterialDataList.fromJson(json.decode(str));
+String listToJson(MaterialDataList data) => json.encode(data.toJson());
+class MaterialDataList {
+  MaterialDataList({
       String? id, 
       String? classId, 
       String? studentId, 
@@ -92,8 +93,9 @@ class DocumentList {
       String? updatedAt, 
       String? deletedAt, 
       String? fullPath, 
+      String? isPending, 
       ClassData? classData, 
-      StudentData? studentData, 
+      String? studentData, 
       ModuleData? moduleData,}){
     _id = id;
     _classId = classId;
@@ -107,12 +109,13 @@ class DocumentList {
     _updatedAt = updatedAt;
     _deletedAt = deletedAt;
     _fullPath = fullPath;
+    _isPending = isPending;
     _classData = classData;
     _studentData = studentData;
     _moduleData = moduleData;
 }
 
-  DocumentList.fromJson(dynamic json) {
+  MaterialDataList.fromJson(dynamic json) {
     _id = json['id'];
     _classId = json['class_id'];
     _studentId = json['student_id'];
@@ -125,8 +128,9 @@ class DocumentList {
     _updatedAt = json['updated_at'];
     _deletedAt = json['deleted_at'];
     _fullPath = json['full_path'];
+    _isPending = json['is_pending'];
     _classData = json['class_data'] != null ? ClassData.fromJson(json['class_data']) : null;
-    _studentData = json['student_data'] != null ? StudentData.fromJson(json['student_data']) : null;
+    _studentData = json['student_data'];
     _moduleData = json['module_data'] != null ? ModuleData.fromJson(json['module_data']) : null;
   }
   String? _id;
@@ -141,10 +145,11 @@ class DocumentList {
   String? _updatedAt;
   String? _deletedAt;
   String? _fullPath;
+  String? _isPending;
   ClassData? _classData;
-  StudentData? _studentData;
+  String? _studentData;
   ModuleData? _moduleData;
-DocumentList copyWith({  String? id,
+MaterialDataList copyWith({  String? id,
   String? classId,
   String? studentId,
   String? documentType,
@@ -156,10 +161,11 @@ DocumentList copyWith({  String? id,
   String? updatedAt,
   String? deletedAt,
   String? fullPath,
+  String? isPending,
   ClassData? classData,
-  StudentData? studentData,
+  String? studentData,
   ModuleData? moduleData,
-}) => DocumentList(  id: id ?? _id,
+}) => MaterialDataList(  id: id ?? _id,
   classId: classId ?? _classId,
   studentId: studentId ?? _studentId,
   documentType: documentType ?? _documentType,
@@ -171,6 +177,7 @@ DocumentList copyWith({  String? id,
   updatedAt: updatedAt ?? _updatedAt,
   deletedAt: deletedAt ?? _deletedAt,
   fullPath: fullPath ?? _fullPath,
+  isPending: isPending ?? _isPending,
   classData: classData ?? _classData,
   studentData: studentData ?? _studentData,
   moduleData: moduleData ?? _moduleData,
@@ -187,8 +194,9 @@ DocumentList copyWith({  String? id,
   String? get updatedAt => _updatedAt;
   String? get deletedAt => _deletedAt;
   String? get fullPath => _fullPath;
+  String? get isPending => _isPending;
   ClassData? get classData => _classData;
-  StudentData? get studentData => _studentData;
+  String? get studentData => _studentData;
   ModuleData? get moduleData => _moduleData;
 
   Map<String, dynamic> toJson() {
@@ -205,12 +213,11 @@ DocumentList copyWith({  String? id,
     map['updated_at'] = _updatedAt;
     map['deleted_at'] = _deletedAt;
     map['full_path'] = _fullPath;
+    map['is_pending'] = _isPending;
     if (_classData != null) {
       map['class_data'] = _classData?.toJson();
     }
-    if (_studentData != null) {
-      map['student_data'] = _studentData?.toJson();
-    }
+    map['student_data'] = _studentData;
     if (_moduleData != null) {
       map['module_data'] = _moduleData?.toJson();
     }
@@ -259,42 +266,6 @@ ModuleData copyWith({  String? name,
     map['name'] = _name;
     map['description'] = _description;
     map['duration'] = _duration;
-    return map;
-  }
-
-}
-
-/// first_name : "Priya"
-/// last_name : "Gohil"
-
-StudentData studentDataFromJson(String str) => StudentData.fromJson(json.decode(str));
-String studentDataToJson(StudentData data) => json.encode(data.toJson());
-class StudentData {
-  StudentData({
-      String? firstName, 
-      String? lastName,}){
-    _firstName = firstName;
-    _lastName = lastName;
-}
-
-  StudentData.fromJson(dynamic json) {
-    _firstName = json['first_name'];
-    _lastName = json['last_name'];
-  }
-  String? _firstName;
-  String? _lastName;
-StudentData copyWith({  String? firstName,
-  String? lastName,
-}) => StudentData(  firstName: firstName ?? _firstName,
-  lastName: lastName ?? _lastName,
-);
-  String? get firstName => _firstName;
-  String? get lastName => _lastName;
-
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['first_name'] = _firstName;
-    map['last_name'] = _lastName;
     return map;
   }
 

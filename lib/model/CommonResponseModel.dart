@@ -13,7 +13,7 @@ class CommonResponseModel {
 }
 
   CommonResponseModel.fromJson(dynamic json) {
-    _success = json['success'];
+    _success = json['success'] is int ? "0" : json['success'];
     _message = json['message'];
   }
   String? _success;

@@ -91,7 +91,7 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
             ),
             titleSpacing: 0,
             centerTitle: false,
-            title: getTitle("Modules",),
+            title: getTitle("Resource Center",),
             actions: [
               InkWell(
                 onTap: () {
@@ -234,7 +234,12 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
                         const Gap(12),
                         Expanded(
                           child: GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisExtent: 130, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisExtent: 130,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10
+                            ),
                             controller: _scrollViewController,
                             physics: const BouncingScrollPhysics(),
                             scrollDirection: Axis.vertical,
@@ -245,7 +250,7 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
                               return GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  startActivity(context, ResourceCenterClassScreen(getSet));
+                                  startActivity(context, ResourceCenterClassScreen(getSet,false));
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(bottom: 12),
@@ -253,7 +258,6 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
                                   decoration: BoxDecoration(
                                     color: white,
                                     borderRadius: BorderRadius.circular(8),
-
                                   ),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -261,7 +265,7 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
                                     children: [
                                       Icon(Icons.folder_copy_outlined,size: 28,),
                                       Gap(12),
-                                      Text("${index + 1} ${getSet.moduleName}",style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w600),)
+                                      Text("${index + 1} ${getSet.moduleName}",style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
                                     ],
                                   ),
                                 ),

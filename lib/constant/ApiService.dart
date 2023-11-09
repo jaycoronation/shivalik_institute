@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shivalik_institute/model/AddHolidayResponseModel.dart';
 import 'package:shivalik_institute/model/CaseStudyResponseModel.dart';
-import 'package:shivalik_institute/model/DocumentResponseModel.dart';
 import 'package:shivalik_institute/model/EventResponseModel.dart';
 import 'package:shivalik_institute/model/LecturesResponseModel.dart';
 import 'package:shivalik_institute/model/ModuleResponseModel.dart';
@@ -16,6 +15,7 @@ import '../model/CourseResponseModel.dart';
 import '../model/DashboardResponseModel.dart';
 import '../model/HolidayResponseModel.dart';
 import '../model/ManagmentResponseModel.dart';
+import '../model/MaterialDetailResponseModel.dart';
 import '../model/StateViewResponseModel.dart';
 import '../model/UserProfileResponseModel.dart';
 import '../model/VerifyOtpResponseModel.dart';
@@ -287,7 +287,7 @@ class ApiService {
     }
   }
 
-  static Future<DocumentResponseModel> documentList(Map<String, String> jsonBody) async {
+  static Future<MaterialDetailResponseModel> documentList(Map<String, String> jsonBody) async {
 
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
@@ -295,7 +295,22 @@ class ApiService {
     final response = await http.post(Uri.parse(materialListUrl),body: jsonBody);
     if (response.statusCode == 200) {
       final dynamic data = json.decode(response.body);
-      return DocumentResponseModel.fromJson(data);
+      return MaterialDetailResponseModel.fromJson(data);
+    } else {
+      throw Exception('Failed to load users');
+    }
+  }
+
+
+  static Future<MaterialDetailResponseModel> materialList(Map<String, String> jsonBody) async {
+
+    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+    final response = await http.post(Uri.parse(materialDetailListUrl),body: jsonBody);
+    if (response.statusCode == 200) {
+      final dynamic data = json.decode(response.body);
+      return MaterialDetailResponseModel.fromJson(data);
     } else {
       throw Exception('Failed to load users');
     }
@@ -338,6 +353,38 @@ class ApiService {
     ]);
 
     final response = await http.post(Uri.parse(deelteHolidayAddUrl),body: jsonBody);
+    if (response.statusCode == 200) {
+      final dynamic data = json.decode(response.body);
+      return CommonResponseModel.fromJson(data);
+    } else {
+      throw Exception('Failed to load users');
+    }
+  }
+
+
+  static Future<CommonResponseModel> deleteResourceData(Map<String, String> jsonBody) async {
+
+    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+
+    final response = await http.post(Uri.parse(deleteResourceAddUrl),body: jsonBody);
+    if (response.statusCode == 200) {
+      final dynamic data = json.decode(response.body);
+      return CommonResponseModel.fromJson(data);
+    } else {
+      throw Exception('Failed to load users');
+    }
+  }
+
+
+  static Future<CommonResponseModel> uploadResourceData(Map<String, String> jsonBody) async {
+
+    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+
+    final response = await http.post(Uri.parse(uploadResourceAddUrl),body: jsonBody);
     if (response.statusCode == 200) {
       final dynamic data = json.decode(response.body);
       return CommonResponseModel.fromJson(data);

@@ -20,7 +20,9 @@ import 'package:shivalik_institute/viewmodels/EventViewModel.dart';
 import 'package:shivalik_institute/viewmodels/HolidayViewModel.dart';
 import 'package:shivalik_institute/viewmodels/LectureViewModel.dart';
 import 'package:shivalik_institute/viewmodels/ManagmentViewModel.dart';
+import 'package:shivalik_institute/viewmodels/MaterialDetailViewModel.dart';
 import 'package:shivalik_institute/viewmodels/ModuleViewModel.dart';
+import 'package:shivalik_institute/viewmodels/MultipartApiViewModel.dart';
 import 'package:shivalik_institute/viewmodels/StateViewModel.dart';
 import 'package:shivalik_institute/viewmodels/TestimonialsViewModel.dart';
 import 'package:shivalik_institute/viewmodels/UserListViewModel.dart';
@@ -57,6 +59,8 @@ Future<void> main() async {
         ChangeNotifierProvider.value(value: ManagementViewModel()),
         ChangeNotifierProvider.value(value: TestimonialsViewModel()),
         ChangeNotifierProvider.value(value: DocumentViewModel()),
+        ChangeNotifierProvider.value(value: MultipartApiViewModel()),
+        ChangeNotifierProvider.value(value: MaterialDetailViewModel()),
       ],
       child: const MyApp(),
     )
@@ -69,7 +73,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -116,7 +119,7 @@ class MyApp extends StatelessWidget {
                 fontSize: 14,
                 fontWeight: FontWeight.w400),
           ),
-          fontFamily: 'Colfax',
+          fontFamily: 'Poppins',
           textSelectionTheme: TextSelectionThemeData(selectionColor: black.withOpacity(0.3)),
           colorScheme: ColorScheme.fromSwatch(primarySwatch: createMaterialColor(white)).copyWith(secondary: white)
       ),

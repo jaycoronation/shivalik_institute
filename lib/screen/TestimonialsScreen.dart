@@ -265,7 +265,7 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
                                       const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                       Expanded(
                                         flex: 2,
-                                        child: Text("${getSet.name}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                        child: Text("${getSet.name}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
                                       ),
                                     ],
                                   ),
@@ -281,7 +281,7 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
                                       const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                       Expanded(
                                         flex: 2,
-                                        child: Text("${getSet.title}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                        child: Text("${getSet.title}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
                                       ),
                                     ],
                                   ),
@@ -297,7 +297,7 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
                                       const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                       Expanded(
                                         flex: 2,
-                                        child: Text(getSet.description ?? '',style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                        child: Text(getSet.description ?? '',style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
                                       ),
                                     ],
                                   ),
@@ -313,7 +313,7 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
                                       const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                       Expanded(
                                         flex: 2,
-                                        child: Text(getSet.isActive == "1" ?"Active" : "InActive",style: TextStyle(color: getSet.isActive == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w600),),
+                                        child: Text(getSet.isActive == "1" ?"Active" : "InActive",style: TextStyle(color: getSet.isActive == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w400),),
                                       ),
                                     ],
                                   )
