@@ -1,9 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:shivalik_institute/model/EventResponseModel.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../common_widget/common_widget.dart';
 import '../constant/colors.dart';
 import '../model/CaseStudyResponseModel.dart';

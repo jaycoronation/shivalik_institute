@@ -10,7 +10,6 @@ import '../constant/colors.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../viewmodels/VerifyOtpViewModel.dart';
-import '../viewmodels/VerifyOtpViewModel.dart';
 import 'DashboardScreen.dart';
 
 class VerifyOTPScreen extends StatefulWidget {

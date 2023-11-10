@@ -3,9 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
-import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/model/BatchResponseModel.dart';
@@ -17,7 +15,6 @@ import 'package:shivalik_institute/utils/app_utils.dart';
 import 'package:shivalik_institute/viewmodels/UserViewModel.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:http/http.dart' as http;
-
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
 import '../constant/api_end_point.dart';
@@ -33,7 +30,6 @@ import '../viewmodels/CommonViewModel.dart';
 import '../viewmodels/CountryViewModel.dart';
 import '../viewmodels/CourseViewModel.dart';
 import '../viewmodels/StateViewModel.dart';
-import '../common_widget/no_data_new.dart';
 
 class ProfileScreen extends StatefulWidget {
 
@@ -237,13 +233,13 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                                           right: 0,
                                           bottom: 12,
                                           child: Container(
-                                              decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)),
-                                                color: grayLight,
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(6.0),
-                                                child: Image.asset('assets/images/ic_edit.png', height: 18, width: 18,),
-                                              )
+                                            decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)),
+                                              color: grayLight,
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(6.0),
+                                              child: Image.asset('assets/images/ic_edit.png', height: 18, width: 18,),
+                                            )
                                           )
                                       )
                                     ],
@@ -865,7 +861,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                                 },*/
                                 onPressed: () {
                                   saveData();
-                                  },
+                                },
                                 child: _isLoading
                                     ? const Padding(
                                         padding: EdgeInsets.only(top: 10,bottom: 10),

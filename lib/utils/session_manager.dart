@@ -1,5 +1,4 @@
 
-
 import 'session_manager_methods.dart';
 
 class SessionManager {
@@ -32,7 +31,6 @@ class SessionManager {
     await SessionManagerMethods.setString(accessToken,apiaccessToken);
 
   }
-
 
   bool? checkIsLoggedIn() {
     return SessionManagerMethods.getBool(isLoggedIn);
@@ -67,7 +65,6 @@ class SessionManager {
     return SessionManagerMethods.getString(lastName);
   }
 
-
   Future<void> setuserType(String apiuserType)
   async {
     await SessionManagerMethods.setString(userType, apiuserType);
@@ -76,7 +73,6 @@ class SessionManager {
   String? getuserType() {
     return SessionManagerMethods.getString(userType);
   }
-
 
   Future<void> setaccessToken(String apiaccessToken)
   async {

@@ -3,11 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/model/CaseStudyResponseModel.dart';
-import 'package:shivalik_institute/model/HolidayResponseModel.dart';
-import 'package:shivalik_institute/utils/app_utils.dart';
 import 'package:shivalik_institute/viewmodels/CaseStudyViewModel.dart';
-import 'package:shivalik_institute/viewmodels/HolidayViewModel.dart';
-
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
 import '../common_widget/loading_more.dart';

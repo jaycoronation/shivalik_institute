@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:shivalik_institute/model/AddHolidayResponseModel.dart';
 import '../constant/ApiService.dart';
-import '../model/BatchResponseModel.dart';
 
 class AddHolidayScreen extends ChangeNotifier {
   late AddHolidayResponseModel _response;

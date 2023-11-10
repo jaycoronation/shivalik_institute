@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
 import '../constant/colors.dart';
 
 class FullScreenImage extends StatelessWidget {

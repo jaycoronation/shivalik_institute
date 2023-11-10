@@ -9,7 +9,6 @@ import '../model/CommonResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../viewmodels/CommonViewModel.dart';
-import 'HolidayScreen.dart';
 
 class AddHolidayScreen extends StatefulWidget {
   final HolidayList getSet;
@@ -37,7 +36,6 @@ class _AddHolidayScreenState extends BaseState<AddHolidayScreen> {
             _dateController.text = (universalDateConverter("dd-MM-yyyy", "dd/MM/yyyy", getSet.holidayDate ?? ""));
           }
       }
-
 
     super.initState();
   }

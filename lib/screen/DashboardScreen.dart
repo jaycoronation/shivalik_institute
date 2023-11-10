@@ -26,7 +26,6 @@ import '../model/ModuleResponseModel.dart';
 import '../utils/base_class.dart';
 import '../viewmodels/CaseStudyViewModel.dart';
 import '../viewmodels/DashboardViewModel.dart';
-import '../viewmodels/LectureViewModel.dart';
 import '../viewmodels/ModuleViewModel.dart';
 import '../viewmodels/UserViewModel.dart';
 import 'CaseStudyDetailScreen.dart';
@@ -973,7 +972,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               indent: 0,
                               color: grayLight,
                             ),
-
                           ],
                         ),
                       ),

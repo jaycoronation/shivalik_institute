@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:shivalik_institute/model/UserProfileResponseModel.dart';
 import '../constant/ApiService.dart';
-import '../model/BatchResponseModel.dart';
 
 class UserViewModel extends ChangeNotifier {
   late UserProfileResponseModel _response;

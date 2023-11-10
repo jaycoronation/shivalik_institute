@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import '../constant/ApiService.dart';
-import '../model/HolidayResponseModel.dart';
-import '../model/LecturesResponseModel.dart';
 import '../model/TestimonialsResponseModel.dart';
 
 class TestimonialsViewModel extends ChangeNotifier {

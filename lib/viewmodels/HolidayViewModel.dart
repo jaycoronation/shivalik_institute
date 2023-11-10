@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../constant/ApiService.dart';
 import '../model/HolidayResponseModel.dart';
-import '../model/LecturesResponseModel.dart';
 
 class HolidayViewModel extends ChangeNotifier {
   late HolidayResponseModel _response;

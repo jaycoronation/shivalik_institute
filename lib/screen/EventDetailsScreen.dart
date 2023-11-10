@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:shivalik_institute/model/EventResponseModel.dart';
-
 import '../common_widget/common_widget.dart';
 import '../constant/colors.dart';
 import '../utils/app_utils.dart';

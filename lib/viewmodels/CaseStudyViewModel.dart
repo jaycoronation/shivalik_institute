@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:shivalik_institute/model/CaseStudyResponseModel.dart';
 import '../constant/ApiService.dart';
-import '../model/LecturesResponseModel.dart';
 
 class CaseStudyViewModel extends ChangeNotifier {
   late CaseStudyResponseModel _response;

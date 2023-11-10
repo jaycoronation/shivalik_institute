@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../constant/ApiService.dart';
-import '../model/CommonResponseModel.dart';
 import '../model/CourseResponseModel.dart';
-import '../model/DashboardResponseModel.dart';
 
 class CourseViewModel extends ChangeNotifier {
   late CourseResponseModel _response;
