@@ -3,8 +3,10 @@ import 'package:countup/countup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_calendar_week/flutter_calendar_week.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/common_widget/common_widget.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
@@ -59,7 +61,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   List<CaseStudyList> listCaseStudy = [];
   List<LectureList> listLecture = [];
 
-
   Details getSet = Details();
 
   @override
@@ -67,12 +68,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     getUserData();
     getModuleData();
     getCaseStudyList(true);
-    Map<String, String> jsonBody = {
-      'student_id': sessionManager.getUserId().toString(),
-      'filter': 'upcoming_class',
-      'from_app' : FROM_APP
-    };
-    Provider.of<DashboardViewModel>(context,listen: false).dashboardData(jsonBody);
+    getDashboardData();
     super.initState();
   }
 
@@ -90,70 +86,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
             elevation: 0,
             backgroundColor: appBg,
             title: getTitle("Dashboard"),
-            actions: [
-              /*InkWell(
-                onTap: (){
-                  openAllScreenBottomSheet();
-                },
-                child: const Padding(
-                  padding: EdgeInsets.only(left: 9,right: 9.0, top: 12, bottom: 12),
-                  child: Icon(Icons.add),
-                ),
-              ),*/
-             /* InkWell(
-                onTap: (){
-                  // startActivity(context, ProfileScreen());
-                  startActivity(context, MyProfileScreen());
-                  //startActivity(context, CaseStudyScreen());
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(left: 9,right: 9.0, top: 12, bottom: 12),
-                  child: Image.asset('assets/images/ic_user_placeholder.png',),
-                ),
-              ),*/
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: InkWell(
-                  onTap: () async {
-                   var value = await Navigator.push(context, MaterialPageRoute(builder: (context) => MyProfileScreen()));
-                   getUserData();
-                  },
-                  customBorder: const CircleBorder(),
-                  child: Padding(
-                      padding: const EdgeInsets.only(left: 6.0, top: 10,bottom: 10),
-                      child :  Container(
-                        // decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(150)), color: Colors.lightBlue),
-                        width: 34,
-                        height: 34,
-                        child: ClipOval(
-                            child:getSet.profilePic.toString().isEmpty
-                                ? Image.asset('assets/images/ic_user_placeholder.png', fit: BoxFit.cover,)
-                                : Image.network(getSet.profilePic.toString(), fit: BoxFit.cover)
-                        ),
-                      )
-                  ),
-                ),
-              ),
-              /*InkWell(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyProfileScreen()));
-                },
-                customBorder: const CircleBorder(),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 18.0, right: 16, top: 10,bottom: 10),
-                  child :  Container(
-                    // decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(150)), color: Colors.lightBlue),
-                    width: 34,
-                    height: 34,
-                    child: ClipOval(
-                        child: getSet.profilePic.toString().isNotEmpty
-                            ? Image.asset('assets/images/ic_user_placeholder.png', fit: BoxFit.cover,)
-                            : Image.network(getSet.profilePic.toString() ?? '', fit: BoxFit.cover)
-                    ),
-                  )
-                ),
-              ),*/
-            ],
           ),
           body: Consumer<DashboardViewModel>(
             builder: (context, value, child) {
@@ -170,6 +102,58 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          SizedBox(
+                            height: 150,
+                            child: CalendarWeek(
+                              controller: CalendarWeekController(),
+                              height: 100,
+                              showMonth: true,
+                              minDate: DateTime.now(),
+                              maxDate: DateTime.now().add(
+                                const Duration(days: 365),
+                              ),
+                              onDatePressed: (DateTime datetime) {
+                                // Do something
+                              },
+                              onDateLongPressed: (DateTime datetime) {
+                                // Do something
+                              },
+                              onWeekChanged: () {
+                                // Do something
+                              },
+                              monthViewBuilder: (DateTime time) => Align(
+                                alignment: FractionalOffset.center,
+                                child: Container(
+                                    margin: const EdgeInsets.symmetric(vertical: 4),
+                                    child: Text(
+                                      DateFormat.yMMMM().format(time),
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          color: Colors.blue, fontWeight: FontWeight.w600),
+                                    )),
+                              ),
+                              decorations: [
+                                DecorationItem(
+                                    decorationAlignment: FractionalOffset.bottomRight,
+                                    date: DateTime.now(),
+                                    decoration: const Icon(
+                                      Icons.today,
+                                      color: Colors.blue,
+                                    )
+                                ),
+                                DecorationItem(
+                                    date: DateTime.now().add(const Duration(days: 3)),
+                                    decoration: const Text(
+                                      'Holiday',
+                                      style: TextStyle(
+                                        color: Colors.brown,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )),
+                              ],
+                            ),
+                          ),
                           Visibility(
                             visible: value.response.upcomingClasses?.isNotEmpty ?? false,
                             child: Column(
@@ -466,7 +450,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                 var getSet = listModule[index];
                                 return Container(
                                   width: 150,
-                                  margin: EdgeInsets.only(left: 18),
+                                  margin: const EdgeInsets.only(left: 18),
                                   child: GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: () {
@@ -483,9 +467,9 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Icon(Icons.folder_copy_outlined,size: 28,),
-                                        Gap(12),
-                                        Text(getSet.moduleName.toString(),style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
+                                        const Icon(Icons.folder_copy_outlined,size: 28,),
+                                        const Gap(12),
+                                        Text(getSet.moduleName.toString(),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
                                       ],
                                     ),
                                   ),
@@ -513,7 +497,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                 var getSet = listModule[index];
                                 return Container(
                                   width: 150,
-                                  margin: EdgeInsets.only(left: 18),
+                                  margin: const EdgeInsets.only(left: 18),
                                   child: GestureDetector(
                                     behavior: HitTestBehavior.opaque,
                                     onTap: () {
@@ -530,9 +514,9 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Icon(Icons.folder_copy_outlined,size: 28,),
-                                          Gap(12),
-                                          Text(getSet.moduleName.toString(),style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
+                                          const Icon(Icons.folder_copy_outlined,size: 28,),
+                                          const Gap(12),
+                                          Text(getSet.moduleName.toString(),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
                                         ],
                                       ),
                                     ),
@@ -568,7 +552,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                   physics: const BouncingScrollPhysics(),
                                   itemBuilder: ( context, index) {
                                     return Container(
-                                      margin: EdgeInsets.only(left: 18),
+                                      margin: const EdgeInsets.only(left: 18),
                                       child: AnimationConfiguration.staggeredList(
                                         position: index,
                                         duration: const Duration(milliseconds: 600),
@@ -653,7 +637,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                 itemBuilder: ( context, index) {
                                   var getSet = listCaseStudy[index];
                                   return Container(
-                                    margin: EdgeInsets.only(left: 18, right: 18),
+                                    margin: const EdgeInsets.only(left: 18, right: 18),
                                     child: AnimationConfiguration.staggeredList(
                                       position: index,
                                       duration: const Duration(milliseconds: 600),
@@ -715,7 +699,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                           ),
                           Container(height: 18,),
                           Padding(
-                            padding: EdgeInsets.only(left: 16, right: 16),
+                            padding: const EdgeInsets.only(left: 16, right: 16),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -752,10 +736,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                   border: Border.all(
                                                     color: grayLight,
                                                   ),
-                                                  borderRadius: BorderRadius.all(Radius.circular(8))
+                                                  borderRadius: const BorderRadius.all(Radius.circular(8))
                                               ),
                                             ),
-                                             Positioned(
+                                             const Positioned(
                                               bottom: 12,
                                               left: 12,
                                               child: Text('Holiday',
@@ -801,7 +785,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                   border: Border.all(
                                                     color: grayLight,
                                                   ),
-                                                  borderRadius: BorderRadius.all(Radius.circular(8))
+                                                  borderRadius: const BorderRadius.all(Radius.circular(8))
                                               ),
                                             ),
                                             const Positioned(
@@ -887,10 +871,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, LectureScreen(ModuleList(id: ""), "upcoming_class"));
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Lectures" ,
@@ -910,10 +894,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const EventsScreen());
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Events" ,
@@ -933,10 +917,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const ResourceCenterScreen());
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Resource Center" ,
@@ -957,10 +941,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const HolidayScreen());
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Holiday" ,
@@ -980,10 +964,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const CaseStudyScreen());
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Case Study" ,
@@ -1004,10 +988,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const TestimonialsScreen());
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Testimonials" ,
@@ -1027,10 +1011,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const ManagementScreen());
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Management" ,
@@ -1133,7 +1117,29 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         getSet = userViewModel.response.details ?? Details();
       });
     }
-    else
+    else  if (userViewModel.response.success == '0')
+    {
+
+    }
+
+  }
+
+  Future<void> getDashboardData() async {
+    Map<String, String> jsonBody = {
+      'student_id': sessionManager.getUserId().toString(),
+      'filter': 'upcoming_class',
+      'from_app' : FROM_APP
+    };
+    DashboardViewModel userViewModel = Provider.of<DashboardViewModel>(context,listen: false);
+    await userViewModel.dashboardData(jsonBody);
+
+    if (userViewModel.response.success == '1')
+    {
+      setState(() {
+
+      });
+    }
+    else  if (userViewModel.response.success == '0')
     {
 
     }

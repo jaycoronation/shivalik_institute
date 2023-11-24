@@ -18,7 +18,11 @@ class UserProfileResponseModel {
   UserProfileResponseModel.fromJson(dynamic json) {
     _success = json['success'];
     _message = json['message'];
-    _details = json['details'] != null ? Details.fromJson(json['details']) : null;
+    _details = json['details'] != null
+        ? Details.fromJson(json['details'])
+        : json['details'] is String
+        ? null
+        : null;
   }
   String? _success;
   String? _message;

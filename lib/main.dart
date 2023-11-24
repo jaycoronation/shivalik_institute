@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
                 borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: grayNew)),
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(kEditTextCornerRadius),
-                borderSide:  BorderSide(width: 1, style: BorderStyle.solid, color: black)),
+                borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: black)),
             errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(kEditTextCornerRadius),
                 borderSide: const BorderSide(width: 1, color: grayNew)),
@@ -159,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
     else
     {
       Timer(const Duration(seconds: 3),(){
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginWithOTPScreen()),(route) => false);
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LoginWithOTPScreen()),(route) => false);
       });
     }
 

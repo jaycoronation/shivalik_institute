@@ -174,11 +174,6 @@ class ApiService {
     if (response.statusCode == 200) {
       try {
         final dynamic data = json.decode(response.body);
-        
-        print("Print In == ${UserProfileResponseModel.fromJson(data)}");
-        
-        print("Data == $data");
-        
         return UserProfileResponseModel.fromJson(data);
       } on Exception catch (e) {
         print("EXECTIOn E === $e");

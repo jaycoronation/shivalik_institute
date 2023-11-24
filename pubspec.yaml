@@ -60,6 +60,7 @@ dependencies:
   flutter_staggered_animations: ^1.0.0
   flutter_expanded_tile: ^0.3.7
   cached_network_image:
+  flutter_calendar_week: ^3.0.2
 
 
 dev_dependencies:
