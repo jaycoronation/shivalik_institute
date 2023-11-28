@@ -22,6 +22,8 @@ const Color appBg= Color(0xffffffff);
 const Color searchColor = Color(0Xfff6f6f6);
 const Color blackConst= Color(0xff000000);
 const Color lightPink= Color(0xffFFF6F5);
+const Color lightPinkBorder = Color(0xffF6EEEC);
+const Color lightPinkText = Color(0xffC47D83);
 const Color progress= Color(0xffD9D9D9);
 
 

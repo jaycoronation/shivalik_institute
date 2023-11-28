@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:countup/countup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_calendar_week/flutter_calendar_week.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shivalik_institute/common_widget/VideoProjectWidget.dart';
 import 'package:shivalik_institute/common_widget/common_widget.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/screen/CaseStudyScreen.dart';
@@ -39,10 +41,8 @@ import '../common_widget/no_data_new.dart';
 import 'ResourceCenterClassScreen.dart';
 import '../model/UserProfileResponseModel.dart';
 
-import 'demo.dart';
-
-
 class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
 
   @override
   BaseState<DashboardScreen> createState() => _DashboardScreenState();
@@ -64,13 +64,16 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   List<EventList> listEvent = [];
   List<CaseStudyList> listCaseStudy = [];
   List<LectureList> listLecture = [];
-  DateTime _selectedDate = DateTime.now();
   List<TestimonialsList> listTestimonials = [];
   List<MediaList> mediaList = [];
 
-
-
   Details getSet = Details();
+  List<HolidaysList> listUpcomingHolidays = [];
+  List<UpcomingClasses> listUpcomingLectures = [];
+  List<DecorationItem> listCalenderEvents = [];
+  final CalendarWeekController calendarController = CalendarWeekController();
+
+  PageController? testimonialController = PageController(initialPage: 0,viewportFraction: 0.60);
 
   @override
  void initState() {
@@ -78,12 +81,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     getUserData();
     getModuleData();
     getCaseStudyList(true);
-    Map<String, String> jsonBody = {
-      'student_id': sessionManager.getUserId().toString(),
-      'filter': 'upcoming_class',
-      'from_app' : FROM_APP
-    };
-    Provider.of<DashboardViewModel>(context,listen: false).dashboardData(jsonBody);
+    getDashboardData();
     super.initState();
   }
 
@@ -184,23 +182,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-
-                          // CalendarTimeline(
-                          //   showYears: false,
-                          //   initialDate: _selectedDate,
-                          //   firstDate: DateTime.now(),
-                          //   lastDate: DateTime.now().add(const Duration(days: 365 * 4)),
-                          //   onDateSelected: (date) => setState(() => _selectedDate = date),
-                          //   leftMargin: 20,
-                          //   monthColor: graySemiDark,
-                          //   dayColor: black,
-                          //   dayNameColor: white,
-                          //   activeDayColor: white,
-                          //   activeBackgroundDayColor: black,
-                          //   dotsColor: white,
-                          //   selectableDayPredicate: (date) => date.day != 23,
-                          //   locale: 'en',
-                          // ),
                          /* Visibility(
                             visible: value.response.upcomingClasses?.isNotEmpty ?? false,
                             child: Column(
@@ -328,9 +309,71 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                             ),
                           ),
 */
+                          SizedBox(
+                            height: 130,
+                            child: CalendarWeek(
+                              controller: calendarController,
+                              height: 110,
+                              showMonth: true,
+                              minDate: DateTime.now(),
+                              maxDate: DateTime.now().add(
+                                const Duration(days: 365),
+                              ),
+                              onDatePressed: (DateTime datetime) {
+                                // Do something
 
+                                DateTime selectedDate = DateTime.now();
 
+                                for(int i=0;i<listCalenderEvents.length;i++)
+                                {
+                                  if(DateFormat('yyyy-MM-dd').format(listCalenderEvents[i].date ?? DateTime.now()) == DateFormat('yyyy-MM-dd').format(datetime))
+                                  {
+                                    selectedDate = listCalenderEvents[i].date ?? DateTime.now();
+                                  }
+                                }
 
+                                for (var i=0; i < listUpcomingLectures.length; i++)
+                                {
+                                  if (DateFormat('dd-MM-yyyy').format(selectedDate) == listUpcomingLectures[i].date.toString())
+                                  {
+                                    openEventBottomSheet(listUpcomingLectures[i].date ?? '', listUpcomingLectures[i].moduleDetails?.name ?? '');
+                                  }
+                                }
+
+                                for (var i=0; i < listUpcomingHolidays.length; i++)
+                                {
+                                  if (DateFormat('dd-MM-yyyy').format(selectedDate) == listUpcomingHolidays[i].holidayDate.toString())
+                                  {
+                                    openEventBottomSheet(listUpcomingHolidays[i].holidayDate ?? '', listUpcomingHolidays[i].title?? '');
+                                  }
+                                }
+
+                              },
+                              onDateLongPressed: (DateTime datetime) {
+                                // Do something
+                              },
+                              onWeekChanged: () {
+                                // Do something
+                              },
+                              dateStyle: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),
+                              dayOfWeekStyle: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),
+                              weekendsStyle: const TextStyle(color: Colors.red,fontSize: 14,fontWeight: FontWeight.w400),
+                              marginMonth: const EdgeInsets.symmetric(vertical: 12,horizontal: 18),
+                              monthViewBuilder: (DateTime time) => Align(
+                                alignment: FractionalOffset.centerLeft,
+                                child: Container(
+                                    margin: const EdgeInsets.symmetric(vertical: 4,horizontal: 18),
+                                    child: Text(
+                                      DateFormat.yMMMM().format(time),
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: black, fontWeight: FontWeight.w400, overflow: TextOverflow.ellipsis,),
+                                    )),
+                              ),
+                              decorations: listCalenderEvents,
+                            ),
+                          ),
                           Container(
                             color: lightPink,
                             child: Column(
@@ -356,105 +399,111 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                     itemCount: value.response.upcomingClasses?.length,
                                     scrollDirection: Axis.horizontal,
                                     controller: controller,
-                                    // shrinkWrap: true,
                                     physics: const BouncingScrollPhysics(),
                                     itemBuilder: ( context, index) {
                                       var getSet =  value.response.upcomingClasses?[index];
-                                      return Padding(
-                                        padding: const EdgeInsets.only(left: 18.0),
-                                        child: Container(
-                                          // height: 200,
-                                          // width: 350,
-                                          // margin: const EdgeInsets.only(bottom: 18),
-                                          padding: const EdgeInsets.all(20),
-                                          decoration: BoxDecoration(
-                                            color: white,
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                   Text(getSet?.moduleDetails?.name ?? "",style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w600),),
-                                                  Text(getSet?.classNoFormat ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                ],
+                                      return Stack(
+                                        alignment: Alignment.topRight,
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.only(left: 12,right: 22),
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              color: white,
+                                              border: Border.all(
+                                                  color: lightPinkBorder,
+                                                  width: 1
                                               ),
-                                              const Gap(8),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text("By ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                  const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                  Text("${getSet?.session1FacultyName} ${getSet?.session2FacultyName}",
-                                                    style: const TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                ],
-                                              ),
-                                              const Gap(18),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    child: Row(
-                                                      children: [
-                                                        Image.asset('assets/images/ic_calender.png', width: 22,height: 22,),
-                                                        Container(width: 10,),
-                                                        Text("${getSet?.date}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),                                                    ],
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(getSet?.moduleDetails?.name ?? "",style: const TextStyle(color: black,fontSize: 16,fontWeight: FontWeight.w600),),
+                                                const Gap(8),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Text("By ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    Text("${getSet?.session1FacultyName} and ${getSet?.session2FacultyName}",
+                                                      style: const TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                  ],
+                                                ),
+                                                const Gap(18),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Expanded(
+                                                      child: Row(
+                                                        children: [
+                                                          Image.asset('assets/images/ic_calender.png', width: 22,height: 22,),
+                                                          Container(width: 10,),
+                                                          Text("${getSet?.date}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),                                                    ],
+                                                      ),
                                                     ),
-                                                  ),
 
-                                                  Expanded(
-                                                    child: Row(
-                                                      children: [
-                                                        Image.asset('assets/images/ic_clock.png', width: 22,height: 22,),
-                                                        Container(width: 10,),
-                                                        Text("${getSet?.startTime} onwards",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),                                                    ],
-                                                    ),
-                                                  ),                                                ],
-                                              )
-                                            ],
+                                                    Expanded(
+                                                      child: Row(
+                                                        children: [
+                                                          Image.asset('assets/images/ic_clock.png', width: 22,height: 22,),
+                                                          Container(width: 10,),
+                                                          Text("${getSet?.startTime} onwards",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),                                                    ],
+                                                      ),
+                                                    ),                                                ],
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                        ),
+                                          Container(
+                                            margin: const EdgeInsets.only(right: 8,top: 8),
+                                            child: Stack(
+                                              alignment: Alignment.topCenter,
+                                              children: [
+                                                Image.asset('assets/images/ic_class_tag.png',width: 130,height: 50,),
+                                                Container(
+                                                  margin: const EdgeInsets.only(top: 10),
+                                                    child: Text(getSet?.classNoFormat ?? "",style: const TextStyle(color: lightPinkText,fontSize: 14,fontWeight: FontWeight.w400),)),
+                                              ],
+                                            ),
+                                          )
+                                        ],
                                       );
                                     },
                                   ),
                                 ),
                                 value.response.upcomingClasses!.length > 1
                                     ? Container(
-                                  alignment: Alignment.bottomCenter,
-                                  margin: const EdgeInsets.all(18),
-                                  child: SmoothPageIndicator(
-                                    controller: controller,
-                                    count: value.response.upcomingClasses?.length ?? 0,
-                                    effect:  const ExpandingDotsEffect(
-                                      dotHeight: 7,
-                                      dotWidth: 7,
-                                      activeDotColor: black,
-                                      dotColor: grayLight,
-                                      // strokeWidth: 5,
-                                    ),
-                                  ),
-                                )
+                                        alignment: Alignment.bottomCenter,
+                                        margin: const EdgeInsets.all(18),
+                                        child: SmoothPageIndicator(
+                                          controller: controller,
+                                          count: value.response.upcomingClasses?.length ?? 0,
+                                          effect:  const ExpandingDotsEffect(
+                                            dotHeight: 7,
+                                            dotWidth: 7,
+                                            activeDotColor: black,
+                                            dotColor: grayLight,
+                                            // strokeWidth: 5,
+                                          ),
+                                        ),
+                                      )
                                     : Container(),
                               ],
                             ),
                           ),
-
                           Container(
                             padding: const EdgeInsets.only(left: 18, right: 18, top: 18),
                             alignment: Alignment.centerLeft,
                             child: const Text("Course Progress",
                               style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w800),),
                           ),
-
                           Container(
-                            padding: EdgeInsets.all(22),
-                            margin: EdgeInsets.all(18),
+                            padding: const EdgeInsets.all(22),
+                            margin: const EdgeInsets.all(18),
                             decoration:  BoxDecoration(
                               border: Border.all(color: white, width: 0.5),
                               borderRadius:const BorderRadius.all(Radius.circular(8),) ,
@@ -484,7 +533,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                           duration: const Duration(seconds: 2),
                                           separator: ',',
                                           style: const TextStyle(
-                                            fontSize: 18, color: Colors.green,fontWeight: FontWeight.w500,
+                                            fontSize: 18, color: black
+                                            ,fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                         const Text(' of ',
@@ -518,165 +568,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               ],
                             ),
                           ),
-
-
-                          /*Container(
-                            margin: const EdgeInsets.only(left: 16, right: 10, top: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: GestureDetector(
-                                    behavior: HitTestBehavior.opaque,
-                                    onTap: () async {
-                                      startActivity(context, const ModuleListScreen("all"));
-                                    },
-                                    child: Container(
-                                      decoration:  BoxDecoration(
-                                        border: Border.all(color: white, width: 0.5),
-                                        borderRadius:const BorderRadius.all(Radius.circular(8),) ,
-                                        color: white,
-                                      ),
-                                      width: 120,
-                                      height: 120,
-                                      margin: const EdgeInsets.only(right: 4, top: 8),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          // Text(getSet.unibharReceived.toString(),
-                                          //   style: TextStyle(fontSize: 24, color: blue,fontWeight: FontWeight.w500),),
-                                          Row(
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Countup(
-                                                begin: 0,
-                                                end: double.parse(value.response.completedModule ?? "0"),
-                                                duration: const Duration(seconds: 2),
-                                                separator: ',',
-                                                style: const TextStyle(
-                                                  fontSize: 24, color: Colors.green,fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                              const Text(' / ',
-                                                  style: TextStyle(fontSize: 24, color:black,fontWeight: FontWeight.w500),
-                                                  textAlign: TextAlign.center
-                                              ),
-                                              Countup(
-                                                begin: 0,
-                                                end: double.parse(value.response.totalModules ?? "0"),
-                                                duration: const Duration(seconds: 2),
-                                                separator: ',',
-                                                style: const TextStyle(
-                                                    fontSize: 24, color: black,fontWeight: FontWeight.w500
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const Padding(
-                                            padding: EdgeInsets.only(top: 8.0, left: 4, right: 4),
-                                            child: Text('Total Modules',
-                                                style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w500),textAlign: TextAlign.center),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                               *//* Container(width: 4,),
-                                Expanded(
-                                  child: GestureDetector(
-                                    behavior: HitTestBehavior.opaque,
-                                    onTap: () async {
-                                      startActivity(context, const ModuleListScreen("pending"));
-                                    },
-                                    child: Container(
-                                      decoration:  BoxDecoration(
-                                        border: Border.all(color: white, width: 0.5),
-                                        borderRadius:const BorderRadius.all(Radius.circular(8),) ,
-                                        color: white,
-                                      ),
-                                      width: 120,
-                                      height: 120,
-                                      margin: const EdgeInsets.only(right: 4, top: 8),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children:  [
-                                          // Text(getSet.unibharGiven.toString(),
-                                          //   style: const TextStyle(fontSize: 24, color: blue,fontWeight: FontWeight.w500),),
-                                          Countup(
-                                            begin: 0,
-                                            // end: double.parse(getSet.unibharGiven.toString()),
-                                            end: double.parse(value.response.pendingModule ?? "0"),
-                                            duration: const Duration(seconds: 2),
-                                            separator: ',',
-                                            style: const TextStyle(
-                                                fontSize: 24, color: black,fontWeight: FontWeight.w500
-                                            ),
-                                          ),
-                                          const Padding(
-                                            padding: EdgeInsets.only(top: 8.0, left: 4, right: 4),
-                                            child: Text('Pending\n Modules',
-                                                style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(width: 4,),
-                                Expanded(
-                                  child: GestureDetector(
-                                    behavior: HitTestBehavior.opaque,
-                                    onTap: () async {
-                                      startActivity(context, const ModuleListScreen("completed"));
-                                    },
-                                    child: Container(
-                                      decoration:  BoxDecoration(
-                                        border: Border.all(color: white, width: 0.5),
-                                        borderRadius:const BorderRadius.all(Radius.circular(8),) ,
-                                        color: white,
-                                      ),
-                                      width: 120,
-                                      height: 120,
-                                      margin: const EdgeInsets.only(right: 4, top: 8),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          // Text(getSet.unisuchanGiven.toString(),
-                                          //   style: const TextStyle(fontSize: 24, color: blue,fontWeight: FontWeight.w500),),
-                                          Countup(
-                                            begin: 0,
-                                            // end: double.parse(getSet.unisuchanGiven.toString()),
-                                            end: double.parse(value.response.completedModule ?? "0"),
-                                            duration: const Duration(seconds: 2),
-                                            separator: ',',
-                                            style: const TextStyle(
-                                              fontSize: 24, color: black,fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          const Padding(
-                                            padding: EdgeInsets.only(top: 8.0, left: 4, right: 4),
-                                            child: Text('Completed Modules',
-                                                style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),*//*
-                              ],
-                            ),
-                          ),*/
-                          // Container(height: 18,),
                           Container(
                             padding: const EdgeInsets.only(left: 18, right: 18),
                             alignment: Alignment.centerLeft,
-                            child: const Text(" Resource Center",
+                            child: const Text("Resource Center",
                               style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w600),),
                           ),
                           Container(height: 12,),
@@ -780,10 +675,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               ],
                             ),
                           ),
-                          Container(height: 12,),
                           Visibility(
                             visible: value.response.upcomingEvents!.isNotEmpty,
-                            child: SizedBox(
+                            child: Container(
+                              margin: EdgeInsets.only(top: 12),
                               height: 290,
                               child: AnimationLimiter(
                                 child: ListView.builder(
@@ -859,7 +754,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               ),
                             ),
                           ),
-                          // Container(height: 18,),
                           Container(
                             padding: const EdgeInsets.only(left: 18, right: 18),
                             alignment: Alignment.centerLeft,
@@ -867,14 +761,14 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text(" Case Study",
+                                const Text("Case Study",
                                   style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w600),),
                                 GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => CaseStudyScreen()));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const CaseStudyScreen()));
                                   },
-                                  child: const Text(" View All",
+                                  child: const Text("View All",
                                     style: TextStyle(fontSize: 14, color: black,fontWeight: FontWeight.w400),),
                                 ),
                               ],
@@ -887,7 +781,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               child: PageView.builder(
                                 itemCount:  listCaseStudy.length,
                                 scrollDirection: Axis.horizontal,
-                                // shrinkWrap: true,
                                 physics: const BouncingScrollPhysics(),
                                 itemBuilder: ( context, index) {
                                   var getSet = listCaseStudy[index];
@@ -905,7 +798,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                               startActivity(context, CaseStudyDetailScreen(listCaseStudy[index]));
                                             },
                                             child: Container(
-                                              // padding: const EdgeInsets.only(bottom: 12.0,),
                                               decoration:  BoxDecoration(
                                                 border: Border.all(color: white, width: 0.5),
                                                 borderRadius:const BorderRadius.all(Radius.circular(8),) ,
@@ -918,7 +810,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     ClipRRect(
-                                                      borderRadius: BorderRadius.only(
+                                                      borderRadius: const BorderRadius.only(
                                                           topRight: Radius.circular(8.0),
                                                           topLeft: Radius.circular(8.0)),
                                                       child: CachedNetworkImage(
@@ -967,11 +859,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                             ),
                           ),
                           Container(height: 18,),
-
-
-
-
-                          // Container(height: 18,),
                           Container(
                             padding: const EdgeInsets.only(left: 18, right: 18),
                             alignment: Alignment.centerLeft,
@@ -979,12 +866,12 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text(" Testimonials",
+                                const Text("Testimonials",
                                   style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w600),),
                                 GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => TestimonialsScreen()));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const TestimonialsScreen()));
                                   },
                                   child: const Text(" View All",
                                     style: TextStyle(fontSize: 14, color: black,fontWeight: FontWeight.w400),),
@@ -993,88 +880,105 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                             ),
                           ),
                           Container(height: 12,),
-                          SizedBox(
-                            height: 265,
-                            child: AnimationLimiter(
-                              child: PageView.builder(
-                                itemCount:  listTestimonials.length,
-                                scrollDirection: Axis.horizontal,
-                                // shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                                itemBuilder: ( context, index) {
-                                  var getSet = listTestimonials[index];
-                                  return Container(
-                                    margin: const EdgeInsets.only(left: 18, right: 18),
-                                    child: AnimationConfiguration.staggeredList(
-                                      position: index,
-                                      duration: const Duration(milliseconds: 600),
-                                      child: SlideAnimation(
-                                        verticalOffset: 100.0,
-                                        child: FadeInAnimation(
-                                          child: GestureDetector(
-                                            behavior: HitTestBehavior.opaque,
-                                            onTap: () {
-                                              // startActivity(context, CaseStudyDetailScreen(listCaseStudy[index]));
-                                            },
-                                            child: Container(
-                                              // padding: const EdgeInsets.only(bottom: 12.0,),
-                                              decoration:  BoxDecoration(
-                                                border: Border.all(color: white, width: 0.5),
-                                                borderRadius:const BorderRadius.all(Radius.circular(8),) ,
-                                                color: white,
+                          Container(
+                            height: 355,
+                            alignment: Alignment.centerLeft,
+                            child: PageView.builder(
+                              itemCount:  listTestimonials.length,
+                              scrollDirection: Axis.horizontal,
+                              padEnds: false,
+                              controller: testimonialController,
+                              physics: const BouncingScrollPhysics(),
+                              itemBuilder: ( context, index) {
+                                var getSet = listTestimonials[index];
+                                return Container(
+                                  width: 140,
+                                  margin: EdgeInsets.only(left: 18),
+                                  child: GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: () {
+                                      var videoUrl = '';
+                                      for (var i=0; i < (getSet.mediaList?.length ?? 0); i++)
+                                        {
+                                          videoUrl = getSet.mediaList?[i].path ?? '';
+                                        }
+                                       startActivity(context, VideoProjectWidget(url: videoUrl, play: true));
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(10),
+                                          child: Stack(
+                                            alignment: Alignment.bottomRight,
+                                            children: [
+                                              CachedNetworkImage(
+                                                  imageUrl: getSet.thumbImg ?? '',
+                                                  fit: BoxFit.cover,
+                                                  width : 250,
+                                                  height: 300,
+                                                  errorWidget: (context, url, error) => Container(
+                                                    color: grayNew,
+                                                    width : 250,
+                                                    height: 300,
+                                                  ),
+                                                  placeholder: (context, url) => Container(
+                                                    color: grayNew,
+                                                    width : 250,
+                                                    height: 300,
+                                                  )
                                               ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(0.0),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                              Container(
+                                                width: 95,
+                                                height: 32,
+                                                margin: const EdgeInsets.only(right: 12,bottom: 12),
+                                                padding: const EdgeInsets.all(8),
+                                                decoration: ShapeDecoration(
+                                                  color: const Color(0xFFEC5554),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(40),
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
                                                   children: [
-                                                    ClipRRect(
-                                                      borderRadius: const BorderRadius.only(
-                                                          topRight: Radius.circular(8.0),
-                                                          topLeft: Radius.circular(8.0)
-                                                      ),
-                                                      child: CachedNetworkImage(
-                                                          imageUrl: "${getSet.thumbImg}",
-                                                          fit: BoxFit.cover,
-                                                          width : MediaQuery.of(context).size.width,
-                                                          height: 200,
-                                                          errorWidget: (context, url, error) => Container(
-                                                            color: grayNew,
-                                                            width : MediaQuery.of(context).size.width,
-                                                            height: 200,
-                                                          ),
-                                                          placeholder: (context, url) => Container(
-                                                            color: grayNew,
-                                                            width : MediaQuery.of(context).size.width,
-                                                            height: 200,
-                                                          )
+                                                    SizedBox(
+                                                      width: 16,
+                                                      height: 16,
+                                                      child: Image.asset('assets/images/ic_play.png'),
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    const Text(
+                                                      'Watch Now',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 10,
+                                                        fontWeight: FontWeight.w600,
                                                       ),
                                                     ),
-                                                    Container(height: 12,),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(left: 10.0),
-                                                      child: Text(getSet.title ?? "",
-                                                        style: const TextStyle(fontSize: 14, color: black,fontWeight: FontWeight.w500),),
-                                                    ),
-
                                                   ],
                                                 ),
-                                              ),
-                                            ),
+                                              )
+                                            ],
                                           ),
                                         ),
-                                      ),
+                                        Container(height: 12),
+                                        Text(
+                                          getSet.title ?? "",
+                                          style: const TextStyle(fontSize: 14, color: black,fontWeight: FontWeight.w500,overflow: TextOverflow.clip),
+                                          overflow: TextOverflow.clip,
+                                        ),
+                                      ],
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                           Container(height: 18,),
-
-
-
                           Padding(
                             padding: const EdgeInsets.only(left: 16, right: 16),
                               child: Row(
@@ -1247,10 +1151,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, LectureScreen(ModuleList(id: ""), "upcoming_class"));
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Lectures" ,
@@ -1270,10 +1174,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const EventsScreen());
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Events" ,
@@ -1293,10 +1197,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const ResourceCenterScreen());
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Resource Center" ,
@@ -1317,10 +1221,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const HolidayScreen());
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Holiday" ,
@@ -1340,10 +1244,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const CaseStudyScreen());
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Case Study" ,
@@ -1364,10 +1268,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const TestimonialsScreen());
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Testimonials" ,
@@ -1387,10 +1291,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const ManagementScreen());
                         },
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text("Management" ,
@@ -1409,6 +1313,66 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                   ),
                 ],
               ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void openEventBottomSheet(String date, String title) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: white,
+      isScrollControlled: true,
+      // barrierColor: Colors.white,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Wrap(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 12,left: 12,right: 12,bottom: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Expanded(
+                            flex: 1,
+                            child: Text("Date & Time ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                          ),
+                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                          Expanded(
+                            flex: 2,
+                            child: Text(date,style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                          ),
+                        ],
+                      ),
+                      const Gap(12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Expanded(
+                            flex: 1,
+                            child: Text("event",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                          ),
+                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                          Expanded(
+                            flex: 2,
+                            child: Text(title ?? "",style:  const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+
+              ],
             );
           },
         );
@@ -1461,14 +1425,14 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     {
       List<CaseStudyList>? _tempList = [];
       _tempList = caseStudyViewModel.response.list;
-      listCaseStudy?.addAll(_tempList!);
+      listCaseStudy.addAll(_tempList!);
 
-      print(listCaseStudy?.length);
+      print(listCaseStudy.length);
 
 
-      if (_tempList?.isNotEmpty ?? false) {
+      if (_tempList.isNotEmpty) {
         _pageIndex += 1;
-        if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
+        if (_tempList.isEmpty || _tempList.length % _pageResult != 0 ) {
           _isLastPage = true;
         }
       }
@@ -1508,6 +1472,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         _isLastPage = false;
       });
     }
+
     Map<String, String> jsonBody = {
       'limit': _pageResult.toString(),
       'page': _pageIndex.toString(),
@@ -1525,14 +1490,13 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     {
       List<TestimonialsList>? _tempList = [];
       _tempList = testimonialsViewModel.response.list;
-      listTestimonials?.addAll(_tempList!);
+      listTestimonials.addAll(_tempList!);
 
-      print(listTestimonials?.length);
+      print(listTestimonials.length);
 
-
-      if (_tempList?.isNotEmpty ?? false) {
+      if (_tempList.isNotEmpty) {
         _pageIndex += 1;
-        if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
+        if (_tempList.isEmpty || _tempList.length % _pageResult != 0 ) {
           _isLastPage = true;
         }
       }
@@ -1541,6 +1505,47 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     setState(() {
       _isLoadingMore = false;
     });
+  }
+
+  Future<void> getDashboardData() async {
+    Map<String, String> jsonBody = {
+      'student_id': sessionManager.getUserId().toString(),
+      'filter': 'upcoming_class',
+      'from_app' : FROM_APP
+    };
+    DashboardViewModel userViewModel = Provider.of<DashboardViewModel>(context,listen: false);
+    await userViewModel.dashboardData(jsonBody);
+
+    if (userViewModel.response.success == '1')
+    {
+      setState(() {
+        listUpcomingHolidays = userViewModel.response.holidaysList ?? [];
+        listUpcomingLectures = userViewModel.response.upcomingClasses ?? [];
+
+        for(int i=0;i<listUpcomingLectures.length;i++)
+          {
+            var setDecoration = DecorationItem(
+              date: DateFormat('dd-MM-yyyy').parse(listUpcomingLectures[i].date.toString()),
+              decoration: const Icon(Icons.circle,color: Colors.red,),
+            );
+            listCalenderEvents.add(setDecoration);
+          }
+
+        for(int i=0;i<listUpcomingHolidays.length;i++)
+          {
+            var setDecoration = DecorationItem(
+              date: DateFormat('dd-MM-yyyy').parse(listUpcomingHolidays[i].holidayDate.toString()),
+              decoration: const Icon(Icons.holiday_village,color: Colors.red,),
+            );
+            listCalenderEvents.add(setDecoration);
+          }
+      });
+    }
+    else  if (userViewModel.response.success == '0')
+    {
+
+    }
+
   }
 
 }
