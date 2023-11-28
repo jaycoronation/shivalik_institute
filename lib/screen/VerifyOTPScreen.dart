@@ -69,7 +69,6 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
   Widget build(BuildContext context) {
     final verifyOtpViewModel = Provider.of<VerifyOtpViewModel>(context);
 
-
     return WillPopScope(
         child: Scaffold(
           backgroundColor: appBg,
@@ -110,10 +109,10 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                 margin: const EdgeInsets.only(bottom: 10, left: 14, top: 14),
                                 child: RichText(
                                   textAlign: TextAlign.center,
-                                  text: TextSpan(
+                                  text: const TextSpan(
                                     style: TextStyle(fontSize: 16, color: black, fontWeight: FontWeight.w400),
                                     children: [
-                                      const TextSpan(
+                                      TextSpan(
                                         text: 'We just sent a OTP to your mobile\nnumber',
                                         style: TextStyle(fontSize: 16, color: black, fontWeight: FontWeight.w400),
                                       ),
@@ -328,11 +327,11 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                           if (value.success == "1")
                                           {
                                             await sessionManager.createLoginSession(
-                                                value.user?.id ?? "",
-                                                value.user?.firstName ?? "",
-                                                value.user?.lastName ?? "",
-                                                value.user?.userType ?? "",
-                                                value.user?.accessToken ?? "",
+                                              value.user?.id ?? "",
+                                              value.user?.firstName ?? "",
+                                              value.user?.lastName ?? "",
+                                              value.user?.userType ?? "",
+                                              value.user?.accessToken ?? "",
                                             );
                                             startActivity(context, DashboardScreen());
                                             showToast(value.message, context);

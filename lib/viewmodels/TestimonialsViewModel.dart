@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import '../constant/ApiService.dart';
-import '../model/TestimonialsResponseModel.dart';
+import '../model/TestimonialResponseModel.dart';
 
 class TestimonialsViewModel extends ChangeNotifier {
-  late TestimonialsResponseModel _response;
+  late TestimonialResponseModel _response;
   bool _isLoading = false;
 
-  TestimonialsResponseModel get response => _response;
+  TestimonialResponseModel get response => _response;
   bool get isLoading => _isLoading;
 
   Future<void> getTestimonialsList(Map<String, String> jsonBody) async {

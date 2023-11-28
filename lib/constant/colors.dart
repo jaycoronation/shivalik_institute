@@ -20,6 +20,10 @@ const Color grayDarkNew= Color(0xff737373);
 const Color lableHint= Color(0xff3A3A3A);
 const Color appBg= Color(0xffffffff);
 const Color searchColor = Color(0Xfff6f6f6);
+const Color blackConst= Color(0xff000000);
+const Color lightPink= Color(0xffFFF6F5);
+const Color progress= Color(0xffD9D9D9);
+
 
 
 

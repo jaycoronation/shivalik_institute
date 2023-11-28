@@ -123,7 +123,8 @@ class _AddHolidayScreenState extends BaseState<AddHolidayScreen> {
                         onPressed: () async {
                           FocusScope.of(context).requestFocus(FocusNode());
 
-                          Map<String, String> jsonBody = {
+                          Map<String, String> jsonBody =
+                          {
                             'title':_titleController.value.text,
                             'description':_descriptionController.value.text,
                             'holiday_date':(universalDateConverter("dd/MM/yyyy", "dd-MM-yyyy",  _dateController.value.text )),
@@ -147,14 +148,14 @@ class _AddHolidayScreenState extends BaseState<AddHolidayScreen> {
                               padding: EdgeInsets.only(top: 10,bottom: 10),
                               child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: white,strokeWidth: 2)),
                             )
-                        : const Padding(
-                          padding: EdgeInsets.only(top: 10,bottom: 10),
-                          child: Text(
-                            "Submit",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w400),
-                          ),
-                        )
+                            : const Padding(
+                              padding: EdgeInsets.only(top: 10,bottom: 10),
+                              child: Text(
+                                "Submit",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w400),
+                              ),
+                            )
                     ),
                   ),
                   Container(height: 18,),

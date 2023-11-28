@@ -267,12 +267,12 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                                                   children: [
                                                     listEvent[index].bannerImage.toString().isNotEmpty
                                                         ? FadeInImage.assetNetwork(
-                                                      image: "${listEvent[index].bannerImage}&h=500&zc=2",
-                                                      fit: BoxFit.cover,
-                                                      width: MediaQuery.of(context).size.width,
-                                                      height: 210,
-                                                      placeholder: 'assets/images/bg_gray.jpeg',
-                                                    )
+                                                          image: "${listEvent[index].bannerImage}&h=500&zc=2",
+                                                          fit: BoxFit.cover,
+                                                          width: MediaQuery.of(context).size.width,
+                                                          height: 210,
+                                                          placeholder: 'assets/images/bg_gray.jpeg',
+                                                        )
                                                         : Image.asset(
                                                         'assets/images/bg_gray.jpeg',
                                                         width: 50, height: 50

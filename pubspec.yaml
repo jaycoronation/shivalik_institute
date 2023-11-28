@@ -60,6 +60,8 @@ dependencies:
   flutter_staggered_animations: ^1.0.0
   flutter_expanded_tile: ^0.3.7
   cached_network_image:
+  calendar_timeline: ^1.1.2
+  table_calendar: ^3.0.9
 
 
 dev_dependencies:

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:countup/countup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ import 'package:shivalik_institute/screen/ManagmentScreen.dart';
 import 'package:shivalik_institute/screen/ModuleListScreen.dart';
 import 'package:shivalik_institute/screen/ResourceCenterScreen.dart';
 import 'package:shivalik_institute/screen/TestimonialsScreen.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../model/CaseStudyResponseModel.dart';
@@ -23,10 +25,12 @@ import '../model/DashboardResponseModel.dart';
 import '../model/EventResponseModel.dart';
 import '../model/LecturesResponseModel.dart';
 import '../model/ModuleResponseModel.dart';
+import '../model/TestimonialResponseModel.dart';
 import '../utils/base_class.dart';
 import '../viewmodels/CaseStudyViewModel.dart';
 import '../viewmodels/DashboardViewModel.dart';
 import '../viewmodels/ModuleViewModel.dart';
+import '../viewmodels/TestimonialsViewModel.dart';
 import '../viewmodels/UserViewModel.dart';
 import 'CaseStudyDetailScreen.dart';
 import 'EventDetailsScreen.dart';
@@ -34,6 +38,8 @@ import 'MyProfleScreen.dart';
 import '../common_widget/no_data_new.dart';
 import 'ResourceCenterClassScreen.dart';
 import '../model/UserProfileResponseModel.dart';
+
+import 'demo.dart';
 
 
 class DashboardScreen extends StatefulWidget {
@@ -58,12 +64,17 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   List<EventList> listEvent = [];
   List<CaseStudyList> listCaseStudy = [];
   List<LectureList> listLecture = [];
+  DateTime _selectedDate = DateTime.now();
+  List<TestimonialsList> listTestimonials = [];
+  List<MediaList> mediaList = [];
+
 
 
   Details getSet = Details();
 
   @override
  void initState() {
+    getTestimonialsList(true);
     getUserData();
     getModuleData();
     getCaseStudyList(true);
@@ -78,6 +89,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    PageController? controller = PageController(initialPage: 0);
+
     return WillPopScope(
         child: Scaffold(
           appBar: AppBar(
@@ -115,7 +128,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 padding: const EdgeInsets.only(right: 16.0),
                 child: InkWell(
                   onTap: () async {
-                   var value = await Navigator.push(context, MaterialPageRoute(builder: (context) => MyProfileScreen()));
+                   var value = await Navigator.push(context, MaterialPageRoute(builder: (context) => const MyProfileScreen()));
+                   // var value = await Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
                    getUserData();
                   },
                   customBorder: const CircleBorder(),
@@ -126,9 +140,9 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         width: 34,
                         height: 34,
                         child: ClipOval(
-                            child:getSet.profilePic.toString().isEmpty
-                                ? Image.asset('assets/images/ic_user_placeholder.png', fit: BoxFit.cover,)
-                                : Image.network(getSet.profilePic.toString(), fit: BoxFit.cover)
+                          child:getSet.profilePic.toString().isEmpty
+                              ? Image.asset('assets/images/ic_user_placeholder.png', fit: BoxFit.cover,)
+                              : Image.network(getSet.profilePic.toString(), fit: BoxFit.cover)
                         ),
                       )
                   ),
@@ -170,7 +184,24 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Visibility(
+
+                          // CalendarTimeline(
+                          //   showYears: false,
+                          //   initialDate: _selectedDate,
+                          //   firstDate: DateTime.now(),
+                          //   lastDate: DateTime.now().add(const Duration(days: 365 * 4)),
+                          //   onDateSelected: (date) => setState(() => _selectedDate = date),
+                          //   leftMargin: 20,
+                          //   monthColor: graySemiDark,
+                          //   dayColor: black,
+                          //   dayNameColor: white,
+                          //   activeDayColor: white,
+                          //   activeBackgroundDayColor: black,
+                          //   dotsColor: white,
+                          //   selectableDayPredicate: (date) => date.day != 23,
+                          //   locale: 'en',
+                          // ),
+                         /* Visibility(
                             visible: value.response.upcomingClasses?.isNotEmpty ?? false,
                             child: Column(
                               children: [
@@ -187,10 +218,11 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                           Container(height: 12,),
                           SizedBox(
                             height: 190,
-                            child: ListView.builder(
+                            child: PageView.builder(
                               itemCount: value.response.upcomingClasses?.length,
                               scrollDirection: Axis.horizontal,
-                              shrinkWrap: true,
+                              controller: controller,
+                              // shrinkWrap: true,
                               physics: const BouncingScrollPhysics(),
                               itemBuilder: ( context, index) {
                                 var getSet =  value.response.upcomingClasses?[index];
@@ -295,8 +327,201 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               },
                             ),
                           ),
+*/
+
+
+
                           Container(
-                            margin: const EdgeInsets.only(left: 16, right: 10,),
+                            color: lightPink,
+                            child: Column(
+                              children: [
+                                Visibility(
+                                  visible: value.response.upcomingClasses?.isNotEmpty ?? false,
+                                  child: Column(
+                                    children: [
+                                      Container(height: 18,),
+                                      Container(
+                                        padding: const EdgeInsets.only(left: 18, right: 18),
+                                        alignment: Alignment.centerLeft,
+                                        child: const Text("Upcoming Lecture",
+                                          style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w800),),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(height: 16,),
+                                SizedBox(
+                                  height: 135,
+                                  child: PageView.builder(
+                                    itemCount: value.response.upcomingClasses?.length,
+                                    scrollDirection: Axis.horizontal,
+                                    controller: controller,
+                                    // shrinkWrap: true,
+                                    physics: const BouncingScrollPhysics(),
+                                    itemBuilder: ( context, index) {
+                                      var getSet =  value.response.upcomingClasses?[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(left: 18.0),
+                                        child: Container(
+                                          // height: 200,
+                                          // width: 350,
+                                          // margin: const EdgeInsets.only(bottom: 18),
+                                          padding: const EdgeInsets.all(20),
+                                          decoration: BoxDecoration(
+                                            color: white,
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                   Text(getSet?.moduleDetails?.name ?? "",style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w600),),
+                                                  Text(getSet?.classNoFormat ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                ],
+                                              ),
+                                              const Gap(8),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("By ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                  const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                  Text("${getSet?.session1FacultyName} ${getSet?.session2FacultyName}",
+                                                    style: const TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                ],
+                                              ),
+                                              const Gap(18),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    child: Row(
+                                                      children: [
+                                                        Image.asset('assets/images/ic_calender.png', width: 22,height: 22,),
+                                                        Container(width: 10,),
+                                                        Text("${getSet?.date}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),                                                    ],
+                                                    ),
+                                                  ),
+
+                                                  Expanded(
+                                                    child: Row(
+                                                      children: [
+                                                        Image.asset('assets/images/ic_clock.png', width: 22,height: 22,),
+                                                        Container(width: 10,),
+                                                        Text("${getSet?.startTime} onwards",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),                                                    ],
+                                                    ),
+                                                  ),                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                value.response.upcomingClasses!.length > 1
+                                    ? Container(
+                                  alignment: Alignment.bottomCenter,
+                                  margin: const EdgeInsets.all(18),
+                                  child: SmoothPageIndicator(
+                                    controller: controller,
+                                    count: value.response.upcomingClasses?.length ?? 0,
+                                    effect:  const ExpandingDotsEffect(
+                                      dotHeight: 7,
+                                      dotWidth: 7,
+                                      activeDotColor: black,
+                                      dotColor: grayLight,
+                                      // strokeWidth: 5,
+                                    ),
+                                  ),
+                                )
+                                    : Container(),
+                              ],
+                            ),
+                          ),
+
+                          Container(
+                            padding: const EdgeInsets.only(left: 18, right: 18, top: 18),
+                            alignment: Alignment.centerLeft,
+                            child: const Text("Course Progress",
+                              style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w800),),
+                          ),
+
+                          Container(
+                            padding: EdgeInsets.all(22),
+                            margin: EdgeInsets.all(18),
+                            decoration:  BoxDecoration(
+                              border: Border.all(color: white, width: 0.5),
+                              borderRadius:const BorderRadius.all(Radius.circular(8),) ,
+                              color: white,
+                            ),
+                            child: Row(
+                              children: [
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 90,width: 90,
+                                      child: CircularProgressIndicator(
+                                        value: double.parse(value.response.completedModule ?? "0") / double.parse(value.response.totalModules ?? "0"),
+                                        color: Colors.green,
+                                        strokeWidth: 10,
+                                        backgroundColor: progress,
+                                      ),
+                                    ),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Countup(
+                                          begin: 0,
+                                          end: double.parse(value.response.completedModule ?? "0"),
+                                          duration: const Duration(seconds: 2),
+                                          separator: ',',
+                                          style: const TextStyle(
+                                            fontSize: 18, color: Colors.green,fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        const Text(' of ',
+                                            style: TextStyle(fontSize: 18, color:black,fontWeight: FontWeight.w500),
+                                            textAlign: TextAlign.center
+                                        ),
+                                        Countup(
+                                          begin: 0,
+                                          end: double.parse(value.response.totalModules ?? "0"),
+                                          duration: const Duration(seconds: 2),
+                                          separator: ',',
+                                          style: const TextStyle(
+                                              fontSize: 18, color: black,fontWeight: FontWeight.w500
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Container(width: 28,),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("${value.response.completedModule ?? "0"} modules completed", style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500)),
+                                    Container(height: 4,),
+                                    Text("Modules ${int.parse(value.response.completedModule ?? "0") + 1} ongoing", style: const TextStyle(color: grayDark,fontSize: 14,fontWeight: FontWeight.w400)),
+                                  ],
+                                ),
+
+                              ],
+                            ),
+                          ),
+
+
+                          /*Container(
+                            margin: const EdgeInsets.only(left: 16, right: 10, top: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -360,7 +585,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                     ),
                                   ),
                                 ),
-                               /* Container(width: 4,),
+                               *//* Container(width: 4,),
                                 Expanded(
                                   child: GestureDetector(
                                     behavior: HitTestBehavior.opaque,
@@ -443,11 +668,11 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                       ),
                                     ),
                                   ),
-                                ),*/
+                                ),*//*
                               ],
                             ),
-                          ),
-                          Container(height: 20,),
+                          ),*/
+                          // Container(height: 18,),
                           Container(
                             padding: const EdgeInsets.only(left: 18, right: 18),
                             alignment: Alignment.centerLeft,
@@ -456,7 +681,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                           ),
                           Container(height: 12,),
                           SizedBox(
-                            height: 140,
+                            height: 120,
                             child: ListView.builder(
                               itemCount: listModule.length,
                               scrollDirection: Axis.horizontal,
@@ -465,8 +690,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               itemBuilder: ( context, index) {
                                 var getSet = listModule[index];
                                 return Container(
-                                  width: 150,
-                                  margin: EdgeInsets.only(left: 18),
+                                  width: 260,
+                                  margin: const EdgeInsets.only(left: 18),
                                   child: GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: () {
@@ -483,9 +708,9 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Icon(Icons.folder_copy_outlined,size: 28,),
-                                        Gap(12),
-                                        Text(getSet.moduleName.toString(),style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
+                                        const Icon(Icons.folder_copy_outlined,size: 26,),
+                                        const Gap(12),
+                                        Text(getSet.moduleName.toString(),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
                                       ],
                                     ),
                                   ),
@@ -503,7 +728,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                           ),
                           Container(height: 12,),
                           SizedBox(
-                            height: 140,
+                            height: 120,
                             child: ListView.builder(
                               itemCount: listModule.length,
                               scrollDirection: Axis.horizontal,
@@ -512,8 +737,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               itemBuilder: ( context, index) {
                                 var getSet = listModule[index];
                                 return Container(
-                                  width: 150,
-                                  margin: EdgeInsets.only(left: 18),
+                                  width: 260,
+                                  margin: const EdgeInsets.only(left: 18),
                                   child: GestureDetector(
                                     behavior: HitTestBehavior.opaque,
                                     onTap: () {
@@ -530,9 +755,9 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Icon(Icons.folder_copy_outlined,size: 28,),
-                                          Gap(12),
-                                          Text(getSet.moduleName.toString(),style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
+                                          const Icon(Icons.folder_copy_outlined,size: 26,),
+                                          const Gap(12),
+                                          Text(getSet.moduleName.toString(),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
                                         ],
                                       ),
                                     ),
@@ -568,7 +793,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                   physics: const BouncingScrollPhysics(),
                                   itemBuilder: ( context, index) {
                                     return Container(
-                                      margin: EdgeInsets.only(left: 18),
+                                      margin: const EdgeInsets.only(left: 18),
                                       child: AnimationConfiguration.staggeredList(
                                         position: index,
                                         duration: const Duration(milliseconds: 600),
@@ -634,16 +859,30 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               ),
                             ),
                           ),
-                          Container(height: 18,),
+                          // Container(height: 18,),
                           Container(
                             padding: const EdgeInsets.only(left: 18, right: 18),
                             alignment: Alignment.centerLeft,
-                            child: const Text(" Case Study",
-                              style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w600),),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text(" Case Study",
+                                  style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w600),),
+                                GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => CaseStudyScreen()));
+                                  },
+                                  child: const Text(" View All",
+                                    style: TextStyle(fontSize: 14, color: black,fontWeight: FontWeight.w400),),
+                                ),
+                              ],
+                            ),
                           ),
                           Container(height: 12,),
                           SizedBox(
-                            height: 286,
+                            height: 275,
                             child: AnimationLimiter(
                               child: PageView.builder(
                                 itemCount:  listCaseStudy.length,
@@ -653,7 +892,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                 itemBuilder: ( context, index) {
                                   var getSet = listCaseStudy[index];
                                   return Container(
-                                    margin: EdgeInsets.only(left: 18, right: 18),
+                                    margin: const EdgeInsets.only(left: 18, right: 18),
                                     child: AnimationConfiguration.staggeredList(
                                       position: index,
                                       duration: const Duration(milliseconds: 600),
@@ -673,33 +912,47 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                 color: white,
                                               ),
                                               child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                padding: const EdgeInsets.all(0.0),
                                                 child: Column(
                                                   mainAxisAlignment: MainAxisAlignment.start,
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    CachedNetworkImage(
-                                                        imageUrl: "${getSet.coverImage}&h=500&zc=2",
-                                                        fit: BoxFit.cover,
-                                                        width : MediaQuery.of(context).size.width,
-                                                        height: 200,
-                                                        errorWidget: (context, url, error) => Container(
-                                                          color: grayNew,
+                                                    ClipRRect(
+                                                      borderRadius: BorderRadius.only(
+                                                          topRight: Radius.circular(8.0),
+                                                          topLeft: Radius.circular(8.0)),
+                                                      child: CachedNetworkImage(
+                                                          imageUrl: "${getSet.coverImage}&h=500&zc=2",
+                                                          fit: BoxFit.cover,
                                                           width : MediaQuery.of(context).size.width,
                                                           height: 200,
-                                                        ),
-                                                        placeholder: (context, url) => Container(
-                                                          color: grayNew,
-                                                          width : MediaQuery.of(context).size.width,
-                                                          height: 200,
-                                                        )
+                                                          errorWidget: (context, url, error) => Container(
+                                                            color: grayNew,
+                                                            width : MediaQuery.of(context).size.width,
+                                                            height: 200,
+                                                          ),
+                                                          placeholder: (context, url) => Container(
+                                                            color: grayNew,
+                                                            width : MediaQuery.of(context).size.width,
+                                                            height: 200,
+                                                          )
+                                                      ),
                                                     ),
                                                     Container(height: 12,),
-                                                    Text(getSet.title ?? "",
-                                                      style: const TextStyle(fontSize: 14, color: black,fontWeight: FontWeight.w500),),
-                                                    Container(height: 8,),
-                                                    Text(getSet.tagLine ?? "",
-                                                      style: const TextStyle(fontSize: 12, color: black,fontWeight: FontWeight.w400),),
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(left: 10.0),
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(getSet.title ?? "",
+                                                            style: const TextStyle(fontSize: 14, color: black,fontWeight: FontWeight.w500),),
+                                                          Container(height: 8,),
+                                                          Text(getSet.tagLine ?? "",
+                                                            style: const TextStyle(fontSize: 12, color: black,fontWeight: FontWeight.w400),),
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -714,8 +967,116 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                             ),
                           ),
                           Container(height: 18,),
+
+
+
+
+                          // Container(height: 18,),
+                          Container(
+                            padding: const EdgeInsets.only(left: 18, right: 18),
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text(" Testimonials",
+                                  style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w600),),
+                                GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => TestimonialsScreen()));
+                                  },
+                                  child: const Text(" View All",
+                                    style: TextStyle(fontSize: 14, color: black,fontWeight: FontWeight.w400),),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(height: 12,),
+                          SizedBox(
+                            height: 265,
+                            child: AnimationLimiter(
+                              child: PageView.builder(
+                                itemCount:  listTestimonials.length,
+                                scrollDirection: Axis.horizontal,
+                                // shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(),
+                                itemBuilder: ( context, index) {
+                                  var getSet = listTestimonials[index];
+                                  return Container(
+                                    margin: const EdgeInsets.only(left: 18, right: 18),
+                                    child: AnimationConfiguration.staggeredList(
+                                      position: index,
+                                      duration: const Duration(milliseconds: 600),
+                                      child: SlideAnimation(
+                                        verticalOffset: 100.0,
+                                        child: FadeInAnimation(
+                                          child: GestureDetector(
+                                            behavior: HitTestBehavior.opaque,
+                                            onTap: () {
+                                              // startActivity(context, CaseStudyDetailScreen(listCaseStudy[index]));
+                                            },
+                                            child: Container(
+                                              // padding: const EdgeInsets.only(bottom: 12.0,),
+                                              decoration:  BoxDecoration(
+                                                border: Border.all(color: white, width: 0.5),
+                                                borderRadius:const BorderRadius.all(Radius.circular(8),) ,
+                                                color: white,
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(0.0),
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    ClipRRect(
+                                                      borderRadius: const BorderRadius.only(
+                                                          topRight: Radius.circular(8.0),
+                                                          topLeft: Radius.circular(8.0)
+                                                      ),
+                                                      child: CachedNetworkImage(
+                                                          imageUrl: "${getSet.thumbImg}",
+                                                          fit: BoxFit.cover,
+                                                          width : MediaQuery.of(context).size.width,
+                                                          height: 200,
+                                                          errorWidget: (context, url, error) => Container(
+                                                            color: grayNew,
+                                                            width : MediaQuery.of(context).size.width,
+                                                            height: 200,
+                                                          ),
+                                                          placeholder: (context, url) => Container(
+                                                            color: grayNew,
+                                                            width : MediaQuery.of(context).size.width,
+                                                            height: 200,
+                                                          )
+                                                      ),
+                                                    ),
+                                                    Container(height: 12,),
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(left: 10.0),
+                                                      child: Text(getSet.title ?? "",
+                                                        style: const TextStyle(fontSize: 14, color: black,fontWeight: FontWeight.w500),),
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          Container(height: 18,),
+
+
+
                           Padding(
-                            padding: EdgeInsets.only(left: 16, right: 16),
+                            padding: const EdgeInsets.only(left: 16, right: 16),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -746,16 +1107,15 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                           // ),
                                             Container(
                                               height: 180,
-
                                               decoration: BoxDecoration(
                                                   color: grayLight,
                                                   border: Border.all(
                                                     color: grayLight,
                                                   ),
-                                                  borderRadius: BorderRadius.all(Radius.circular(8))
+                                                  borderRadius: const BorderRadius.all(Radius.circular(8))
                                               ),
                                             ),
-                                             Positioned(
+                                             const Positioned(
                                               bottom: 12,
                                               left: 12,
                                               child: Text('Holiday',
@@ -795,20 +1155,20 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                             ),*/
                                             Container(
                                               height: 180,
-
                                               decoration: BoxDecoration(
                                                   color: grayLight,
                                                   border: Border.all(
                                                     color: grayLight,
                                                   ),
-                                                  borderRadius: BorderRadius.all(Radius.circular(8))
+                                                  borderRadius: const BorderRadius.all(Radius.circular(8))
                                               ),
                                             ),
                                             const Positioned(
                                               bottom: 12,
                                               left: 12,
                                               child: Text('Testimonials',
-                                                style: TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w500),),
+                                                style: TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w500),
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -1138,6 +1498,49 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
     }
 
+  }
+
+  Future<void> getTestimonialsList(bool isFirstTime) async {
+    if (isFirstTime) {
+      setState(() {
+        _isLoadingMore = false;
+        _pageIndex = 1;
+        _isLastPage = false;
+      });
+    }
+    Map<String, String> jsonBody = {
+      'limit': _pageResult.toString(),
+      'page': _pageIndex.toString(),
+      'search': "",
+      'from_app' : FROM_APP,
+      'total' : '0',
+      'type' : '',
+      'user_type' : '3'
+    };
+
+    var testimonialsViewModel = Provider.of<TestimonialsViewModel>(context,listen: false);
+    await testimonialsViewModel.getTestimonialsList(jsonBody);
+
+    if (testimonialsViewModel.response.success == "1")
+    {
+      List<TestimonialsList>? _tempList = [];
+      _tempList = testimonialsViewModel.response.list;
+      listTestimonials?.addAll(_tempList!);
+
+      print(listTestimonials?.length);
+
+
+      if (_tempList?.isNotEmpty ?? false) {
+        _pageIndex += 1;
+        if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
+          _isLastPage = true;
+        }
+      }
+
+    }
+    setState(() {
+      _isLoadingMore = false;
+    });
   }
 
 }

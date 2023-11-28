@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
@@ -40,6 +42,8 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
 
   List<HolidayList> listHoliday = [];
 
+  Map<int, Map<int, List<HolidayList>>> separatedHolidays = {};
+
   @override
   void initState(){
     super.initState();
@@ -80,7 +84,6 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
         child: Scaffold(
           appBar: AppBar(
@@ -128,7 +131,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
               else
               {
                 return Padding(
-                  padding: const EdgeInsets.fromLTRB(18, 12, 18, 12),
+                  padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,112 +239,193 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                       ),
                       listHoliday.isNotEmpty
                           ? Expanded(
-                        child: ListView.builder(
-                          controller: _scrollViewController,
-                          physics: const BouncingScrollPhysics(),
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: listHoliday.length ?? 0,
-                          itemBuilder: (context, index) {
-                            var getSet = listHoliday[index];
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: white,
-                                borderRadius: BorderRadius.circular(8),
-
+                            child: MediaQuery.removePadding(
+                              context: context,
+                              removeTop: true,
+                              removeBottom: true,
+                              child: ListView.builder(
+                                controller: _scrollViewController,
+                                physics: const BouncingScrollPhysics(),
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: separatedHolidays.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  int year = separatedHolidays.keys.elementAt(index);
+                                  return Container(
+                                    padding: const EdgeInsets.all(12),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            const Flexible(child: Divider(height: 0.5,color: graySemiDark,thickness: 0.5,endIndent: 12,)),
+                                            Text(year.toString(),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w400,fontSize: 14),),
+                                            const Flexible(child: Divider(height: 0.5,color: graySemiDark,thickness: 0.5,indent: 12,)),
+                                          ],
+                                        ),
+                                        MediaQuery.removePadding(
+                                          context: context,
+                                          removeTop: true,
+                                          removeBottom: true,
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.vertical,
+                                            shrinkWrap: true,
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            itemCount: separatedHolidays[year]!.length,
+                                            itemBuilder: (context, monthIndex) {
+                                              int month = separatedHolidays[year]!.keys.elementAt(monthIndex);
+                                              List<HolidayList> holidays = separatedHolidays[year]![month]!;
+                                              return Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  const Gap(12),
+                                                  Text(
+                                                    universalDateConverter("MM", "MMMM", month.toString()),
+                                                    style: const TextStyle(fontWeight: FontWeight.w600,color: black,fontSize: 16),
+                                                  ),
+                                                  const Gap(12),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: white,
+                                                      borderRadius: BorderRadius.circular(8),
+                                                    ),
+                                                    child: MediaQuery.removePadding(
+                                                      context: context,
+                                                      removeTop: true,
+                                                      removeBottom: true,
+                                                      child: ListView.builder(
+                                                        itemCount: holidays.length,
+                                                        shrinkWrap: true,
+                                                        physics: const NeverScrollableScrollPhysics(),
+                                                        itemBuilder: (context, index) {
+                                                          return Padding(
+                                                            padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                            child: Column(
+                                                              children: [
+                                                                Padding(
+                                                                  padding: const EdgeInsets.only(top: 8,bottom: 8),
+                                                                  child: Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                    children: [
+                                                                      Text(universalDateConverter("dd-MM-yyyy","dd MMMM",holidays[index].holidayDate ?? ''),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400,),),
+                                                                      Text(holidays[index].title ?? '',style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400,),)
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Visibility(
+                                                                  visible: holidays.length > 1,
+                                                                    child: const Divider(height: 0.5,thickness: 0.5,color: graySemiDark,)
+                                                                )
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        )
+                                        /*Stack(
+                                          children: [
+                                            Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Expanded(
+                                                      flex: 1,
+                                                      child: Text("Title ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    ),
+                                                    const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(getSet.title ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const Gap(12),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Expanded(
+                                                      flex: 1,
+                                                      child: Text("Description ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    ),
+                                                    const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text("${getSet?.description}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const Gap(12),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Expanded(
+                                                      flex: 1,
+                                                      child: Text("Date ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    ),
+                                                    const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(universalDateConverter("dd-MM-yyyy", "dd MMM,yyyy", getSet.holidayDate ?? ""),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const Gap(12),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Expanded(
+                                                      flex: 1,
+                                                      child: Text("Status ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    ),
+                                                    const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(getSet.status == "1" ? "Active" : "InActive",style: TextStyle(color: getSet.status == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                    ),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                            // Positioned(
+                                            //   right: 5,
+                                            //   child: GestureDetector(
+                                            //     behavior: HitTestBehavior.opaque,
+                                            //     onTap: (){
+                                            //       showActionBottomsheet(listHoliday[index]);
+                                            //     },
+                                            //     child: Image.asset("assets/images/ic_dots.png",
+                                            //       width: 26, height: 26,
+                                            //       color: black,
+                                            //     ),
+                                            //   ),
+                                            // ),
+                                          ],
+                                        ),*/
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
-                              child: Stack(
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Expanded(
-                                            flex: 1,
-                                            child: Text("Title ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(getSet.title ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                        ],
-                                      ),
-                                      const Gap(12),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Expanded(
-                                            flex: 1,
-                                            child: Text("Description ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text("${getSet?.description}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                        ],
-                                      ),
-                                      const Gap(12),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Expanded(
-                                            flex: 1,
-                                            child: Text("Date ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(universalDateConverter("dd-MM-yyyy", "dd MMM,yyyy", getSet.holidayDate ?? ""),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                        ],
-                                      ),
-                                      const Gap(12),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Expanded(
-                                            flex: 1,
-                                            child: Text("Status ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(getSet.status == "1" ? "Active" : "InActive",style: TextStyle(color: getSet.status == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  // Positioned(
-                                  //   right: 5,
-                                  //   child: GestureDetector(
-                                  //     behavior: HitTestBehavior.opaque,
-                                  //     onTap: (){
-                                  //       showActionBottomsheet(listHoliday[index]);
-                                  //     },
-                                  //     child: Image.asset("assets/images/ic_dots.png",
-                                  //       width: 26, height: 26,
-                                  //       color: black,
-                                  //     ),
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      )
+                            ),
+                          )
                           : const MyNoDataNewWidget(msg: "No Holiday Founds", img: ""),
                       Visibility(
                           visible: _isLoadingMore,
@@ -367,6 +451,48 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
         },
     );
   }
+
+
+  void holiday() {
+  // Assume jsonString is the JSON data you provided
+  String jsonString = '{"success":"1","message":"List Found","total_records":"8","list":[{"id":"3","title":"Diwali","description":"Festival of Lights","holiday_date":"12-11-2023","status":"1","created_at":"1698304510","updated_at":"1699342843","deleted_at":""},{"id":"4","title":"Christmas","description":"Christmas ","holiday_date":"25-12-2023","status":"1","created_at":"1698304935","updated_at":"1699343379","deleted_at":""},{"id":"13","title":"Vasi Uttarayan","description":"Festival of Kites","holiday_date":"15-01-2024","status":"1","created_at":"1699342900","updated_at":"1699342946","deleted_at":""},{"id":"14","title":"Republic Day","description":"Republic Day","holiday_date":"26-01-2024","status":"1","created_at":"1699342989","updated_at":"","deleted_at":""},{"id":"15","title":"Mahashivratri","description":"Festival of Lord Shiva","holiday_date":"08-03-2024","status":"1","created_at":"1699343093","updated_at":"","deleted_at":""},{"id":"16","title":"Dhuleti","description":"Festival of Colors","holiday_date":"25-03-2024","status":"1","created_at":"1699343160","updated_at":"","deleted_at":""},{"id":"17","title":"Independence Day","description":"Independence Day","holiday_date":"15-08-2024","status":"1","created_at":"1699343233","updated_at":"","deleted_at":""},{"id":"18","title":"Rakshabandhan","description":"Rakshabandhan","holiday_date":"19-08-2024","status":"1","created_at":"1699343277","updated_at":"","deleted_at":""}]}';
+
+  // Parse JSON
+  Map<String, dynamic> jsonData = json.decode(jsonString);
+
+  // Extract the list of holidays
+  List<Map<String, dynamic>> holidayData = List<Map<String, dynamic>>.from(jsonData['list']);
+
+  // Create a HolidayManager instance
+  HolidayManager holidayManager = HolidayManager();
+
+  // Populate the holidays list
+  holidayManager.holidays = listHoliday.map((data) => HolidayList(
+  id: data.id,
+  title: data.title,
+  description: data.description,
+  holidayDate: data.holidayDate,
+  status: data.status,
+  createdAt: data.createdAt,
+  updatedAt: data.updatedAt,
+  deletedAt: data.deletedAt,
+  )).toList();
+
+  // Separate holidays by year and month
+  separatedHolidays = holidayManager.separateHolidaysByYearAndMonth();
+
+  // Print the result
+  separatedHolidays.forEach((year, monthMap) {
+  print('Year: $year');
+  monthMap.forEach((month, holidays) {
+  print('  Month: $month');
+  holidays.forEach((holiday) {
+  print('    $holiday');
+  });
+  });
+  });
+  }
+
 
   Future<void> getHolidayList(bool isFirstTime) async {
     if (isFirstTime) {
@@ -398,7 +524,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
       List<HolidayList>? _tempList = [];
       _tempList = holidayViewModel.response.holidayList;
       listHoliday?.addAll(_tempList!);
-
+      holiday();
       print(listHoliday?.length);
 
 
@@ -609,8 +735,8 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                         margin: const EdgeInsets.only(bottom: 12)
                     ),
                   ),
-                  Center(
-                    child: const Text("Select Action",
+                  const Center(
+                    child: Text("Select Action",
                       style: TextStyle(
                           fontSize: 18, color: black,fontWeight: FontWeight.w500),
                     ),
@@ -637,8 +763,8 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                                   children: [
                                     Image.asset('assets/images/ic_edit.png', height: 20, width: 20,),
                                     Container(width: 12,),
-                                    Text("Edit",
-                                        style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                                    const Text("Edit",
+                                        style: TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
                                   ],
                                 ),
                               ),
@@ -694,5 +820,43 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
         );
       },
     );
+  }
+}
+
+class HolidayManager {
+  List<HolidayList> _holidays = [];
+
+  // Getter for all holidays
+  List<HolidayList> get holidays => _holidays;
+
+  // Setter for all holidays
+  set holidays(List<HolidayList> holidays) {
+    _holidays = holidays;
+  }
+
+  // Add a holiday
+  void addHoliday(HolidayList holiday) {
+    _holidays.add(holiday);
+  }
+
+  // Separate holidays by year and month
+  Map<int, Map<int, List<HolidayList>>> separateHolidaysByYearAndMonth() {
+    Map<int, Map<int, List<HolidayList>>> separatedHolidays = {};
+
+    for (HolidayList holiday in _holidays) {
+      int year = int.parse(universalDateConverter("dd-MM-yyyy", "yyyy",holiday.holidayDate ?? ''));
+      int month = int.parse(universalDateConverter("dd-MM-yyyy", "MM",holiday.holidayDate ?? ''));
+
+      // Create year map if not exists
+      separatedHolidays[year] ??= {};
+
+      // Create month list if not exists
+      separatedHolidays[year]?[month] ??= [];
+
+      // Add the holiday to the corresponding year and month
+      separatedHolidays[year]?[month]?.add(holiday);
+    }
+
+    return separatedHolidays;
   }
 }

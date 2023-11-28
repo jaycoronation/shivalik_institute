@@ -23,7 +23,6 @@ class _CaseStudyDetailScreen extends BaseState<CaseStudyDetailScreen> {
   @override
   void initState(){
     super.initState();
-
     getSet = (widget as CaseStudyDetailScreen).getSet;
   }
 
@@ -121,22 +120,22 @@ class _CaseStudyDetailScreen extends BaseState<CaseStudyDetailScreen> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(right: 12,left: 12),
+                  padding: const EdgeInsets.only(right: 12,left: 12),
                   child: Row(
                     children: [
-                      Text("Published By:",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
-                       Gap(22),
+                      const Text("Published By:",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
+                       const Gap(22),
                       Image.network("${getSet.publishedBy}&w=124",),
                     ],
                   ),
                 ),
                 Container(height: 12,),
                 Padding(
-                  padding: EdgeInsets.only(right: 12,left: 12),
+                  padding: const EdgeInsets.only(right: 12,left: 12),
                   child: Row(
                     children: [
-                      Text("Affiliated With",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
-                      Gap(22),
+                      const Text("Affiliated With",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
+                      const Gap(22),
                       Image.network("${getSet.affiliatedWith}&w=124",),
                     ],
                   ),
@@ -150,7 +149,7 @@ class _CaseStudyDetailScreen extends BaseState<CaseStudyDetailScreen> {
                       await launchUrl(Uri.parse(getSet?.brochure ?? ""),mode: LaunchMode.externalApplication);
                     },
                     child: Container(
-                      margin: EdgeInsets.only(left: 18),
+                      margin: const EdgeInsets.only(left: 18),
                       decoration: BoxDecoration(
                         color: black,
                         border: Border.all(
@@ -159,7 +158,7 @@ class _CaseStudyDetailScreen extends BaseState<CaseStudyDetailScreen> {
                         ),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child:   Text("Download Brochure",style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w400,color: white),),
+                      child:   const Text("Download Brochure",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w400,color: white),),
                     ),
                   ),
                 ),

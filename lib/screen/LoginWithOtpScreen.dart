@@ -160,12 +160,12 @@ class _LoginWithOTPScreenState extends BaseState<LoginWithOTPScreen> {
                                 child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: white,strokeWidth: 2)),
                               )
                               : const Padding(
-                            padding: EdgeInsets.only(top: 10,bottom: 10),
-                            child: Text(
-                              "Submit",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w400),
-                            ),
+                                padding: EdgeInsets.only(top: 10,bottom: 10),
+                                child: Text(
+                                  "Submit",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w400),
+                                ),
                           )
                       ),
                     ),
@@ -206,7 +206,6 @@ class _LoginWithOTPScreenState extends BaseState<LoginWithOTPScreen> {
                         ),
                       ),
                     ),
-
                   ],
                 )),
               ],

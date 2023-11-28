@@ -44,7 +44,7 @@ abstract class BaseState<T extends StatefulWidget> extends State {
     initConnectivity();
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
-        .listen((ConnectivityResult result) async {
+        .listen((ConnectivityResult result) async  {
       await _updateConnectionStatus().then((bool isConnected) => setState(() {
         isOnline = isConnected;
       }));

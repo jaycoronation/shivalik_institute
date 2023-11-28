@@ -2,22 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
-import 'package:shivalik_institute/model/CaseStudyResponseModel.dart';
-import 'package:shivalik_institute/model/HolidayResponseModel.dart';
-import 'package:shivalik_institute/model/ManagmentResponseModel.dart';
-import 'package:shivalik_institute/model/TestimonialsResponseModel.dart';
-import 'package:shivalik_institute/utils/app_utils.dart';
-import 'package:shivalik_institute/viewmodels/CaseStudyViewModel.dart';
-import 'package:shivalik_institute/viewmodels/HolidayViewModel.dart';
-import 'package:shivalik_institute/viewmodels/ManagmentViewModel.dart';
 import 'package:shivalik_institute/viewmodels/TestimonialsViewModel.dart';
-
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
 import '../common_widget/loading_more.dart';
 import '../common_widget/no_data_new.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
+import '../model/TestimonialResponseModel.dart';
 import '../utils/base_class.dart';
 
 class TestimonialsScreen extends StatefulWidget {
@@ -40,6 +32,7 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
   bool _isLoadingMore = false;
 
   List<TestimonialsList> listTestimonials = [];
+  List<MediaList> mediaList = [];
 
   @override
   void initState(){
@@ -233,98 +226,154 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
                         ),
                       ),
                       listTestimonials.isNotEmpty
+                      //     ? Expanded(
+                      //   child: ListView.builder(
+                      //     controller: _scrollViewController,
+                      //     physics: const BouncingScrollPhysics(),
+                      //     scrollDirection: Axis.vertical,
+                      //     shrinkWrap: true,
+                      //     itemCount: listTestimonials.length,
+                      //     itemBuilder: (context, index) {
+                      //       var getSet = listTestimonials[index];
+                      //       return Container(
+                      //         margin: const EdgeInsets.only(bottom: 12),
+                      //         padding: const EdgeInsets.all(12),
+                      //         decoration: BoxDecoration(
+                      //           color: white,
+                      //           borderRadius: BorderRadius.circular(8),
+                      //
+                      //         ),
+                      //         child: Column(
+                      //           mainAxisAlignment: MainAxisAlignment.start,
+                      //           crossAxisAlignment: CrossAxisAlignment.start,
+                      //           children: [
+                      //             Row(
+                      //               mainAxisAlignment: MainAxisAlignment.start,
+                      //               crossAxisAlignment: CrossAxisAlignment.start,
+                      //               children: [
+                      //                 const Expanded(
+                      //                   flex: 1,
+                      //                   child: Text("Name ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                      //                 ),
+                      //                 const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                      //                 Expanded(
+                      //                   flex: 2,
+                      //                   child: Text("${getSet.name}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //             const Gap(12),
+                      //             Row(
+                      //               mainAxisAlignment: MainAxisAlignment.start,
+                      //               crossAxisAlignment: CrossAxisAlignment.start,
+                      //               children: [
+                      //                 const Expanded(
+                      //                   flex: 1,
+                      //                   child: Text("Title ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                      //                 ),
+                      //                 const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                      //                 Expanded(
+                      //                   flex: 2,
+                      //                   child: Text("${getSet.title}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //             const Gap(12),
+                      //             Row(
+                      //               mainAxisAlignment: MainAxisAlignment.start,
+                      //               crossAxisAlignment: CrossAxisAlignment.start,
+                      //               children: [
+                      //                 const Expanded(
+                      //                   flex: 1,
+                      //                   child: Text("Description ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                      //                 ),
+                      //                 const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                      //                 Expanded(
+                      //                   flex: 2,
+                      //                   child: Text(getSet.description ?? '',style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //             const Gap(12),
+                      //             Row(
+                      //               mainAxisAlignment: MainAxisAlignment.start,
+                      //               crossAxisAlignment: CrossAxisAlignment.start,
+                      //               children: [
+                      //                 const Expanded(
+                      //                   flex: 1,
+                      //                   child: Text("Status ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                      //                 ),
+                      //                 const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                      //                 Expanded(
+                      //                   flex: 2,
+                      //                   child: Text(getSet.isActive == "1" ?"Active" : "InActive",style: TextStyle(color: getSet.isActive == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w400),),
+                      //                 ),
+                      //               ],
+                      //             )
+                      //           ],
+                      //         ),
+                      //       );
+                      //     },
+                      //   ),
+                      // )
                           ? Expanded(
-                        child: ListView.builder(
-                          controller: _scrollViewController,
-                          physics: const BouncingScrollPhysics(),
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: listTestimonials.length,
-                          itemBuilder: (context, index) {
-                            var getSet = listTestimonials[index];
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: white,
-                                borderRadius: BorderRadius.circular(8),
-
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                        flex: 1,
-                                        child: Text("Name ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                      ),
-                                      const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text("${getSet.name}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                      ),
-                                    ],
-                                  ),
-                                  const Gap(12),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                        flex: 1,
-                                        child: Text("Title ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                      ),
-                                      const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text("${getSet.title}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                      ),
-                                    ],
-                                  ),
-                                  const Gap(12),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                        flex: 1,
-                                        child: Text("Description ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                      ),
-                                      const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(getSet.description ?? '',style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                      ),
-                                    ],
-                                  ),
-                                  const Gap(12),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                        flex: 1,
-                                        child: Text("Status ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                      ),
-                                      const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(getSet.isActive == "1" ?"Active" : "InActive",style: TextStyle(color: getSet.isActive == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w400),),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      )
+                            child: ListView.builder(
+                              controller: _scrollViewController,
+                              physics: const BouncingScrollPhysics(),
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: listTestimonials.length,
+                              itemBuilder: (context, index) {
+                                var getSet = listTestimonials[index];
+                                return  Column(
+                                  children: [
+                                    Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                          child: Image.network(
+                                            getSet.thumbImg.toString(),
+                                            width: MediaQuery.of(context).size.width,
+                                            height: 400,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 400,
+                                          decoration: BoxDecoration(
+                                              color: Colors.black,
+                                              gradient: LinearGradient(
+                                                  begin: FractionalOffset.topCenter,
+                                                  end: FractionalOffset.bottomCenter,
+                                                  colors: [
+                                                    blackConst.withOpacity(0.0),
+                                                    blackConst.withOpacity(1),
+                                                  ],
+                                                  stops: const [
+                                                    0.5,
+                                                    1.0
+                                                  ]
+                                              ),
+                                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: 18,
+                                          left: 18,
+                                          right: 18,
+                                          child: Text("${getSet.name}",style: const TextStyle(color: white,fontSize: 16,fontWeight: FontWeight.w500),
+                                            overflow: TextOverflow.clip,
+                                          )
+                                        ),
+                                      ],
+                                    ),
+                                    Container(height: 18,),
+                                  ],
+                                );
+                              },
+                            ),
+                          )
                           : const MyNoDataNewWidget(msg: "No Testimonials Founds", img: ""),
-
                       Visibility(
                           visible: _isLoadingMore,
                           child: const LoadingMoreWidget()

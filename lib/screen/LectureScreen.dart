@@ -501,6 +501,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
       'search': "",
       'from_app' : FROM_APP
     };
+
     var facultyViewModel = Provider.of<UserListViewModel>(context,listen: false);
     await facultyViewModel.getUserList(jsonBody);
 
@@ -519,7 +520,8 @@ class _LectureScreenState extends BaseState<LectureScreen> {
       backgroundColor: white,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+      ),
       elevation: 5,
       isDismissible: true,
       builder: (BuildContext context) {
@@ -533,7 +535,8 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                     Container(height: 2, width : 40, color: black, margin: const EdgeInsets.only(bottom:12)),
                     const Text("Select Date Rage",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: black, fontWeight: FontWeight.bold, fontSize: 16),),
+                      style: TextStyle(color: black, fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
                     Container(height: 12),
                     ListView.builder(
                       itemCount: dateFilterList.length,
@@ -550,7 +553,6 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                               setState(() {
                                 selectedDateFilter = getSet;
                               });
-
 
                               if (selectedDateFilter == "All") {
                                 fromDateApi = "";

@@ -2,14 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
-import 'package:shivalik_institute/model/CaseStudyResponseModel.dart';
-import 'package:shivalik_institute/model/HolidayResponseModel.dart';
 import 'package:shivalik_institute/model/ManagmentResponseModel.dart';
-import 'package:shivalik_institute/utils/app_utils.dart';
-import 'package:shivalik_institute/viewmodels/CaseStudyViewModel.dart';
-import 'package:shivalik_institute/viewmodels/HolidayViewModel.dart';
 import 'package:shivalik_institute/viewmodels/ManagmentViewModel.dart';
-
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
 import '../common_widget/loading_more.dart';
@@ -366,7 +360,6 @@ class _ManagementScreenState extends BaseState<ManagementScreen> {
 
     if (managementViewModel.response.success == "1")
     {
-
       List<ManagementList>? _tempList = [];
       _tempList = managementViewModel.response.list;
       listManagement?.addAll(_tempList!);

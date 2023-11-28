@@ -90,19 +90,19 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
                   alignment: Alignment.center,
                   children: [
                     CachedNetworkImage(
-                        imageUrl: "${getSet.bannerImage}&h=500&zc=2",
-                        fit: BoxFit.cover,
+                      imageUrl: "${getSet.bannerImage}&h=500&zc=2",
+                      fit: BoxFit.cover,
+                      width: MediaQuery.of(context).size.width,
+                      errorWidget: (context, url, error) => Container(
+                        color: grayNew,
                         width: MediaQuery.of(context).size.width,
-                        errorWidget: (context, url, error) => Container(
-                          color: grayNew,
-                          width: MediaQuery.of(context).size.width,
-                          height: 280,
-                        ),
-                        placeholder: (context, url) => Container(
-                          color: grayNew,
-                          width: MediaQuery.of(context).size.width,
-                          height: 280 ,
-                        )
+                        height: 280,
+                      ),
+                      placeholder: (context, url) => Container(
+                        color: grayNew,
+                        width: MediaQuery.of(context).size.width,
+                        height: 280 ,
+                      )
                     ),
                   ],
                 ),

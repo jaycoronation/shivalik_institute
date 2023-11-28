@@ -5,7 +5,6 @@ import 'package:shivalik_institute/model/CaseStudyResponseModel.dart';
 import 'package:shivalik_institute/model/EventResponseModel.dart';
 import 'package:shivalik_institute/model/LecturesResponseModel.dart';
 import 'package:shivalik_institute/model/ModuleResponseModel.dart';
-import 'package:shivalik_institute/model/TestimonialsResponseModel.dart';
 import 'package:shivalik_institute/model/UserListResponseModel.dart';
 import '../model/BatchResponseModel.dart';
 import '../model/CityResponseModel.dart';
@@ -17,6 +16,7 @@ import '../model/HolidayResponseModel.dart';
 import '../model/ManagmentResponseModel.dart';
 import '../model/MaterialDetailResponseModel.dart';
 import '../model/StateViewResponseModel.dart';
+import '../model/TestimonialResponseModel.dart';
 import '../model/UserProfileResponseModel.dart';
 import '../model/VerifyOtpResponseModel.dart';
 import 'api_end_point.dart';
@@ -273,7 +273,7 @@ class ApiService {
     }
   }
 
-  static Future<TestimonialsResponseModel> testimonialsList(Map<String, String> jsonBody) async {
+  static Future<TestimonialResponseModel> testimonialsList(Map<String, String> jsonBody) async {
 
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
@@ -281,7 +281,7 @@ class ApiService {
     final response = await http.post(Uri.parse(testimonialsListUrl),body: jsonBody);
     if (response.statusCode == 200) {
       final dynamic data = json.decode(response.body);
-      return TestimonialsResponseModel.fromJson(data);
+      return TestimonialResponseModel.fromJson(data);
     } else {
       throw Exception('Failed to load users');
     }

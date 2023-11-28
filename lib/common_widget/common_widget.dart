@@ -1,7 +1,5 @@
-
 import 'package:flutter/material.dart';
 import '../constant/colors.dart';
-import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as tab;
 
 
 Widget getBackArrow(){
@@ -15,8 +13,6 @@ Widget getBackArrow(){
   );
 }
 
-
-
 Widget getTitle(String title){
   return Text(
     title,
@@ -24,7 +20,6 @@ Widget getTitle(String title){
     style: const TextStyle(fontWeight: FontWeight.w600, color: black, fontSize: 18),
   );
 }
-
 
 Widget getCommonButton(String title, void Function() onPressed, bool isLoading ){
   return TextButton(
