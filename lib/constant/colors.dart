@@ -25,6 +25,8 @@ const Color lightPink= Color(0xffFFF6F5);
 const Color lightPinkBorder = Color(0xffF6EEEC);
 const Color lightPinkText = Color(0xffC47D83);
 const Color progress= Color(0xffD9D9D9);
+const Color greenbg= Color(0x4200a814);
+const Color redbg= Color(0x42FF0000);
 
 
 

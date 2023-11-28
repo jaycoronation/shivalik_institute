@@ -8,7 +8,6 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shivalik_institute/common_widget/VideoProjectWidget.dart';
 import 'package:shivalik_institute/common_widget/common_widget.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/screen/CaseStudyScreen.dart';
@@ -501,71 +500,78 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                             child: const Text("Course Progress",
                               style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w800),),
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(22),
-                            margin: const EdgeInsets.all(18),
-                            decoration:  BoxDecoration(
-                              border: Border.all(color: white, width: 0.5),
-                              borderRadius:const BorderRadius.all(Radius.circular(8),) ,
-                              color: white,
-                            ),
-                            child: Row(
-                              children: [
-                                Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 90,width: 90,
-                                      child: CircularProgressIndicator(
-                                        value: double.parse(value.response.completedModule ?? "0") / double.parse(value.response.totalModules ?? "0"),
-                                        color: Colors.green,
-                                        strokeWidth: 10,
-                                        backgroundColor: progress,
-                                      ),
-                                    ),
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Countup(
-                                          begin: 0,
-                                          end: double.parse(value.response.completedModule ?? "0"),
-                                          duration: const Duration(seconds: 2),
-                                          separator: ',',
-                                          style: const TextStyle(
-                                            fontSize: 18, color: black
-                                            ,fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        const Text(' of ',
-                                            style: TextStyle(fontSize: 18, color:black,fontWeight: FontWeight.w500),
-                                            textAlign: TextAlign.center
-                                        ),
-                                        Countup(
-                                          begin: 0,
-                                          end: double.parse(value.response.totalModules ?? "0"),
-                                          duration: const Duration(seconds: 2),
-                                          separator: ',',
-                                          style: const TextStyle(
-                                              fontSize: 18, color: black,fontWeight: FontWeight.w500
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Container(width: 28,),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("${value.response.completedModule ?? "0"} modules completed", style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500)),
-                                    Container(height: 4,),
-                                    Text("Modules ${int.parse(value.response.completedModule ?? "0") + 1} ongoing", style: const TextStyle(color: grayDark,fontSize: 14,fontWeight: FontWeight.w400)),
-                                  ],
-                                ),
 
-                              ],
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () async {
+                              startActivity(context, const ModuleListScreen("all"));
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(22),
+                              margin: const EdgeInsets.all(18),
+                              decoration:  BoxDecoration(
+                                border: Border.all(color: white, width: 0.5),
+                                borderRadius:const BorderRadius.all(Radius.circular(8),) ,
+                                color: white,
+                              ),
+                              child: Row(
+                                children: [
+                                  Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 90,width: 90,
+                                        child: CircularProgressIndicator(
+                                          value: double.parse(value.response.completedModule ?? "0") / double.parse(value.response.totalModules ?? "0"),
+                                          color: Colors.green,
+                                          strokeWidth: 10,
+                                          backgroundColor: progress,
+                                        ),
+                                      ),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Countup(
+                                            begin: 0,
+                                            end: double.parse(value.response.completedModule ?? "0"),
+                                            duration: const Duration(seconds: 2),
+                                            separator: ',',
+                                            style: const TextStyle(
+                                              fontSize: 18, color: black
+                                              ,fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const Text(' of ',
+                                              style: TextStyle(fontSize: 18, color:black,fontWeight: FontWeight.w500),
+                                              textAlign: TextAlign.center
+                                          ),
+                                          Countup(
+                                            begin: 0,
+                                            end: double.parse(value.response.totalModules ?? "0"),
+                                            duration: const Duration(seconds: 2),
+                                            separator: ',',
+                                            style: const TextStyle(
+                                                fontSize: 18, color: black,fontWeight: FontWeight.w500
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Container(width: 28,),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("${value.response.completedModule ?? "0"} modules completed", style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500)),
+                                      Container(height: 4,),
+                                      Text("Modules ${int.parse(value.response.completedModule ?? "0") + 1} ongoing", style: const TextStyle(color: grayDark,fontSize: 14,fontWeight: FontWeight.w400)),
+                                    ],
+                                  ),
+
+                                ],
+                              ),
                             ),
                           ),
                           Container(
@@ -902,7 +908,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                         {
                                           videoUrl = getSet.mediaList?[i].path ?? '';
                                         }
-                                       startActivity(context, VideoProjectWidget(url: videoUrl, play: true));
+                                       // startActivity(context, VideoProjectWidget(url: videoUrl, play: true));
                                     },
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.start,
@@ -1151,7 +1157,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, LectureScreen(ModuleList(id: ""), "upcoming_class"));
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1174,7 +1180,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const EventsScreen());
                         },
-                        child: const Column(
+                        child:  Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1197,7 +1203,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const ResourceCenterScreen());
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1221,12 +1227,12 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const HolidayScreen());
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                          children: const [
                             Padding(
-                              padding: EdgeInsets.all(6.0),
+                               padding: EdgeInsets.all(6.0),
                               child: Text("Holiday" ,
                                   style: TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
                             ),
@@ -1244,7 +1250,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const CaseStudyScreen());
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1268,7 +1274,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const TestimonialsScreen());
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1291,7 +1297,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         onTap: () {
                           startActivity(context, const ManagementScreen());
                         },
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

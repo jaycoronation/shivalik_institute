@@ -325,50 +325,100 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
                               itemCount: listTestimonials.length,
                               itemBuilder: (context, index) {
                                 var getSet = listTestimonials[index];
-                                return  Column(
-                                  children: [
-                                    Stack(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          child: Image.network(
-                                            getSet.thumbImg.toString(),
-                                            width: MediaQuery.of(context).size.width,
+                                return  GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () {
+                                    var videoUrl = '';
+                                    for (var i=0; i < (getSet.mediaList?.length ?? 0); i++)
+                                    {
+                                      videoUrl = getSet.mediaList?[i].path ?? '';
+                                    }
+                                    // startActivity(context, VideoProjectWidget(url: videoUrl, play: true));
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Stack(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            child: Image.network(
+                                              getSet.thumbImg.toString(),
+                                              width: MediaQuery.of(context).size.width,
+                                              height: 400,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          Container(
                                             height: 400,
-                                            fit: BoxFit.cover,
+                                            decoration: BoxDecoration(
+                                                color: Colors.black,
+                                                gradient: LinearGradient(
+                                                    begin: FractionalOffset.topCenter,
+                                                    end: FractionalOffset.bottomCenter,
+                                                    colors: [
+                                                      blackConst.withOpacity(0.0),
+                                                      blackConst.withOpacity(1),
+                                                    ],
+                                                    stops: const [
+                                                      0.5,
+                                                      1.0
+                                                    ]
+                                                ),
+                                                borderRadius: BorderRadius.all(Radius.circular(8)),
+                                            ),
                                           ),
-                                        ),
-                                        Container(
-                                          height: 400,
-                                          decoration: BoxDecoration(
-                                              color: Colors.black,
-                                              gradient: LinearGradient(
-                                                  begin: FractionalOffset.topCenter,
-                                                  end: FractionalOffset.bottomCenter,
-                                                  colors: [
-                                                    blackConst.withOpacity(0.0),
-                                                    blackConst.withOpacity(1),
-                                                  ],
-                                                  stops: const [
-                                                    0.5,
-                                                    1.0
-                                                  ]
-                                              ),
-                                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                                          Positioned(
+                                            bottom: 18,
+                                            left: 18,
+                                            right: 18,
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: [
+                                                Container(
+                                                  width: 95,
+                                                  height: 32,
+                                                  margin: const EdgeInsets.only(bottom: 12, top: 12),
+                                                  padding: const EdgeInsets.all(8),
+                                                  decoration: ShapeDecoration(
+                                                    color: const Color(0xFFEC5554),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(40),
+                                                    ),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 16,
+                                                        height: 16,
+                                                        child: Image.asset('assets/images/ic_play.png'),
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      const Text(
+                                                        'Watch Now',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 10,
+                                                          fontWeight: FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Text("${getSet.name}",style: const TextStyle(color: white,fontSize: 16,fontWeight: FontWeight.w500),
+                                                  overflow: TextOverflow.clip,
+                                                ),
+                                              ],
+                                            )
                                           ),
-                                        ),
-                                        Positioned(
-                                          bottom: 18,
-                                          left: 18,
-                                          right: 18,
-                                          child: Text("${getSet.name}",style: const TextStyle(color: white,fontSize: 16,fontWeight: FontWeight.w500),
-                                            overflow: TextOverflow.clip,
-                                          )
-                                        ),
-                                      ],
-                                    ),
-                                    Container(height: 18,),
-                                  ],
+                                        ],
+                                      ),
+                                      Container(height: 18,),
+                                    ],
+                                  ),
                                 );
                               },
                             ),

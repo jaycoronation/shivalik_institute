@@ -238,7 +238,8 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                      ],
                                    ),
                                  ),
-                                 const Gap(12),
+                                 const Gap(18),
+
                                  Expanded(
                                    child: ListView.builder(
                                      controller: _scrollViewController,
@@ -254,8 +255,8 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                            startActivity(context, ModuleDetailsScreen(getSet));
                                          },
                                          child: Container(
-                                           margin: const EdgeInsets.only(bottom: 12),
-                                           padding: const EdgeInsets.all(12),
+                                           margin: const EdgeInsets.only(bottom: 22),
+                                           // padding: const EdgeInsets.all(12),
                                            decoration: BoxDecoration(
                                              color: white,
                                              borderRadius: BorderRadius.circular(8),
@@ -265,6 +266,41 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                              crossAxisAlignment: CrossAxisAlignment.start,
                                              children: [
                                                Row(
+                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                                 children: [
+                                                   Container(
+                                                     padding: EdgeInsets.all(6),
+                                                     decoration: const BoxDecoration(
+                                                       color: black,
+                                                       borderRadius: BorderRadius.only(
+                                                           topRight: Radius.circular(0.0),
+                                                           bottomRight: Radius.circular(8.0),
+                                                           topLeft: Radius.circular(8.0),
+                                                           bottomLeft: Radius.circular(0.0)
+                                                       ),
+                                                     ),
+                                                       child:Text(" Modules ${index + 1} ", style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w400)),
+                                                   ),
+                                                   Container(
+                                                     padding: const EdgeInsets.all(6),
+                                                     decoration:  BoxDecoration(
+                                                       color: getSet.status == "Completed" ? greenbg : redbg,
+                                                       borderRadius: const BorderRadius.only(
+                                                           topRight: Radius.circular(8.0),
+                                                           bottomRight: Radius.circular(0.0),
+                                                           topLeft: Radius.circular(0.0),
+                                                           bottomLeft: Radius.circular(8.0)
+                                                       ),
+                                                     ),
+                                                     child: Text(getSet?.status ?? "",
+                                                       style: TextStyle(color: getSet.status == "Completed" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w400),
+                                                     ),
+                                                   ),
+                                                 ],
+                                               ),
+                                               const Gap(12),
+                                               Row(
                                                  mainAxisAlignment: MainAxisAlignment.start,
                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                  children: [
@@ -272,7 +308,6 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                                      flex: 1,
                                                      child: Text("Name ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    ),
-                                                   const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    Expanded(
                                                      flex: 2,
                                                      child: Text(getSet?.moduleName ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
@@ -288,7 +323,6 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                                      flex: 1,
                                                      child: Text("Duration ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    ),
-                                                   const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    Expanded(
                                                      flex: 2,
                                                      child: Text("${getSet?.duration}hr",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
@@ -304,7 +338,6 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                                      flex: 1,
                                                      child: Text("Course ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    ),
-                                                   const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                    Expanded(
                                                      flex: 2,
                                                      child: Text(getSet.courseName ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
@@ -312,21 +345,7 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                                  ],
                                                ),
                                                const Gap(12),
-                                               Row(
-                                                 mainAxisAlignment: MainAxisAlignment.start,
-                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                 children: [
-                                                   const Expanded(
-                                                     flex: 1,
-                                                     child: Text("Status ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                   ),
-                                                   const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                   Expanded(
-                                                     flex: 2,
-                                                     child: Text(getSet?.status ?? "",style: TextStyle(color: getSet.status == "Completed" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                   ),
-                                                 ],
-                                               )
+
                                              ],
                                            ),
                                          ),
