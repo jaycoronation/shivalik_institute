@@ -367,7 +367,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                       overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(
-                                        color: black, fontWeight: FontWeight.w400, overflow: TextOverflow.ellipsis,),
+                                        color: black, fontWeight: FontWeight.w400, overflow: TextOverflow.ellipsis,
+                                      ),
                                     )),
                               ),
                               decorations: listCalenderEvents,
@@ -428,7 +429,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                     const Text("By ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                     const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                     Text("${getSet?.session1FacultyName} and ${getSet?.session2FacultyName}",
-                                                      style: const TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                      style: const TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),
+                                                    ),
                                                   ],
                                                 ),
                                                 const Gap(18),
@@ -444,7 +446,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                           Text("${getSet?.date}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),                                                    ],
                                                       ),
                                                     ),
-
                                                     Expanded(
                                                       child: Row(
                                                         children: [
@@ -452,7 +453,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                           Container(width: 10,),
                                                           Text("${getSet?.startTime} onwards",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),                                                    ],
                                                       ),
-                                                    ),                                                ],
+                                                    ),
+                                                  ],
                                                 )
                                               ],
                                             ),
@@ -887,7 +889,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                           ),
                           Container(height: 12,),
                           Container(
-                            height: 355,
+                            height: 400,
                             alignment: Alignment.centerLeft,
                             child: PageView.builder(
                               itemCount:  listTestimonials.length,

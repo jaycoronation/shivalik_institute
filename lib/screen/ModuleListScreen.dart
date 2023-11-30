@@ -345,7 +345,6 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                                  ],
                                                ),
                                                const Gap(12),
-
                                              ],
                                            ),
                                          ),
@@ -353,8 +352,6 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                      },
                                    ),
                                  ),
-
-
                                ],
                              ),
                            ),

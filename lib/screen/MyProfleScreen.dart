@@ -112,7 +112,7 @@ bool _isLoadingMore = false;
                               children: [
                                 Row(
                                   children: [
-                                    Image.asset('assets/images/ic_grey_placeholder.png', width: 26,height: 26,),
+                                    Image.asset('assets/images/ic_profile.png', width: 26,height: 26,),
                                     Container(width: 12,),
                                     Padding(
                                       padding: const EdgeInsets.all(6.0),
@@ -136,7 +136,7 @@ bool _isLoadingMore = false;
                               children: [
                                 Row(
                                   children: [
-                                    Image.asset('assets/images/ic_grey_placeholder.png', width: 26,height: 26,),
+                                    Image.asset('assets/images/ic_Mail.png', width: 26,height: 26,),
                                     Container(width: 12,),
                                     Padding(
                                       padding: const EdgeInsets.all(11.0),
@@ -160,7 +160,7 @@ bool _isLoadingMore = false;
                               children: [
                                 Row(
                                   children: [
-                                    Image.asset('assets/images/ic_grey_placeholder.png', width: 26,height: 26,),
+                                    Image.asset('assets/images/ic_Phone.png', width: 26,height: 26,),
                                     Container(width: 12,),
                                     Padding(
                                       padding: const EdgeInsets.all(11.0),
