@@ -345,7 +345,6 @@ class _EventsScreenState extends BaseState<EventsScreen> {
       });
     }
 
-    /*page: 1, limit: 10, search: "", total: 0, status: 1, filter: "upcoming", filter_by: "upcoming",…}*/
     Map<String, String> jsonBody = {
       'filter': "",
       'filter_by': "past",

@@ -438,12 +438,6 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
               }
             },
           ),
-          // floatingActionButton:  FloatingActionButton(
-          //   onPressed: () {
-          //       Navigator.push(context, MaterialPageRoute(builder: (context) =>  AddHolidayScreen(HolidayList())));
-          //   },
-          //   child: const Icon(Icons.add),
-          // ),
         ),
         onWillPop: () {
           Navigator.pop(context);

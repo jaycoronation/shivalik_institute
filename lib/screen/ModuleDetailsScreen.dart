@@ -237,7 +237,6 @@ class _ModuleListScreenState extends BaseState<ModuleDetailsScreen> {
                       ),
                     ],
                   ),*/
-
                   Consumer<LectureViewModel>(
                     builder: (context, value, child) {
                       if ((value.isLoading) && (_isLoadingMore == false))
@@ -338,7 +337,7 @@ class _ModuleListScreenState extends BaseState<ModuleDetailsScreen> {
                                         flex: 1,
                                         child: Text("Status ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                       ),
-                                      const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                      const Text(" :  ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                       Expanded(
                                         flex: 2,
                                         child: Text(getSet.isActive == "1" ? "Active" : "InActive",style: TextStyle(color: getSet.isActive == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w600),),

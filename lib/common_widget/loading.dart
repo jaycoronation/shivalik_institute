@@ -13,7 +13,7 @@ class LoadingWidget extends StatelessWidget {
       child: Center(
           child: Container(
             width: 100,height: 100,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 color: white,
                 borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),

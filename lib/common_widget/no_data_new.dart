@@ -29,7 +29,7 @@ class MyNoDataNewWidget extends StatelessWidget {
             Container(height: 18),
              Text(
               msg,
-              style: TextStyle(
+              style: const TextStyle(
                   color: black,
                   fontSize: 20,
                   fontWeight: FontWeight.w500

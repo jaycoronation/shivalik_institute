@@ -5,7 +5,6 @@ import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
-import 'package:shivalik_institute/screen/ModuleDetailsScreen.dart';
 import 'package:shivalik_institute/viewmodels/ModuleViewModel.dart';
 
 import '../common_widget/common_widget.dart';

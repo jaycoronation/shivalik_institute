@@ -43,8 +43,6 @@ class _AddHolidayScreenState extends BaseState<AddHolidayScreen> {
   @override
   Widget build(BuildContext context) {
     final commonViewModel = Provider.of<CommonViewModel>(context);
-
-
     return WillPopScope(
         child: Scaffold(
           appBar: AppBar(
@@ -122,9 +120,7 @@ class _AddHolidayScreenState extends BaseState<AddHolidayScreen> {
 
                         onPressed: () async {
                           FocusScope.of(context).requestFocus(FocusNode());
-
-                          Map<String, String> jsonBody =
-                          {
+                          Map<String, String> jsonBody = {
                             'title':_titleController.value.text,
                             'description':_descriptionController.value.text,
                             'holiday_date':(universalDateConverter("dd/MM/yyyy", "dd-MM-yyyy",  _dateController.value.text )),
@@ -135,7 +131,6 @@ class _AddHolidayScreenState extends BaseState<AddHolidayScreen> {
                           CommonResponseModel value = commonViewModel.response;
                           if (value.success == "1")
                           {
-                            // showToast(value.message, context);
                             Navigator.pop(context);
                           }
                           else
@@ -181,7 +176,7 @@ class _AddHolidayScreenState extends BaseState<AddHolidayScreen> {
 class _DateFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue prevText, TextEditingValue currText) {
+       TextEditingValue prevText, TextEditingValue currText) {
     int selectionIndex;
 
     // Get the previous and current input strings

@@ -9,19 +9,18 @@ import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
+import 'package:shivalik_institute/model/SubmissionNewResponseModel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../common_widget/common_widget.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../model/CommonResponseModel.dart';
 import '../model/LecturesResponseModel.dart';
-import '../model/MaterialDetailResponseModel.dart';
 import '../model/ModuleResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../viewmodels/CommonViewModel.dart';
 import 'package:http/http.dart' as http;
-import '../viewmodels/LectureViewModel.dart';
 import '../viewmodels/MultipartApiViewModel.dart';
 
 class ResourceMaterialScreen extends StatefulWidget {
@@ -44,7 +43,7 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
   int _pageIndex = 1;
   bool _isSearchHideShow = false;
   final int _pageResult = 10;
-  List<MaterialData> listDocument = [];
+  List<ListData> listDocument = [];
   late ScrollController _scrollViewController;
   bool isScrollingDown = false;
   bool _isLastPage = false;
@@ -106,7 +105,7 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
             ),
             titleSpacing: 0,
             centerTitle: false,
-            title: getTitle("Submisssions",),
+            title: getTitle("Submissions",),
             actions: [
               InkWell(
                 onTap: () {
@@ -240,67 +239,60 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
                   ),
                 ),
                 const Gap(12),
-                ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  itemCount: listDocument.length,
-                  physics: BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisExtent: 150, crossAxisSpacing: 10, mainAxisSpacing: 10),
-                      controller: _scrollViewController,
-                      physics: const BouncingScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: listDocument.length,
-                      itemBuilder: (context, indexInner) {
-                        var getSet = listDocument[index].documets?[indexInner] ?? Documets();
-                        return GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () async {
-                            await launchUrl(Uri.parse(getSet.fullPath ?? ""),mode: LaunchMode.externalApplication);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: white,
-                              borderRadius: BorderRadius.circular(8),
-
-                            ),
-                            child: Stack(
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Icon(Icons.file_copy_outlined,size: 28,),
-                                    Gap(18),
-                                    Text("${getSet.file}",style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
-                                  ],
-                                ),
-                                Container(height: 12,),
-                                Positioned(
-                                  bottom: 5,
-                                  right: 5,
-                                  child: GestureDetector(
-                                    behavior: HitTestBehavior.opaque,
-                                    onTap: (){
-                                      showDeleteBottomsheet(getSet);
-                                    },
-                                    child: Image.asset("assets/images/ic_delete.png",
-                                      width: 22, height: 22,
-                                      color: black,
-                                    ),
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisExtent: 150, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                    controller: _scrollViewController,
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: listDocument.length,
+                    itemBuilder: (context, index) {
+                      var getSet = listDocument[index];
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () async {
+                          await launchUrl(Uri.parse(getSet.fullPath ?? ""),mode: LaunchMode.externalApplication);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: white,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Stack(
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(Icons.file_copy_outlined,size: 28,),
+                                  const Gap(18),
+                                  Text("${getSet.file}",style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
+                                ],
+                              ),
+                              Container(height: 12,),
+                              Positioned(
+                                bottom: 5,
+                                right: 5,
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: (){
+                                    showDeleteBottomsheet(getSet);
+                                  },
+                                  child: Image.asset("assets/images/ic_delete.png",
+                                    width: 22, height: 22,
+                                    color: black,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    );
-                  },
+                        ),
+                      );
+                    },
+                  ),
                 )
               ],
             ),
@@ -325,7 +317,7 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
     widget is ResourceMaterialScreen;
   }
 
-  void showDeleteBottomsheet(Documets getSet) {
+  void showDeleteBottomsheet(ListData getSet) {
     final commonViewModel = Provider.of<CommonViewModel>(context,listen: false);
 
     showModalBottomSheet(
@@ -361,14 +353,14 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text("Delete",
+                        const Text("Delete Submission",
                           style: TextStyle(
                               fontSize: 18, color: black,fontWeight: FontWeight.w500),textAlign: TextAlign.left,
                         ),
                         Container(
                           height: 10,
                         ),
-                        const Text("Are you sure you want to delete from app?",
+                        const Text("Are you sure you want to delete submission?",
                             style: TextStyle(
                                 color: black,
                                 fontWeight: FontWeight.normal,
@@ -567,7 +559,7 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
 
     final body = response.body;
     Map<String, dynamic> order = jsonDecode(body);
-    var dataResponse = MaterialDetailResponseModel.fromJson(order);
+    var dataResponse = SubmissionNewResponseModel.fromJson(order);
 
     if (isFirstTime) {
       if (listDocument?.isNotEmpty ?? false) {
@@ -577,10 +569,10 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
 
     if (statusCode == 200) {
 
-      if (dataResponse.data?.isNotEmpty ?? false) {
-        List<MaterialData>? _tempList = [];
-        _tempList = dataResponse.data;
-        listDocument?.addAll(_tempList!);
+      if (dataResponse.list?.isNotEmpty ?? false) {
+        List<ListData>? _tempList = [];
+        _tempList = dataResponse.list;
+        listDocument.addAll(_tempList ?? []);
 
         if (_tempList?.isNotEmpty ?? false) {
           _pageIndex += 1;

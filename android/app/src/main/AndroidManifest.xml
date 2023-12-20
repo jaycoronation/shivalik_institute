@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.coronation.shivalik_institute">
    <application
-        android:label="shivalik_institute"
+        android:label="SIRE"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

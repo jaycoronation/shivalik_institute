@@ -14,31 +14,6 @@ class WebViewContainer extends StatefulWidget {
 class _WebViewContainerState extends State<WebViewContainer> {
   final _key = UniqueKey();
   bool isLoading = false;
-  // late WebViewController controller;
-
-  @override
- /* void initState() {
-    super.initState();
-    print("URL IN Init State ==== ${widget.url}");
-
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (int progress) {
-            // Update loading bar.
-          },
-          onPageStarted: (String url) {},
-          onPageFinished: (String url) {},
-          onWebResourceError: (WebResourceError error) {},
-        ),
-      )
-      ..loadRequest(Uri.parse(widget.url));
-    setState((){
-      isLoading = true;
-    });
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -64,17 +39,6 @@ class _WebViewContainerState extends State<WebViewContainer> {
         titleSpacing: 0,
         backgroundColor: white,
       ),
-      /*body: Stack(
-        children: [
-          WebViewWidget(controller: controller),
-          Visibility(
-              visible: isLoading,
-              child: const Center(
-                  child: CircularProgressIndicator(color: textGrey,)
-              )
-          )
-        ],
-      ),*/
     );
   }
 }

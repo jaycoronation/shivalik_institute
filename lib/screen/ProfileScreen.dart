@@ -788,76 +788,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                                     ),
                                     backgroundColor: MaterialStateProperty.all<Color>(black)
                                 ),
-                                /*onPressed: () async {
-                                  FocusScope.of(context).requestFocus(FocusNode());
 
-                                  print("_courseId PASSING == ${_courseId}");
-
-                                  final url = Uri.parse(MAIN_URL + saveUserDataUrl);
-
-                                  var request = MultipartRequest("POST", url);
-
-                                  print(_courseId);
-                                  Map<String, String> jsonBody = {
-                                    'user_type': "3",
-                                    'batch_id': _batchId,
-                                    'course_id': _courseId,
-                                    'is_active': "1",
-                                    'gender': _genderController.value.text,
-                                    'prefix_name': _prefixController.value.text,
-                                    'first_name': _fNameController.value.text,
-                                    'last_name': _lNameController.value.text,
-                                    'email': _emailController.value.text,
-                                    'contact_no': _contactController.value.text,
-                                    'date_of_birth': userGetSet.dateOfBirth ?? '',
-                                    'highest_education': _educationController.value.text,
-                                    'college_name': userGetSet.collegeName ?? '',
-                                    'designation': _designationController.value.text,
-                                    'paid_fees': _paidController.value.text,
-                                    'pending_fees': _pendingFeesController.value.text,
-                                    'years_of_experience': _experienceController.value.text,
-                                    'id': sessionManager.getUserId() ?? '',
-                                    'age': _ageController.value.text,
-                                    'address': _addressController.value.text,
-                                    'family_background': '',
-                                    'city': _cityId,
-                                    'country': _countryId,
-                                    'state': _stateId,
-                                    'document_submitted': jsonEncode(userGetSet.documentSubmitted),
-                                    'payment_details': (userGetSet.paymentDetails ?? ""),
-                                    'payment_mode': (userGetSet.paymentMode ?? ""),
-                                    'payment_mode_cash': isCashSelected ? "1" : "0",
-                                    'payment_mode_cheque': isChequeSelected ? "1" : "0",
-                                    'payment_mode_netbanking': isNetSelected ? "1" : "0",
-                                    'holding_seat': isHoldSeatSelected ? "1" : "0",
-                                    'enrolled_in_course': isEnrollCourseSelected ? "1" : "0",
-                                    'enrolled_in_course_desc': _enrollController.value.text,
-                                    'holding_seat_desc': _holdSeatController.value.text,
-                                    'payment_mode_netbanking_amount': _netController.value.text,
-                                    'payment_mode_cheque_amount': _chequeController.value.text,
-                                    'payment_mode_cash_amount': _cashController.value.text,
-                                  };
-
-                                  request.fields['profile_pic'] = pickImgPath;
-
-                                  if (pickImgPath != "") {
-                                    request.files.add(await MultipartFile.fromPath('profile_pic', pickImgPath));
-                                  }
-                                  var response = await request.send();
-
-                                  await commonViewModel.saveUserData(jsonBody);
-                                  CommonResponseModel value = commonViewModel.response;
-                                  if (value.success == "1")
-                                  {
-                                    showToast(value.message, context);
-                                    Navigator.pop(context);
-                                    getUserData();
-                                  }
-                                  else
-                                  {
-                                    showToast(value.message, context);
-                                  }
-                                },*/
                                 onPressed: () {
                                   saveData();
                                 },

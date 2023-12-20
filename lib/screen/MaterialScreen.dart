@@ -66,7 +66,6 @@ class _MaterialScreenState extends BaseState<MaterialScreen> {
                             decoration: BoxDecoration(
                               color: white,
                               borderRadius: BorderRadius.circular(8),
-
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -99,7 +98,7 @@ class _MaterialScreenState extends BaseState<MaterialScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                              children: const [
                                 Icon(Icons.folder_copy_outlined,size: 28,),
                                 Gap(12),
                                 Text("Submissions",style: TextStyle(color: black,fontSize: 16,fontWeight: FontWeight.w400),)

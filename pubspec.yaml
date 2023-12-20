@@ -62,8 +62,8 @@ dependencies:
   cached_network_image:
   flutter_calendar_week: ^3.0.2
   chewie: ^1.7.1
-  video_player: ^2.7.2
-
+  video_player:
+  share_plus: ^7.2.1
 
 dev_dependencies:
   flutter_test:

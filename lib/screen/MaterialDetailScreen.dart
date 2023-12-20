@@ -288,7 +288,6 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                                           ],
                                         ),
                                         Container(height: 12,),
-
                                       ],
                                     ),
                                   ),
@@ -340,10 +339,10 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                   Container(height: 8,),
                   Center(
                     child: Container(
-                        height: 2,
-                        width: 40,
-                        color: black,
-                        margin: const EdgeInsets.only(bottom: 12)
+                      height: 2,
+                      width: 40,
+                      color: black,
+                      margin: const EdgeInsets.only(bottom: 12)
                     ),
                   ),
                   Padding(

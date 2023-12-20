@@ -26,7 +26,6 @@ class _VideoProjectWidgetState extends State<VideoProjectWidget> {
   void initState() {
     super.initState();
     videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.url));
-
     _initializeVideoPlayerFuture = videoPlayerController.initialize().then((_) {
       setState(() {});
     });
@@ -78,7 +77,7 @@ class _VideoProjectWidgetState extends State<VideoProjectWidget> {
                       return Center(
                         child: Text(
                           errorMessage,
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.black),
                         ),
                       );
                     },
@@ -89,7 +88,8 @@ class _VideoProjectWidgetState extends State<VideoProjectWidget> {
           }
           else {
             return const Center(
-              child: CircularProgressIndicator(),);
+              child: CircularProgressIndicator(color: black),
+            );
           }
         },
       ),

@@ -147,6 +147,7 @@ class _CaseStudyDetailScreen extends BaseState<CaseStudyDetailScreen> {
                     behavior: HitTestBehavior.opaque,
                     onTap: () async {
                       await launchUrl(Uri.parse(getSet?.brochure ?? ""),mode: LaunchMode.externalApplication);
+                      // startActivity(context, PdfViewer(getSet.brochure ?? "", getSet.title ?? ""));
                     },
                     child: Container(
                       margin: const EdgeInsets.only(left: 18),
@@ -158,7 +159,7 @@ class _CaseStudyDetailScreen extends BaseState<CaseStudyDetailScreen> {
                         ),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child:   const Text("Download Brochure",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w400,color: white),),
+                      child: const Text("Read More",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w400,color: white),),
                     ),
                   ),
                 ),

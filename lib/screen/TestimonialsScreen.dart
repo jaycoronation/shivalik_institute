@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/viewmodels/TestimonialsViewModel.dart';
+import '../common_widget/VideoProjectWidget.dart';
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
 import '../common_widget/loading_more.dart';
@@ -333,7 +334,7 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
                                     {
                                       videoUrl = getSet.mediaList?[i].path ?? '';
                                     }
-                                    // startActivity(context, VideoProjectWidget(url: videoUrl, play: true));
+                                    startActivity(context,  VideoProjectWidget(url: videoUrl, play: true));
                                   },
                                   child: Column(
                                     children: [
@@ -425,8 +426,8 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
                           )
                           : const MyNoDataNewWidget(msg: "No Testimonials Founds", img: ""),
                       Visibility(
-                          visible: _isLoadingMore,
-                          child: const LoadingMoreWidget()
+                        visible: _isLoadingMore,
+                        child: const LoadingMoreWidget()
                       )
                     ],
                   ),
@@ -470,7 +471,6 @@ class _TestimonialsScreenState extends BaseState<TestimonialsScreen> {
       listTestimonials?.addAll(_tempList!);
 
       print(listTestimonials?.length);
-
 
       if (_tempList?.isNotEmpty ?? false) {
         _pageIndex += 1;

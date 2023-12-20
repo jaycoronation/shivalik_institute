@@ -270,7 +270,7 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                  children: [
                                                    Container(
-                                                     padding: EdgeInsets.all(6),
+                                                     padding: const EdgeInsets.all(6),
                                                      decoration: const BoxDecoration(
                                                        color: black,
                                                        borderRadius: BorderRadius.only(

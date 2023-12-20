@@ -304,7 +304,6 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
       });
     }
 
-    /*page: 1, limit: 10, search: "", total: 0, status: 1, filter: "upcoming", filter_by: "upcoming",…}*/
     Map<String, String> jsonBody = {
       'limit': _pageResult.toString(),
       'page': _pageIndex.toString(),

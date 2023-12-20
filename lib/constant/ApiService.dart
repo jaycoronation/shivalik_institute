@@ -24,7 +24,6 @@ import 'package:pretty_http_logger/pretty_http_logger.dart';
 
 
 class ApiService {
-
   static Future<CommonResponseModel> generateOtp(Map<String, String> jsonBody) async {
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
@@ -43,7 +42,6 @@ class ApiService {
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
-
     final response = await http.post(Uri.parse(saveUserDataUrl),body: jsonBody);
     if (response.statusCode == 200) {
       final dynamic data = json.decode(response.body);
@@ -110,7 +108,6 @@ class ApiService {
   }
 
   static Future<StateViewResponseModel> stateList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -124,7 +121,6 @@ class ApiService {
   }
 
   static Future<CityResponseModel> cityList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -138,7 +134,6 @@ class ApiService {
   }
 
   static Future<BatchResponseModel> batchList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -152,7 +147,6 @@ class ApiService {
   }
 
   static Future<UserListResponseModel> userList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -166,7 +160,6 @@ class ApiService {
   }
 
   static Future<UserProfileResponseModel> userDetails(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -185,7 +178,6 @@ class ApiService {
   }
 
   static Future<ModuleResponseModel> moduleList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -199,7 +191,6 @@ class ApiService {
   }
 
   static Future<LecturesResponseModel> lectureList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -213,7 +204,6 @@ class ApiService {
   }
 
   static Future<EventResponseModel> eventList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -227,7 +217,6 @@ class ApiService {
   }
 
   static Future<HolidayResponseModel> holidayList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -241,7 +230,6 @@ class ApiService {
   }
 
   static Future<CaseStudyResponseModel> caseStudyList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -255,7 +243,6 @@ class ApiService {
   }
 
   static Future<ManagementResponseModel> managementList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -269,7 +256,6 @@ class ApiService {
   }
 
   static Future<TestimonialResponseModel> testimonialsList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -283,7 +269,6 @@ class ApiService {
   }
 
   static Future<MaterialDetailResponseModel> documentList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -298,7 +283,6 @@ class ApiService {
 
 
   static Future<MaterialDetailResponseModel> materialList(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -312,7 +296,6 @@ class ApiService {
   }
 
   static Future<CommonResponseModel> saveHolidayAddData(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -327,7 +310,6 @@ class ApiService {
   }
 
   static Future<AddHolidayResponseModel> addHolidayData(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -342,7 +324,6 @@ class ApiService {
   }
 
   static Future<CommonResponseModel> deleteHolidayAddData(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -358,7 +339,6 @@ class ApiService {
 
 
   static Future<CommonResponseModel> deleteResourceData(Map<String, String> jsonBody) async {
-
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -374,8 +354,7 @@ class ApiService {
 
 
   static Future<CommonResponseModel> uploadResourceData(Map<String, String> jsonBody) async {
-
-    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+        HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
 
