@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/model/SubmissionNewResponseModel.dart';
+import 'package:shivalik_institute/utils/pdf_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../common_widget/common_widget.dart';
 import '../constant/api_end_point.dart';
@@ -70,7 +71,6 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
       }
       pagination();
     });
-
   }
 
   void pagination() {
@@ -107,7 +107,7 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
             centerTitle: false,
             title: getTitle("Submissions",),
             actions: [
-              InkWell(
+              /*InkWell(
                 onTap: () {
                   setState(() {
                     _isSearchHideShow = !_isSearchHideShow;
@@ -124,7 +124,7 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
                     color: black,
                   ),
                 ),
-              ),
+              ),*/
               const Gap(12),
             ],
           ),
@@ -252,7 +252,14 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
                       return GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () async {
-                          await launchUrl(Uri.parse(getSet.fullPath ?? ""),mode: LaunchMode.externalApplication);
+                          if (getSet.fileType == "pdf")
+                            {
+                              startActivity(context, PdfViewer(getSet.fullPath ?? ""));
+                            }
+                          else
+                            {
+                              await launchUrl(Uri.parse(getSet.fullPath ?? ""),mode: LaunchMode.externalApplication);
+                            }
                         },
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 12),
@@ -378,7 +385,6 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
                                 child: TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
-                                    // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddHolidayScreen()));
                                   },
                                   style: ButtonStyle(
                                     shape: MaterialStateProperty.all<
@@ -417,6 +423,10 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
                                     left: 12, right: 12, bottom: 30, top: 12),
                                 child: TextButton(
                                   onPressed: () async {
+                                    Navigator.pop(context);
+                                    setState((){
+                                      _isLoading = true;
+                                    });
                                     Map<String, String> jsonBody = {
                                       'doc_id':getSet.id ?? "",
                                     };
@@ -425,11 +435,13 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
                                     if (value.success == "1")
                                     {
                                       showToast(value.message, context);
-                                      Navigator.pop(context);
-                                      getClassesDocumentData();
+                                      getClassesDocumentData(true);
                                     }
                                     else
                                     {
+                                      setState((){
+                                        _isLoading = false;
+                                      });
                                       showToast(value.message, context);
                                     }
                                   },
@@ -483,10 +495,12 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
     final commonViewModel = Provider.of<MultipartApiViewModel>(context,listen: false);
 
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
+      FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom,allowCompression: true,allowedExtensions: ['pdf']);
 
       if (result != null) {
-
+        setState(() {
+          _isLoading = true;
+        });
         File pickedFile = File(result.files.single.path!);
         var request = http.MultipartRequest('POST', Uri.parse(uploadResourceAddUrl));
 
@@ -505,17 +519,18 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
         if (value.success == "1")
         {
           showToast(value.message, context);
-          getClassesDocumentData();
-
+          getClassesDocumentData(true);
         }
         else
         {
           showToast(value.message, context);
+          setState(() {
+            _isLoading = false;
+          });
         }
 
 
       } else {
-        // User canceled the picker
       }
     } on Exception catch (e) {
       print(e);

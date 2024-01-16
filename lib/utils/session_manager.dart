@@ -18,6 +18,7 @@ class SessionManager {
   final String lastName = "last_name";
   final String userType = "user_type";
   final String accessToken = "access_token";
+  final String deviceToken = "deviceToken";
 
 
   //set data into shared preferences...
@@ -29,7 +30,6 @@ class SessionManager {
     await SessionManagerMethods.setString(lastName,apiLastName);
     await SessionManagerMethods.setString(userType,apiuserType);
     await SessionManagerMethods.setString(accessToken,apiaccessToken);
-
   }
 
   bool? checkIsLoggedIn() {
@@ -40,21 +40,28 @@ class SessionManager {
     return SessionManagerMethods.getString(userId);
   }
 
+  Future<void> setUserId(String apiUserId)
+  async {
+    await SessionManagerMethods.setString(userId, apiUserId);
+  }
 
   Future<void> setName(String apiFirstName)
   async {
     await SessionManagerMethods.setString(firstName, apiFirstName);
   }
 
-  Future<void> setUserId(String apiUserId)
-  async {
-    await SessionManagerMethods.setString(userId, apiUserId);
-  }
-
   String? getName() {
     return SessionManagerMethods.getString(firstName);
   }
 
+  Future<void> setDeviceToken(String apiDeviceToken)
+  async {
+    await SessionManagerMethods.setString(deviceToken, apiDeviceToken);
+  }
+
+  String? getDeviceToken() {
+    return SessionManagerMethods.getString(deviceToken);
+  }
 
   Future<void> setLastName(String apiLastName)
   async {

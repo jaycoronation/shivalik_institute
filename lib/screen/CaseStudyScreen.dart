@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
@@ -243,33 +244,57 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
                                 startActivity(context, CaseStudyDetailScreen(listCaseStudy[index]));
                               },
                               child: Container(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: white,
-                                  borderRadius: BorderRadius.circular(8),
-
+                                decoration:  BoxDecoration(
+                                  border: Border.all(color: white, width: 0.5),
+                                  borderRadius:const BorderRadius.all(Radius.circular(8),) ,
+                                  color: grayNew,
                                 ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Image.network(getSet.coverImage ?? "",fit: BoxFit.cover,width: 100,height: 100),
-                                    ),
-                                    Gap(12),
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(getSet.title ?? "",style: const TextStyle(color: black,fontSize: 16,fontWeight: FontWeight.w500),),
-                                        const Gap(6),
-                                        Text("${getSet.tagLine}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-
-                                      ],
-                                    ),
-                                  ],
+                                child: Padding(
+                                  padding: const EdgeInsets.all(0.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                            topRight: Radius.circular(8.0),
+                                            topLeft: Radius.circular(8.0)
+                                        ),
+                                        child: CachedNetworkImage(
+                                            imageUrl: "${getSet.coverImage}&h=500&zc=2",
+                                            fit: BoxFit.cover,
+                                            width : MediaQuery.of(context).size.width,
+                                            height: 200,
+                                            errorWidget: (context, url, error) => Container(
+                                              color: grayNew,
+                                              width : MediaQuery.of(context).size.width,
+                                              height: 200,
+                                            ),
+                                            placeholder: (context, url) => Container(
+                                              color: grayNew,
+                                              width : MediaQuery.of(context).size.width,
+                                              height: 200,
+                                            )
+                                        ),
+                                      ),
+                                      Container(height: 12,),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 10.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(getSet.title ?? "",
+                                              style: const TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w500),),
+                                            Container(height: 8,),
+                                            Text(getSet.tagLine ?? "",
+                                              style: const TextStyle(fontSize: 14, color: black,fontWeight: FontWeight.w400),),
+                                            Container(height: 12,),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );

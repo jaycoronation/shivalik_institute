@@ -31,6 +31,7 @@ import '../viewmodels/CourseViewModel.dart';
 import '../viewmodels/StateViewModel.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
   BaseState<ProfileScreen> createState() => _ProfileScreenState();
@@ -223,7 +224,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                                                     ? Image.file(file,height: 150,width: 120, fit: BoxFit.cover,)
                                                     : userGetSet.profilePic.toString().isEmpty
                                                     ? Image.asset('assets/images/ic_user_placeholder.png',height: 120,width: 120,)
-                                                    : Image.network(userGetSet.profilePic.toString(),height: 120,width: 120,)
+                                                    : Image.network(userGetSet.profilePic.toString(),height: 120,width: 120,fit: BoxFit.cover,)
                                             ),
                                           ),
                                         ),
@@ -248,41 +249,43 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                             ),
                           ),
                           Container(height: 26,),
-                          Consumer<CourseViewModel>(
-                            builder: (context, value, child) {
-                              return  Stack(
-                                alignment: Alignment.centerRight,
-                                children: [
-                                  TextField(
-                                    onTap: (){
-                                      openCourseBottomSheet(value.response.courseList ?? []);
-                                    },
-                                    readOnly: true,
-                                    cursorColor: black,
-                                    textCapitalization: TextCapitalization.words,
-                                    controller: _courseNameController,
-                                    keyboardType: TextInputType.text,
-                                    style: getTextFiledStyle(),
-                                    decoration: const InputDecoration(
-                                      labelText: 'Course*',
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: value.isLoading,
-                                    child: Container(
-                                      alignment: Alignment.centerRight,
-                                      margin: const EdgeInsets.only(right: 12),
-                                      child: const Padding(
-                                        padding: EdgeInsets.only(top: 10,bottom: 10),
-                                        child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
+                          Visibility(
+                            visible: false,
+                            child: Consumer<CourseViewModel>(
+                              builder: (context, value, child) {
+                                return  Stack(
+                                  alignment: Alignment.centerRight,
+                                  children: [
+                                    TextField(
+                                      onTap: (){
+                                        openCourseBottomSheet(value.response.courseList ?? []);
+                                      },
+                                      readOnly: true,
+                                      cursorColor: black,
+                                      textCapitalization: TextCapitalization.words,
+                                      controller: _courseNameController,
+                                      keyboardType: TextInputType.text,
+                                      style: getTextFiledStyle(),
+                                      decoration: const InputDecoration(
+                                        labelText: 'Course*',
                                       ),
                                     ),
-                                  )
-                                ],
-                              );
-                            },
+                                    Visibility(
+                                      visible: value.isLoading,
+                                      child: Container(
+                                        alignment: Alignment.centerRight,
+                                        margin: const EdgeInsets.only(right: 12),
+                                        child: const Padding(
+                                          padding: EdgeInsets.only(top: 10,bottom: 10),
+                                          child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                );
+                              },
+                            ),
                           ),
-                          Container(height: 18,),
                           TextField(
                             onTap: (){
                               openPrefixBottomsheet();
@@ -511,30 +514,34 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                             ),
                           ),
                           Container(height: 18,),
-                          TextField(
-                            readOnly: true,
-                            cursorColor: black,
-                            textCapitalization: TextCapitalization.words,
-                            controller: _pendingFeesController,
-                            keyboardType: TextInputType.number,
-                            style: getTextFiledStyle(),
-                            decoration: const InputDecoration(
-                              labelText: 'Pending Fees.',
+                          Visibility(
+                            visible: false,
+                            child: TextField(
+                              readOnly: true,
+                              cursorColor: black,
+                              textCapitalization: TextCapitalization.words,
+                              controller: _pendingFeesController,
+                              keyboardType: TextInputType.number,
+                              style: getTextFiledStyle(),
+                              decoration: const InputDecoration(
+                                labelText: 'Pending Fees.',
+                              ),
                             ),
-                          ),
-                          Container(height: 18,),
-                          TextField(
-                            readOnly: true,
-                            cursorColor: black,
-                            textCapitalization: TextCapitalization.words,
-                            controller: _paidController,
-                            keyboardType: TextInputType.number,
-                            style: getTextFiledStyle(),
-                            decoration: const InputDecoration(
-                              labelText: 'Paid Fees *',
+                          ), // Pending Fees
+                          Visibility(
+                            visible: false,
+                            child: TextField(
+                              readOnly: true,
+                              cursorColor: black,
+                              textCapitalization: TextCapitalization.words,
+                              controller: _paidController,
+                              keyboardType: TextInputType.number,
+                              style: getTextFiledStyle(),
+                              decoration: const InputDecoration(
+                                labelText: 'Paid Fees *',
+                              ),
                             ),
-                          ),
-                          Container(height: 18,),
+                          ),// Paid Fees
                           TextField(
                             cursorColor: black,
                             textCapitalization: TextCapitalization.words,
@@ -545,43 +552,45 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                               labelText: 'Years of Experience (Real Estate). *',
                             ),
                           ),
-                          Container(height: 18,),
-                          Consumer<BatchViewModel>(
-                            builder: (context, value, child) {
-                              return Stack(
-                                alignment: Alignment.centerRight,
-                                children: [
-                                  TextField(
-                                    onTap: (){
-                                      // openBatchBottomSheet(value.response.batchList ?? []);
-                                    },
-                                    readOnly: true,
-                                    cursorColor: black,
-                                    textCapitalization: TextCapitalization.words,
-                                    controller: _batchController,
-                                    keyboardType: TextInputType.text,
-                                    style: getTextFiledStyle(),
-                                    decoration: const InputDecoration(
-                                      labelText: 'Select Batch',
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: value.isLoading,
-                                    child: Container(
-                                      alignment: Alignment.centerRight,
-                                      margin: const EdgeInsets.only(right: 12),
-                                      child: const Padding(
-                                        padding: EdgeInsets.only(top: 10,bottom: 10),
-                                        child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
+                          Visibility(
+                            visible: false,
+                            child: Consumer<BatchViewModel>(
+                              builder: (context, value, child) {
+                                return Stack(
+                                  alignment: Alignment.centerRight,
+                                  children: [
+                                    TextField(
+                                      onTap: (){
+                                        // openBatchBottomSheet(value.response.batchList ?? []);
+                                      },
+                                      readOnly: true,
+                                      cursorColor: black,
+                                      textCapitalization: TextCapitalization.words,
+                                      controller: _batchController,
+                                      keyboardType: TextInputType.text,
+                                      style: getTextFiledStyle(),
+                                      decoration: const InputDecoration(
+                                        labelText: 'Select Batch',
                                       ),
                                     ),
-                                  )
-                                ],
-                              );
-                            },
-                          ),
+                                    Visibility(
+                                      visible: value.isLoading,
+                                      child: Container(
+                                        alignment: Alignment.centerRight,
+                                        margin: const EdgeInsets.only(right: 12),
+                                        child: const Padding(
+                                          padding: EdgeInsets.only(top: 10,bottom: 10),
+                                          child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                );
+                              },
+                            ),
+                          ), // Batch Selection
                           Container(height: 22,),
-                          const Text("Mode Of Payment" ,
+                          /*const Text("Mode Of Payment" ,
                               style: TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w600),textAlign: TextAlign.center
                           ),
                           Container(height: 18,),
@@ -775,9 +784,9 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                                 ),
                               ),
                             ),
-                          ),
+                          ),*/ // Payment Mode
                           Container(
-                            margin: const EdgeInsets.only(top: 30,left: 8, right: 8),
+                            margin: const EdgeInsets.only(top: 18,left: 8, right: 8),
                             width: double.infinity,
                             child: TextButton(
                                 style: ButtonStyle(
@@ -1396,7 +1405,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     );
   }
 
-  void getContryData() {
+  void getCountryData() {
     Provider.of<CountryViewModel>(context,listen: false).countryData();
   }
 
@@ -1484,7 +1493,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     if (userViewModel.response.success == '1')
       {
         setData(userViewModel.response.details ?? Details());
-        getContryData();
+        getCountryData();
         getStateData();
         getCityData();
         getBatchData();
@@ -1492,7 +1501,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       }
     else
       {
-        getContryData();
+        getCountryData();
         getStateData();
         getCityData();
         getBatchData();

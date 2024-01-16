@@ -67,10 +67,10 @@ class _MaterialScreenState extends BaseState<MaterialScreen> {
                               color: white,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Column(
+                            child: const Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
+                              children: [
                                 Icon(Icons.folder_copy_outlined,size: 28,),
                                 Gap(12),
                                 Text("Materials",style: TextStyle(color: black,fontSize: 16,fontWeight: FontWeight.w400),)
@@ -95,10 +95,10 @@ class _MaterialScreenState extends BaseState<MaterialScreen> {
                               borderRadius: BorderRadius.circular(8),
 
                             ),
-                            child: Column(
+                            child: const Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
+                              children: [
                                 Icon(Icons.folder_copy_outlined,size: 28,),
                                 Gap(12),
                                 Text("Submissions",style: TextStyle(color: black,fontSize: 16,fontWeight: FontWeight.w400),)

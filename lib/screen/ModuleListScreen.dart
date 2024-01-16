@@ -66,8 +66,10 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
   void pagination() {
     var maxScroll = _scrollViewController.position.maxScrollExtent - 200;
 
-    if (!_isLastPage && !_isLoadingMore) {
-      if ((_scrollViewController.position.pixels >= maxScroll)) {
+    if (!_isLastPage && !_isLoadingMore)
+    {
+      if ((_scrollViewController.position.pixels >= maxScroll))
+      {
         setState(() {
           print("is loading == ${((!_isLoadingMore))}");
           _isLoadingMore = true;
@@ -252,7 +254,7 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                        return GestureDetector(
                                          behavior: HitTestBehavior.opaque,
                                          onTap: () {
-                                           startActivity(context, ModuleDetailsScreen(getSet));
+                                           //startActivity(context, ModuleDetailsScreen(getSet));
                                          },
                                          child: Container(
                                            margin: const EdgeInsets.only(bottom: 22),
@@ -293,57 +295,49 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                                            bottomLeft: Radius.circular(8.0)
                                                        ),
                                                      ),
-                                                     child: Text(getSet?.status ?? "",
+                                                     child: Text(getSet.status ?? "",
                                                        style: TextStyle(color: getSet.status == "Completed" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w400),
                                                      ),
                                                    ),
                                                  ],
                                                ),
                                                const Gap(12),
-                                               Row(
-                                                 mainAxisAlignment: MainAxisAlignment.start,
-                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                 children: [
-                                                   const Expanded(
-                                                     flex: 1,
-                                                     child: Text("Name ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                   ),
-                                                   Expanded(
-                                                     flex: 2,
-                                                     child: Text(getSet?.moduleName ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                   ),
-                                                 ],
+                                               Padding(
+                                                 padding: const EdgeInsets.only(left: 12,right: 12),
+                                                 child: Row(
+                                                   mainAxisAlignment: MainAxisAlignment.start,
+                                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                                   children: [
+                                                     const Expanded(
+                                                       flex: 1,
+                                                       child: Text("Name ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                     ),
+                                                     Expanded(
+                                                       flex: 2,
+                                                       child: Text(getSet.moduleName ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                     ),
+                                                   ],
+                                                 ),
                                                ),
                                                const Gap(12),
-                                               Row(
-                                                 mainAxisAlignment: MainAxisAlignment.start,
-                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                 children: [
-                                                   const Expanded(
-                                                     flex: 1,
-                                                     child: Text("Duration ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                   ),
-                                                   Expanded(
-                                                     flex: 2,
-                                                     child: Text("${getSet?.duration}hr",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                   ),
-                                                 ],
+                                               Padding(
+                                                 padding: const EdgeInsets.only(left: 12,right: 12),
+                                                 child: Row(
+                                                   mainAxisAlignment: MainAxisAlignment.start,
+                                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                                   children: [
+                                                     const Expanded(
+                                                       flex: 1,
+                                                       child: Text("Duration ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                     ),
+                                                     Expanded(
+                                                       flex: 2,
+                                                       child: Text("${getSet.duration}hr",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                     ),
+                                                   ],
+                                                 ),
                                                ),
-                                               const Gap(12),
-                                               Row(
-                                                 mainAxisAlignment: MainAxisAlignment.start,
-                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                 children: [
-                                                   const Expanded(
-                                                     flex: 1,
-                                                     child: Text("Course ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                   ),
-                                                   Expanded(
-                                                     flex: 2,
-                                                     child: Text(getSet.courseName ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                   ),
-                                                 ],
-                                               ),
+
                                                const Gap(12),
                                              ],
                                            ),
@@ -406,7 +400,7 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
     await moduleViewModel.getModuleList(jsonBody);
 
     if (isFirstTime) {
-      if (listModule?.isNotEmpty ?? false) {
+      if (listModule.isNotEmpty) {
         listModule = [];
       }
     }
@@ -416,14 +410,14 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
           {
             List<ModuleList>? _tempList = [];
             _tempList = moduleViewModel.response.list;
-            listModule?.addAll(_tempList!);
+            listModule.addAll(_tempList!);
 
-            print(listModule?.length);
+            print(listModule.length);
 
 
-            if (_tempList?.isNotEmpty ?? false) {
+            if (_tempList.isNotEmpty) {
               _pageIndex += 1;
-              if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
+              if (_tempList.isEmpty || _tempList.length % _pageResult != 0 ) {
                 _isLastPage = true;
               }
             }
@@ -438,7 +432,7 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                 listModule.add(element);
               }
             });
-            print(listModule?.length);
+            print(listModule.length);
 
 
             if (_tempList?.isNotEmpty ?? false) {
@@ -458,7 +452,7 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                 listModule.add(element);
               }
             });
-            print(listModule?.length);
+            print(listModule.length);
 
 
             if (_tempList?.isNotEmpty ?? false) {
@@ -469,6 +463,8 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
             }
 
           }
+
+        print("IS LAST PAGE === ${_isLastPage}");
 
       }
 

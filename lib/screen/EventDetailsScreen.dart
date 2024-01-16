@@ -1,11 +1,21 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:gap/gap.dart';
+import 'package:pretty_http_logger/pretty_http_logger.dart';
+import 'package:provider/provider.dart';
+import 'package:shivalik_institute/common_widget/loading.dart';
+import 'package:shivalik_institute/common_widget/no_data_new.dart';
+import 'package:shivalik_institute/constant/global_context.dart';
 import 'package:shivalik_institute/model/EventResponseModel.dart';
 import '../common_widget/common_widget.dart';
+import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
+import '../viewmodels/EventViewModel.dart';
 
 class EventsDetailsScreen extends StatefulWidget {
   final EventList getSet;
@@ -18,12 +28,19 @@ class EventsDetailsScreen extends StatefulWidget {
 class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
 
   EventList getSet = EventList();
+  bool isLoading = false;
+  bool isNoDataFound = false;
 
   @override
   void initState(){
     super.initState();
 
     getSet = (widget as EventsDetailsScreen).getSet;
+
+    if (NavigationService.notif_id.isNotEmpty)
+      {
+        getEventsList();
+      }
   }
 
   @override
@@ -46,88 +63,139 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
               child: getBackArrow(),
             ),
           ),
-          body: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 12,right: 12,left: 12),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(checkValidString(getSet.title).toString(),style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
-                      const Gap(12),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(22),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                universalDateConverter("yyyy-MM-dd","yyyy-MM-dd", getSet.date.toString()),
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: black,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(12),
-                Stack(
-                  alignment: Alignment.center,
+          body: isLoading
+              ? const LoadingWidget()
+              : isNoDataFound
+              ? const MyNoDataNewWidget(msg: "Event not found", img: '')
+              : SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CachedNetworkImage(
-                      imageUrl: "${getSet.bannerImage}&h=500&zc=2",
-                      fit: BoxFit.cover,
-                      width: MediaQuery.of(context).size.width,
-                      errorWidget: (context, url, error) => Container(
-                        color: grayNew,
-                        width: MediaQuery.of(context).size.width,
-                        height: 280,
+                    Container(
+                      margin: const EdgeInsets.only(top: 12,right: 12,left: 12),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(checkValidString(getSet.title).toString(),style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
+                          const Gap(12),
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(22),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    universalDateConverter("dd-MM-yyyy hh:MM a","dd MMM, yyyy", getSet.date.toString()),
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      color: black,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      placeholder: (context, url) => Container(
-                        color: grayNew,
-                        width: MediaQuery.of(context).size.width,
-                        height: 280 ,
-                      )
+                    ),
+                    const Gap(12),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: "${getSet.bannerImage}&h=500&zc=2",
+                          fit: BoxFit.cover,
+                          width: MediaQuery.of(context).size.width,
+                          errorWidget: (context, url, error) => Container(
+                            color: grayNew,
+                            width: MediaQuery.of(context).size.width,
+                            height: 280,
+                          ),
+                          placeholder: (context, url) => Container(
+                            color: grayNew,
+                            width: MediaQuery.of(context).size.width,
+                            height: 280 ,
+                          )
+                        ),
+                      ],
+                    ),
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(22, 32, 22, 12),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          HtmlWidget(
+                            checkValidString(getSet.description),
+                            textStyle:const TextStyle(fontSize: 16, color: grayDark, fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                Container(
-                  margin: const EdgeInsets.fromLTRB(22, 32, 22, 12),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        checkValidString(getSet.description).replaceAll("<p>&nbsp;</p>", "").toString().replaceAll("<br />", ""),
-                          style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 16),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
         ),
         onWillPop: (){
           Navigator.pop(context);
           return Future.value(true);
         }
     );
+  }
+
+  Future<void> getEventsList() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    Map<String, String> jsonBody = {
+      'filter': "",
+      'filter_by': "",
+      'limit': "999",
+      'page': '1',
+      'search': "",
+      'status': "1",
+      'from_app' : FROM_APP
+    };
+    var eventViewModel = Provider.of<EventViewModel>(context,listen: false);
+    await eventViewModel.getEventsList(jsonBody);
+
+    if (eventViewModel.response.success == "1")
+    {
+      List<EventList>? _tempList = [];
+      _tempList = eventViewModel.response.eventList;
+
+      print("NavigationService ==== ${NavigationService.notif_id}");
+
+      if (_tempList?.isNotEmpty ?? false)
+      {
+        for (var i=0; i < (_tempList?.length ?? 0); i++)
+        {
+          if (_tempList?[i].id == NavigationService.notif_id)
+          {
+            isNoDataFound = false;
+            getSet = _tempList?[i] ?? EventList();
+            break;
+          }
+          else
+            {
+              isNoDataFound = true;
+            }
+        }
+      }
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
 

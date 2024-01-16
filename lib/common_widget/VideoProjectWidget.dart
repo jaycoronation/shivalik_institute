@@ -8,24 +8,27 @@ import '../constant/colors.dart';
 import 'common_widget.dart';
 
 class VideoProjectWidget extends StatefulWidget {
-
   final bool play;
   final String url;
 
-  const VideoProjectWidget({Key? key, required this.url, required this.play}) : super(key: key);
+  const VideoProjectWidget({Key? key, required this.url, required this.play})
+      : super(key: key);
 
   @override
   State<VideoProjectWidget> createState() => _VideoProjectWidgetState();
 }
 
 class _VideoProjectWidgetState extends State<VideoProjectWidget> {
-  late VideoPlayerController videoPlayerController ;
+  late VideoPlayerController videoPlayerController;
+
   late Future<void> _initializeVideoPlayerFuture;
 
   @override
   void initState() {
     super.initState();
-    videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.url));
+    videoPlayerController =
+        VideoPlayerController.networkUrl(Uri.parse(widget.url));
+
     _initializeVideoPlayerFuture = videoPlayerController.initialize().then((_) {
       setState(() {});
     });
@@ -44,7 +47,7 @@ class _VideoProjectWidgetState extends State<VideoProjectWidget> {
         automaticallyImplyLeading: false,
         elevation: 0,
         backgroundColor: appBg,
-        leading:  InkWell(
+        leading: InkWell(
           borderRadius: BorderRadius.circular(52),
           onTap: () {
             Navigator.pop(context);
@@ -70,14 +73,14 @@ class _VideoProjectWidgetState extends State<VideoProjectWidget> {
                   controller: ChewieController(
                     showControls: true,
                     videoPlayerController: videoPlayerController,
-                    aspectRatio: Platform.isIOS ? 14/22 : 12 / 18,
+                    aspectRatio: Platform.isIOS ? 14 / 22 : 12 / 18,
                     looping: true,
                     autoPlay: true,
                     errorBuilder: (context, errorMessage) {
                       return Center(
                         child: Text(
                           errorMessage,
-                          style: const TextStyle(color: Colors.black),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       );
                     },
@@ -85,10 +88,9 @@ class _VideoProjectWidgetState extends State<VideoProjectWidget> {
                 ),
               ),
             );
-          }
-          else {
+          } else {
             return const Center(
-              child: CircularProgressIndicator(color: black),
+              child: CircularProgressIndicator(),
             );
           }
         },

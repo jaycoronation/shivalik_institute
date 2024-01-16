@@ -1,10 +1,16 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/screen/DashboardScreen.dart';
+import 'package:shivalik_institute/screen/EventDetailsScreen.dart';
+import 'package:shivalik_institute/screen/LectureDetailsScreen.dart';
 import 'package:shivalik_institute/screen/LoginWithOtpScreen.dart';
+import 'package:shivalik_institute/screen/MaterialDetailScreen.dart';
 import 'package:shivalik_institute/utils/app_utils.dart';
 import 'package:shivalik_institute/utils/session_manager.dart';
 import 'package:shivalik_institute/utils/session_manager_methods.dart';
@@ -32,11 +38,34 @@ import 'package:shivalik_institute/viewmodels/VerifyOtpViewModel.dart';
 import 'common_widget/common_widget.dart';
 import 'constant/colors.dart';
 import 'constant/global_context.dart';
-
+import 'firebase_options.dart';
+import 'model/EventResponseModel.dart';
+import 'model/LecturesResponseModel.dart';
+import 'model/ModuleResponseModel.dart';
+import 'push_notification/PushNotificationService.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SessionManagerMethods.init();
+  Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await PushNotificationService().setupInteractedMessage();
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+  //FOR NOTIFICATION//
+  if (initialMessage != null)
+    {
+      print("@@@@@@@@ Main Dart @@@@@@@@ ${initialMessage.data}");
+      NavigationService.notif_type = initialMessage.data['operation'];
+      NavigationService.notif_id = initialMessage.data['content_id'];
+    }
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((value) => runApp(
     MultiProvider(
@@ -68,6 +97,17 @@ Future<void> main() async {
 
 }
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+
+  print("@@@@@@@@ Main Dart @@@@@@@@ ${message.data}");
+  NavigationService.notif_type = message.data['operation'];
+  NavigationService.notif_id = message.data['id'];
+
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -89,6 +129,7 @@ class MyApp extends StatelessWidget {
       title: 'Shivalik Institute',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        useMaterial3: false,
           primaryColor: black,
           platform: TargetPlatform.iOS,
           inputDecorationTheme: InputDecorationTheme(
@@ -152,9 +193,78 @@ class _MyHomePageState extends State<MyHomePage> {
     SessionManager sessionManager = SessionManager();
     if (sessionManager.checkIsLoggedIn() ?? false)
     {
-      Timer(const Duration(seconds: 3),(){
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  DashboardScreen()),(route) => false);
-      });
+      if (NavigationService.notif_type.isNotEmpty)
+        {
+          var contentId = NavigationService.notif_type;
+
+          if (contentId == "event_scheduled")
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  EventsDetailsScreen(EventList())),(route) => false);
+            });
+
+          }
+          else if (contentId == "lecture_complete")
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  LectureDetailsScreen(NavigationService.notif_id ?? '')),(route) => false);
+            });
+
+          }
+          else if (contentId == "lecture_reminder")
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  LectureDetailsScreen(NavigationService.notif_id ?? '')),(route) => false);
+            });
+
+          }
+          else if (contentId == "lecture_scheduled")
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  LectureDetailsScreen(NavigationService.notif_id ?? '')),(route) => false);
+            });
+
+          }
+          else if (contentId == "material_uploaded")
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  MaterialDetailScreen(ModuleList(), LectureList())),(route) => false);
+            });
+
+          }
+          else if (contentId == "pedning_fees_reminder")
+          {
+            NavigationService.isForPendingFees = true;
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  const DashboardScreen()),(route) => false);
+            });
+          }
+          else if (contentId == "submission_reminder")
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  const DashboardScreen()),(route) => false);
+            });
+          }
+          else if (contentId == "lecture_cancelled")
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LectureDetailsScreen(NavigationService.notif_id ?? '')),(route) => false);
+            });
+          }
+          else
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  const DashboardScreen()),(route) => false);
+            });
+          }
+        }
+      else
+        {
+          Timer(const Duration(seconds: 3),(){
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  const DashboardScreen()),(route) => false);
+          });
+        }
+
     }
     else
     {

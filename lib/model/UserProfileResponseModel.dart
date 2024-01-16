@@ -188,6 +188,7 @@ class Details {
       String? holdingSeatDesc, 
       String? enrolledInCourseDesc, 
       String? panCard, 
+      String? invoiceFile,
       String? paymentLink,}){
     _id = id;
     _courseId = courseId;
@@ -256,6 +257,7 @@ class Details {
     _holdingSeatDesc = holdingSeatDesc;
     _enrolledInCourseDesc = enrolledInCourseDesc;
     _panCard = panCard;
+    _invoiceFile = invoiceFile;
     _paymentLink = paymentLink;
 }
 
@@ -327,6 +329,7 @@ class Details {
     _holdingSeatDesc = json['holding_seat_desc'];
     _enrolledInCourseDesc = json['enrolled_in_course_desc'];
     _panCard = json['pan_card'];
+    _invoiceFile = json['invoice_file'];
     _paymentLink = json['payment_link'];
   }
   String? _id;
@@ -396,6 +399,7 @@ class Details {
   String? _holdingSeatDesc;
   String? _enrolledInCourseDesc;
   String? _panCard;
+  String? _invoiceFile;
   String? _paymentLink;
 Details copyWith({  String? id,
   String? courseId,
@@ -464,6 +468,7 @@ Details copyWith({  String? id,
   String? holdingSeatDesc,
   String? enrolledInCourseDesc,
   String? panCard,
+  String? invoiceFile,
   String? paymentLink,
 }) => Details(  id: id ?? _id,
   courseId: courseId ?? _courseId,
@@ -532,6 +537,7 @@ Details copyWith({  String? id,
   holdingSeatDesc: holdingSeatDesc ?? _holdingSeatDesc,
   enrolledInCourseDesc: enrolledInCourseDesc ?? _enrolledInCourseDesc,
   panCard: panCard ?? _panCard,
+  invoiceFile: invoiceFile ?? _invoiceFile,
   paymentLink: paymentLink ?? _paymentLink,
 );
   String? get id => _id;
@@ -601,6 +607,7 @@ Details copyWith({  String? id,
   String? get holdingSeatDesc => _holdingSeatDesc;
   String? get enrolledInCourseDesc => _enrolledInCourseDesc;
   String? get panCard => _panCard;
+  String? get invoiceFile => _invoiceFile;
   String? get paymentLink => _paymentLink;
 
   Map<String, dynamic> toJson() {
@@ -672,6 +679,7 @@ Details copyWith({  String? id,
     map['holding_seat_desc'] = _holdingSeatDesc;
     map['enrolled_in_course_desc'] = _enrolledInCourseDesc;
     map['pan_card'] = _panCard;
+    map['invoice_file'] = _invoiceFile;
     map['payment_link'] = _paymentLink;
     return map;
   }

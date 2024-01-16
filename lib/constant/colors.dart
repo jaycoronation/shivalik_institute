@@ -27,6 +27,8 @@ const Color lightPinkText = Color(0xffC47D83);
 const Color progress= Color(0xffD9D9D9);
 const Color greenbg= Color(0x4200a814);
 const Color redbg= Color(0x42FF0000);
+const Color brandColor= Color(0xFFe31e24);
+const Color lightgrey = Color(0xfff3f2f2);
 
 
 

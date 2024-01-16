@@ -7,6 +7,7 @@ import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/model/ModuleResponseModel.dart';
 import 'package:shivalik_institute/model/UserListResponseModel.dart';
+import 'package:shivalik_institute/screen/LectureDetailsScreen.dart';
 import 'package:shivalik_institute/viewmodels/LectureViewModel.dart';
 import 'package:shivalik_institute/viewmodels/UserListViewModel.dart';
 import '../common_widget/common_widget.dart';
@@ -77,10 +78,12 @@ class _LectureScreenState extends BaseState<LectureScreen> {
   }
 
   void pagination() {
-    var maxScroll = _scrollViewController.position.maxScrollExtent - 200;
+    var maxScroll = _scrollViewController.position.maxScrollExtent - 50;
 
-    if (!_isLastPage && !_isLoadingMore) {
-      if ((_scrollViewController.position.pixels >= maxScroll)) {
+    if (!_isLastPage && !_isLoadingMore)
+    {
+      if ((_scrollViewController.position.pixels >= maxScroll))
+      {
         setState(() {
           _isLoadingMore = true;
           getLectureList(false);
@@ -172,7 +175,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                   showFacultyBottomSheet();
                                 },
                                 child: Container(
-                                  margin: const EdgeInsets.only(top: 10, bottom: 5, left: 15),
+                                  margin: const EdgeInsets.only(bottom: 5),
                                   decoration: BoxDecoration(
                                     border: Border.all(color: black),
                                     borderRadius: BorderRadius.circular(6),
@@ -194,7 +197,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                               Visibility(
                                 visible: fromDateApi.isNotEmpty,
                                 child: Container(
-                                  margin: const EdgeInsets.only(top: 10, bottom: 5, left: 15),
+                                  margin: const EdgeInsets.only(bottom: 5,left: 12),
                                   decoration: BoxDecoration(
                                     border: Border.all(color: black),
                                     borderRadius: BorderRadius.circular(6),
@@ -207,7 +210,19 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                           style: const TextStyle(fontSize: 16, color: black, fontWeight: FontWeight.w600),
                                         ),
                                         const Gap(5),
-                                        Image.asset('assets/images/ic_close.png', width: 18, height: 18, color: black,),
+                                        GestureDetector(
+                                          behavior: HitTestBehavior.opaque,
+                                            onTap: () {
+                                            setState(() {
+                                              fromDateApi = '';
+                                              toDateApi = '';
+                                              fromDateDisplay = '';
+                                              toDateDisplay = '';
+                                            });
+                                            getLectureList(true);
+                                            },
+                                            child: Image.asset('assets/images/ic_close.png', width: 18, height: 18, color: black,)
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -222,7 +237,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                             alignment: Alignment.centerRight,
                             children: [
                               Container(
-                                margin: const EdgeInsets.only(top: 12,bottom: 12),
+                                margin: const EdgeInsets.only(bottom: 12),
                                 height: 50,
                                 child: TextField(
                                   cursorColor: black,
@@ -327,98 +342,121 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                             itemCount: listLecture.length ?? 0,
                             itemBuilder: (context, index) {
                               var getSet = listLecture[index];
-                              return Container(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: white,
-                                  borderRadius: BorderRadius.circular(8),
-
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const Expanded(
-                                          flex: 1,
-                                          child: Text("No ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                              return GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () {
+                                  startActivity(context, LectureDetailsScreen(getSet.id ?? ''));
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: white,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Expanded(
+                                            flex: 1,
+                                            child: Text("No ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                          ),
+                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text(getSet.classNoFormat ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                          ),
+                                        ],
+                                      ),
+                                      const Gap(12),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Expanded(
+                                            flex: 1,
+                                            child: Text("Date",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                          ),
+                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text("${getSet.date}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                          ),
+                                        ],
+                                      ),
+                                      const Gap(12),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Expanded(
+                                            flex: 1,
+                                            child: Text("Time",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                          ),
+                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text("${getSet.startTime} - ${getSet.endTime}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                          ),
+                                        ],
+                                      ),
+                                      const Gap(12),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Expanded(
+                                            flex: 1,
+                                            child: Text("Module ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                          ),
+                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text(getSet.moduleDetails?.name ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                          ),
+                                        ],
+                                      ),
+                                      const Gap(12),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Expanded(
+                                            flex: 1,
+                                            child: Text("Faculty ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                          ),
+                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text(getSet.session2FacultyName?.isNotEmpty ?? false ? "${getSet.session1FacultyName},${getSet.session2FacultyName}" : getSet.session1FacultyName ?? '',style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                          ),
+                                        ],
+                                      ),
+                                      Visibility(
+                                        visible: false,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Expanded(
+                                              flex: 1,
+                                              child: Text("Status ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                            ),
+                                            const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(getSet.isActive == "1" ? "Active" : "InActive",style: TextStyle(color: getSet.isActive == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w600),),
+                                            ),
+                                          ],
                                         ),
-                                        const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text(getSet?.classNoFormat ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
-                                        ),
-                                      ],
-                                    ),
-                                    const Gap(12),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const Expanded(
-                                          flex: 1,
-                                          child: Text("Date & Time ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                        ),
-                                        const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text("${getSet?.date} ${getSet.startTime} - ${getSet.endTime}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
-                                        ),
-                                      ],
-                                    ),
-                                    const Gap(12),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const Expanded(
-                                          flex: 1,
-                                          child: Text("Module ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                        ),
-                                        const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text(getSet.moduleDetails?.name ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
-                                        ),
-                                      ],
-                                    ),
-                                    const Gap(12),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const Expanded(
-                                          flex: 1,
-                                          child: Text("Faculty ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                        ),
-                                        const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text("${getSet.session1FacultyName} ${getSet.session2FacultyName}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
-                                        ),
-                                      ],
-                                    ),
-                                    const Gap(12),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const Expanded(
-                                          flex: 1,
-                                          child: Text("Status ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                        ),
-                                        const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text(getSet.isActive == "1" ? "Active" : "InActive",style: TextStyle(color: getSet.isActive == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w600),),
-                                        ),
-                                      ],
-                                    )
-                                  ],
+                                      )
+                                    ],
+                                  ),
                                 ),
                               );
                             },
@@ -474,21 +512,52 @@ class _LectureScreenState extends BaseState<LectureScreen> {
 
     if (moduleViewModel.response.success == "1")
       {
-        List<LectureList>? _tempList = [];
-        _tempList = moduleViewModel.response.lectureList;
-        listLecture?.addAll(_tempList!);
-
-        print(listLecture?.length);
-
-        if (_tempList?.isNotEmpty ?? false) {
-          _pageIndex += 1;
-          if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
-            _isLastPage = true;
+        if (isFirstTime)
+          {
+            setState(() {
+              listLecture = [];
+            });
           }
-        }
 
-        // listLecture = moduleViewModel.response.lectureList ?? [];
+        if (moduleViewModel.response.lectureList?.isNotEmpty ?? false)
+          {
+            setState(() {
+              List<LectureList>? _tempList = [];
+              _tempList = moduleViewModel.response.lectureList;
+              listLecture.addAll(_tempList!);
+
+              print(listLecture.length);
+
+              if (_tempList.isNotEmpty)
+              {
+                _pageIndex += 1;
+                if (_tempList.isEmpty || _tempList.length % _pageResult != 0 )
+                {
+                  _isLastPage = true;
+                }
+              }
+            });
+
+            print("_isLastPage === $_isLastPage");
+
+          }
+        else
+          {
+            setState(() {
+              listLecture = [];
+            });
+          }
       }
+    else
+      {
+        setState(() {
+          listLecture = [];
+        });
+      }
+
+    setState(() {
+      _isLoadingMore = false;
+    });
 
   }
 
@@ -554,12 +623,15 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                 selectedDateFilter = getSet;
                               });
 
-                              if (selectedDateFilter == "All") {
+                              if (selectedDateFilter == "All")
+                              {
                                 fromDateApi = "";
                                 toDateApi = "";
                                 getLectureList(true);
                                 Navigator.pop(context);
-                              } else if (selectedDateFilter == "Today") {
+                              }
+                              else if (selectedDateFilter == "Today")
+                              {
                                 var now = DateTime.now();
                                 var formatter = DateFormat('yyyy-MM-dd');
                                 String formattedDate = formatter.format(now);
@@ -574,7 +646,9 @@ class _LectureScreenState extends BaseState<LectureScreen> {
 
                                 getLectureList(true);
                                 Navigator.pop(context);
-                              } else if (selectedDateFilter == "Tomorrow") {
+                              }
+                              else if (selectedDateFilter == "Tomorrow")
+                              {
                                 var now = DateTime.now().add(const Duration(days: 1));
                                 var formatter = DateFormat('yyyy-MM-dd');
                                 String formattedDate = formatter.format(now);
@@ -589,7 +663,9 @@ class _LectureScreenState extends BaseState<LectureScreen> {
 
                                 getLectureList(true);
                                 Navigator.pop(context);
-                              } else if (selectedDateFilter == "Yesterday") {
+                              }
+                              else if (selectedDateFilter == "Yesterday")
+                              {
                                 var now = DateTime.now().subtract(const Duration(days: 1));
                                 var formatter = DateFormat('yyyy-MM-dd');
                                 String formattedDate = formatter.format(now);
@@ -604,7 +680,9 @@ class _LectureScreenState extends BaseState<LectureScreen> {
 
                                 getLectureList(true);
                                 Navigator.pop(context);
-                              } else if (selectedDateFilter == "Last 7 Days") {
+                              }
+                              else if (selectedDateFilter == "Last 7 Days")
+                              {
                                 var now = DateTime.now().subtract(const Duration(days: 6));
                                 var formatter = DateFormat('yyyy-MM-dd');
                                 String formattedDate = formatter.format(now);
@@ -622,7 +700,9 @@ class _LectureScreenState extends BaseState<LectureScreen> {
 
                                 getLectureList(true);
                                 Navigator.pop(context);
-                              } else if (selectedDateFilter == "Last 30 Days") {
+                              }
+                              else if (selectedDateFilter == "Last 30 Days")
+                              {
                                 var now = DateTime.now().subtract(const Duration(days: 30));
                                 var formatter = DateFormat('yyyy-MM-dd');
                                 String formattedDate = formatter.format(now);
@@ -640,7 +720,9 @@ class _LectureScreenState extends BaseState<LectureScreen> {
 
                                 getLectureList(true);
                                 Navigator.pop(context);
-                              } else if (selectedDateFilter == "This Month") {
+                              }
+                              else if (selectedDateFilter == "This Month")
+                              {
                                 var now = DateTime.now();
                                 var formatter = DateFormat('yyyy-MM');
                                 String formattedDate = "${formatter.format(now)}-01";
@@ -658,7 +740,9 @@ class _LectureScreenState extends BaseState<LectureScreen> {
 
                                 getLectureList(true);
                                 Navigator.pop(context);
-                              } else if (selectedDateFilter == "Last Month") {
+                              }
+                              else if (selectedDateFilter == "Last Month")
+                              {
                                 var formatterToday = DateFormat('yyyy-MM-dd');
                                 final now = DateTime.now();
                                 var firstDayOfMonth = DateTime(now.year, now.month, 1);
@@ -680,7 +764,9 @@ class _LectureScreenState extends BaseState<LectureScreen> {
 
                                 getLectureList(true);
                                 Navigator.pop(context);
-                              } else if (selectedDateFilter == "Custom range") {
+                              }
+                              else if (selectedDateFilter == "Custom range")
+                              {
                                 Navigator.pop(context);
 
                                 DateTimeRange? result = await showDateRangePicker(
@@ -728,6 +814,27 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                   Navigator.pop(context);
                                 }
                               }
+                              else if (selectedDateFilter == "Next 7 Days")
+                              {
+                                var now = DateTime.now().add(const Duration(days: 6));
+                                var formatter = DateFormat('yyyy-MM-dd');
+                                String formattedDate = formatter.format(now);
+                                var todayDate = DateTime.now();
+                                var formatterToday = DateFormat('yyyy-MM-dd');
+                                String formattedDateToday = formatterToday.format(todayDate);
+                                fromDateApi = formattedDate;
+                                toDateApi = formattedDateToday;
+
+                                String startDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
+                                String endDateFormatDisplay = DateFormat('dd MMM yyyy').format(todayDate);
+
+                                fromDateDisplay = startDateFormatDisplay;
+                                toDateDisplay = endDateFormatDisplay;
+
+                                getLectureList(true);
+                                Navigator.pop(context);
+                              }
+
 
                               setState(() {});
 

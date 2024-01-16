@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import '../constant/ApiService.dart';
 import '../model/ModuleResponseModel.dart';
 
-
 class ModuleViewModel extends ChangeNotifier {
   late ModuleResponseModel _response;
   bool _isLoading = false;
@@ -17,7 +16,8 @@ class ModuleViewModel extends ChangeNotifier {
     try {
       _response = await ApiService.moduleList(jsonBody);
     } catch (error) {
-      // Handle error, e.g., show an error message to the user
+      print("Error === $error");
+      // Handle error, e.gx., show an error message to the user
     } finally {
       _isLoading = false;
       notifyListeners();

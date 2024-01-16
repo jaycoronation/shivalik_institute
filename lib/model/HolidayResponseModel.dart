@@ -77,7 +77,8 @@ class HolidayList {
       String? title, 
       String? description, 
       String? holidayDate, 
-      String? status, 
+      String? toDate,
+      String? status,
       String? createdAt, 
       String? updatedAt, 
       String? deletedAt,}){
@@ -85,6 +86,7 @@ class HolidayList {
     _title = title;
     _description = description;
     _holidayDate = holidayDate;
+    _toDate = toDate;
     _status = status;
     _createdAt = createdAt;
     _updatedAt = updatedAt;
@@ -96,6 +98,7 @@ class HolidayList {
     _title = json['title'];
     _description = json['description'];
     _holidayDate = json['holiday_date'];
+    _toDate = json['to_date'];
     _status = json['status'];
     _createdAt = json['created_at'];
     _updatedAt = json['updated_at'];
@@ -105,6 +108,7 @@ class HolidayList {
   String? _title;
   String? _description;
   String? _holidayDate;
+  String? _toDate;
   String? _status;
   String? _createdAt;
   String? _updatedAt;
@@ -113,6 +117,7 @@ HolidayList copyWith({  String? id,
   String? title,
   String? description,
   String? holidayDate,
+  String? toDate,
   String? status,
   String? createdAt,
   String? updatedAt,
@@ -121,6 +126,7 @@ HolidayList copyWith({  String? id,
   title: title ?? _title,
   description: description ?? _description,
   holidayDate: holidayDate ?? _holidayDate,
+  toDate: toDate ?? _toDate,
   status: status ?? _status,
   createdAt: createdAt ?? _createdAt,
   updatedAt: updatedAt ?? _updatedAt,
@@ -130,6 +136,7 @@ HolidayList copyWith({  String? id,
   String? get title => _title;
   String? get description => _description;
   String? get holidayDate => _holidayDate;
+  String? get toDate => _toDate;
   String? get status => _status;
   String? get createdAt => _createdAt;
   String? get updatedAt => _updatedAt;
@@ -141,6 +148,7 @@ HolidayList copyWith({  String? id,
     map['title'] = _title;
     map['description'] = _description;
     map['holiday_date'] = _holidayDate;
+    map['to_date'] = _toDate;
     map['status'] = _status;
     map['created_at'] = _createdAt;
     map['updated_at'] = _updatedAt;

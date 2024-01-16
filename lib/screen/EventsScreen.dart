@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
@@ -63,8 +64,10 @@ class _EventsScreenState extends BaseState<EventsScreen> {
   void pagination() {
     var maxScroll = _scrollViewController.position.maxScrollExtent - 200;
 
-    if (!_isLastPage && !_isLoadingMore) {
-      if ((_scrollViewController.position.pixels >= maxScroll)) {
+    if (!_isLastPage && !_isLoadingMore)
+    {
+      if ((_scrollViewController.position.pixels >= maxScroll))
+      {
         setState(() {
           _isLoadingMore = true;
           getEventsList(false);
@@ -92,7 +95,6 @@ class _EventsScreenState extends BaseState<EventsScreen> {
             centerTitle: false,
             title: getTitle("Events",),
             actions: [
-
               InkWell(
                 onTap: () {
                   setState(() {
@@ -292,7 +294,8 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                                                   style: const TextStyle(fontSize: 20, color: black, fontWeight: FontWeight.w500),
                                                 ),
                                                 const Gap(10),
-                                                Text(checkValidString(listEvent[index].description).toString(),
+                                                Text(
+                                                  checkValidString(listEvent[index].description.toString().replaceAll(htmlExp, "").replaceAll("&nbsp;", "").replaceAll("&quot;", "").replaceAll("&#39;", "'").replaceAll("<br />", "").trim()).toString(),
                                                   textAlign: TextAlign.start,
                                                   maxLines: 5,
                                                   style: const TextStyle(fontSize: 16, color: grayDark, fontWeight: FontWeight.w400),
@@ -347,10 +350,10 @@ class _EventsScreenState extends BaseState<EventsScreen> {
 
     Map<String, String> jsonBody = {
       'filter': "",
-      'filter_by': "past",
+      'filter_by': "",
       'limit': _pageResult.toString(),
       'page': _pageIndex.toString(),
-      'search': "",
+      'search': searchParam,
       'status': "1",
       'from_app' : FROM_APP
     };
@@ -359,20 +362,27 @@ class _EventsScreenState extends BaseState<EventsScreen> {
 
     if (eventViewModel.response.success == "1")
     {
+      if (isFirstTime)
+        {
+          listEvent = [];
+        }
       List<EventList>? _tempList = [];
       _tempList = eventViewModel.response.eventList;
-      listEvent?.addAll(_tempList!);
+      listEvent.addAll(_tempList!);
 
-      print(listEvent?.length);
+      print(listEvent.length);
 
-      if (_tempList?.isNotEmpty ?? false) {
+      if (_tempList.isNotEmpty) {
         _pageIndex += 1;
-        if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
+        if (_tempList.isEmpty || _tempList.length % _pageResult != 0 ) {
           _isLastPage = true;
         }
       }
 
     }
+
+    print("Is Last Page === $_isLastPage");
+
     setState(() {
       _isLoadingMore = false;
     });

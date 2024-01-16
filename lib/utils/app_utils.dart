@@ -8,6 +8,7 @@ import '../constant/colors.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as tab;
 
 
+RegExp htmlExp = RegExp(r"<[^>]*>",multiLine: true,caseSensitive: true);
 
 /*show message to user*/
 showSnackBar(String? message,BuildContext? context) {

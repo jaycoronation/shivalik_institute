@@ -82,7 +82,7 @@ class _ModuleListScreenState extends BaseState<ModuleDetailsScreen> {
                     ],
                   ),
                   const Gap(12),
-                  Text(getSet.description ?? '',style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w400,color: black),),
+                  Text((getSet.description ?? '').replaceAll("\r\n", ""),style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: black),),
                   const Gap(12),
                   ExpandedTile(
                     theme: ExpandedTileThemeData(
@@ -275,7 +275,7 @@ class _ModuleListScreenState extends BaseState<ModuleDetailsScreen> {
                                       const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                       Expanded(
                                         flex: 2,
-                                        child: Text(getSet?.classNoFormat ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                        child: Text(getSet.classNoFormat ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
                                       ),
                                     ],
                                   ),
@@ -286,12 +286,29 @@ class _ModuleListScreenState extends BaseState<ModuleDetailsScreen> {
                                     children: [
                                       const Expanded(
                                         flex: 1,
-                                        child: Text("Date & Time ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                        child: Text("Date",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                       ),
                                       const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                       Expanded(
                                         flex: 2,
-                                        child: Text("${getSet?.date} ${getSet.startTime} - ${getSet.endTime}",
+                                        child: Text("${getSet.date}",
+                                          style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                      ),
+                                    ],
+                                  ),
+                                  const Gap(12),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Expanded(
+                                        flex: 1,
+                                        child: Text("Time",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                      ),
+                                      const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text("${getSet.startTime} - ${getSet.endTime}",
                                           style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
                                       ),
                                     ],
@@ -328,7 +345,7 @@ class _ModuleListScreenState extends BaseState<ModuleDetailsScreen> {
                                       ),
                                     ],
                                   ),
-                                  const Gap(12),
+                                  /*const Gap(12),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -343,7 +360,7 @@ class _ModuleListScreenState extends BaseState<ModuleDetailsScreen> {
                                         child: Text(getSet.isActive == "1" ? "Active" : "InActive",style: TextStyle(color: getSet.isActive == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w600),),
                                       ),
                                     ],
-                                  )
+                                  )*/
                                 ],
                               ),
                             );
@@ -401,9 +418,9 @@ class _ModuleListScreenState extends BaseState<ModuleDetailsScreen> {
     {
       List<LectureList>? _tempList = [];
       _tempList = moduleViewModel.response.lectureList;
-      listLecture?.addAll(_tempList!);
+      listLecture.addAll(_tempList!);
 
-      print(listLecture?.length);
+      print(listLecture.length);
 
       if (_tempList?.isNotEmpty ?? false) {
         _pageIndex += 1;

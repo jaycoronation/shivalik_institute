@@ -88,6 +88,10 @@ startActivity(BuildContext context, Widget screen){
   Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
 }
 
+startActivityRemove(BuildContext context, Widget screen){
+  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => screen),(route) => false,);
+}
+
 closeAndStartActivity(BuildContext context, Widget screen){
   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => screen), (Route<dynamic> route) => false);
 }

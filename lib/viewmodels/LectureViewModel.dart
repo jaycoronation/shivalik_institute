@@ -16,6 +16,7 @@ class LectureViewModel extends ChangeNotifier {
     try {
       _response = await ApiService.lectureList(jsonBody);
     } catch (error) {
+      print("Error === $error");
       // Handle error, e.g., show an error message to the user
     } finally {
       _isLoading = false;

@@ -15,7 +15,8 @@ import '../utils/base_class.dart';
 import 'ResourceCenterClassScreen.dart';
 
 class ResourceCenterScreen extends StatefulWidget {
-  const ResourceCenterScreen({super.key});
+  final bool isForSubmission;
+  const ResourceCenterScreen(this.isForSubmission, {super.key});
 
   @override
   BaseState<ResourceCenterScreen> createState() => _ResourceCenterScreenState();
@@ -34,11 +35,14 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
   bool isScrollingDown = false;
   bool _isLastPage = false;
   bool _isLoadingMore = false;
+  bool isForSubmission = false;
 
   @override
   void initState(){
     super.initState();
     getModuleData();
+
+    isForSubmission = (widget as ResourceCenterScreen).isForSubmission;
 
     _scrollViewController = ScrollController();
     _scrollViewController.addListener(() {
@@ -90,7 +94,7 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
             ),
             titleSpacing: 0,
             centerTitle: false,
-            title: getTitle("Resource Center",),
+            title: getTitle(isForSubmission ? "Submission" : "Resource Center",),
             actions: [
               InkWell(
                 onTap: () {
@@ -232,13 +236,7 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
                         ),
                         const Gap(12),
                         Expanded(
-                          child: GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                mainAxisExtent: 130,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 10
-                            ),
+                          child: ListView.builder(
                             controller: _scrollViewController,
                             physics: const BouncingScrollPhysics(),
                             scrollDirection: Axis.vertical,
@@ -249,7 +247,14 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
                               return GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  startActivity(context, ResourceCenterClassScreen(getSet,false));
+                                  if (isForSubmission)
+                                    {
+                                      startActivity(context, ResourceCenterClassScreen(getSet,true));
+                                    }
+                                  else
+                                    {
+                                      startActivity(context, ResourceCenterClassScreen(getSet,false));
+                                    }
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(bottom: 12),
@@ -258,13 +263,13 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
                                     color: white,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: Column(
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                      Icon(Icons.folder_copy_outlined,size: 28,),
-                                      Gap(12),
-                                      Text("${index + 1} ${getSet.moduleName}",style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
+                                      Image.asset(isForSubmission ? "assets/images/ic_submission.png" : "assets/images/ic_resource.png" , height: 22,width: 22),
+                                      const Gap(12),
+                                      Text("${index + 1} ${getSet.moduleName}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
                                     ],
                                   ),
                                 ),
@@ -304,7 +309,7 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
       'search': searchParam,
       'status': "1",
       'total': "0",
-      'student_id': "",
+      'student_id': sessionManager.getUserId() ?? '',
       'from_app' : FROM_APP
     };
     var moduleViewModel = Provider.of<ModuleViewModel>(context,listen: false);
@@ -312,7 +317,34 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
 
     if (moduleViewModel.response.success == '1')
     {
-       listModule = moduleViewModel.response.list ?? [];
+       setState(() {
+         var listModuleTemp = moduleViewModel.response.list ?? [];
+
+
+         if (isForSubmission)
+           {
+             for (var i=0; i < listModuleTemp.length; i++)
+             {
+               if (listModuleTemp[i].hasSubmission == "1")
+               {
+                 listModule.add(listModuleTemp[i]);
+               }
+             }
+           }
+         else
+           {
+             for (var i=0; i < listModuleTemp.length; i++)
+             {
+               if (listModuleTemp[i].allowMaterialAccess == "1")
+               {
+                 listModule.add(listModuleTemp[i]);
+               }
+             }
+           }
+
+         print("listModule ==== ${listModule.length}");
+       });
+
     }
 
   }

@@ -122,7 +122,9 @@ class LectureList {
       List<dynamic>? classMaterial, 
       List<dynamic>? classWorksheet, 
       String? classNo, 
-      String? classNoFormat, 
+      String? allowMaterialAccess,
+      String? allowUploadSubmissions,
+      String? classNoFormat,
       String? session1Faculty, 
       String? session1Topic, 
       String? session1LectureType, 
@@ -159,6 +161,8 @@ class LectureList {
     _classMaterial = classMaterial;
     _classWorksheet = classWorksheet;
     _classNo = classNo;
+    _allowMaterialAccess = allowMaterialAccess;
+    _allowUploadSubmissions = allowUploadSubmissions;
     _classNoFormat = classNoFormat;
     _session1Faculty = session1Faculty;
     _session1Topic = session1Topic;
@@ -209,6 +213,8 @@ class LectureList {
       });
     }
     _classNo = json['class_no'];
+    _allowMaterialAccess = json['allow_material_access'];
+    _allowUploadSubmissions = json['allow_upload_submissions'];
     _classNoFormat = json['class_no_format'];
     _session1Faculty = json['session1_faculty'];
     _session1Topic = json['session1_topic'];
@@ -247,6 +253,8 @@ class LectureList {
   List<dynamic>? _classMaterial;
   List<dynamic>? _classWorksheet;
   String? _classNo;
+  String? _allowMaterialAccess;
+  String? _allowUploadSubmissions;
   String? _classNoFormat;
   String? _session1Faculty;
   String? _session1Topic;
@@ -284,6 +292,8 @@ LectureList copyWith({  String? id,
   List<dynamic>? classMaterial,
   List<dynamic>? classWorksheet,
   String? classNo,
+  String? allowMaterialAccess,
+  String? allowUploadSubmissions,
   String? classNoFormat,
   String? session1Faculty,
   String? session1Topic,
@@ -321,6 +331,8 @@ LectureList copyWith({  String? id,
   classMaterial: classMaterial ?? _classMaterial,
   classWorksheet: classWorksheet ?? _classWorksheet,
   classNo: classNo ?? _classNo,
+  allowMaterialAccess: allowMaterialAccess ?? _allowMaterialAccess,
+  allowUploadSubmissions: allowUploadSubmissions ?? _allowUploadSubmissions,
   classNoFormat: classNoFormat ?? _classNoFormat,
   session1Faculty: session1Faculty ?? _session1Faculty,
   session1Topic: session1Topic ?? _session1Topic,
@@ -359,6 +371,8 @@ LectureList copyWith({  String? id,
   List<dynamic>? get classMaterial => _classMaterial;
   List<dynamic>? get classWorksheet => _classWorksheet;
   String? get classNo => _classNo;
+  String? get allowMaterialAccess => _allowMaterialAccess;
+  String? get allowUploadSubmissions => _allowUploadSubmissions;
   String? get classNoFormat => _classNoFormat;
   String? get session1Faculty => _session1Faculty;
   String? get session1Topic => _session1Topic;
@@ -407,6 +421,8 @@ LectureList copyWith({  String? id,
       map['class_worksheet'] = _classWorksheet?.map((v) => v.toJson()).toList();
     }
     map['class_no'] = _classNo;
+    map['allow_material_access'] = _allowMaterialAccess;
+    map['allow_upload_submissions'] = _allowUploadSubmissions;
     map['class_no_format'] = _classNoFormat;
     map['session1_faculty'] = _session1Faculty;
     map['session1_topic'] = _session1Topic;

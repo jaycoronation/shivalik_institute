@@ -90,6 +90,8 @@ class ModuleList {
       String? updatedAt, 
       String? deletedAt, 
       String? status,
+    String? hasSubmission,
+    String? allowMaterialAccess,
     List<Topics>? topics,
     List<Activities>? activities,
       num? isComplete,}){
@@ -104,6 +106,8 @@ class ModuleList {
     _updatedAt = updatedAt;
     _deletedAt = deletedAt;
     _status = status;
+    _hasSubmission = hasSubmission;
+    _allowMaterialAccess = allowMaterialAccess;
     _topics = topics;
     _activities = activities;
     _isComplete = isComplete;
@@ -121,6 +125,8 @@ class ModuleList {
     _updatedAt = json['updated_at'];
     _deletedAt = json['deleted_at'];
     _status = json['status'];
+    _hasSubmission = json['has_submission'];
+    _allowMaterialAccess = json['allow_material_access'];
     if (json['topics'] != null) {
       _topics = [];
       json['topics'].forEach((v) {
@@ -146,6 +152,8 @@ class ModuleList {
   String? _updatedAt;
   String? _deletedAt;
   String? _status;
+  String? _hasSubmission;
+  String? _allowMaterialAccess;
   List<Topics>? _topics;
   List<Activities>? _activities;
   num? _isComplete;
@@ -160,6 +168,8 @@ ModuleList copyWith({  String? id,
   String? updatedAt,
   String? deletedAt,
   String? status,
+  String? hasSubmission,
+  String? allowMaterialAccess,
   List<Topics>? topics,
   List<Activities>? activities,
   num? isComplete,
@@ -174,6 +184,8 @@ ModuleList copyWith({  String? id,
   updatedAt: updatedAt ?? _updatedAt,
   deletedAt: deletedAt ?? _deletedAt,
   status: status ?? _status,
+  hasSubmission: hasSubmission ?? _hasSubmission,
+  allowMaterialAccess: allowMaterialAccess ?? _allowMaterialAccess,
   topics: topics ?? _topics,
   activities: activities ?? _activities,
   isComplete: isComplete ?? _isComplete,
@@ -189,6 +201,8 @@ ModuleList copyWith({  String? id,
   String? get updatedAt => _updatedAt;
   String? get deletedAt => _deletedAt;
   String? get status => _status;
+  String? get hasSubmission => _hasSubmission;
+  String? get allowMaterialAccess => _allowMaterialAccess;
   List<Topics>? get topics => _topics;
   List<Activities>? get activities => _activities;
   num? get isComplete => _isComplete;
@@ -205,6 +219,8 @@ ModuleList copyWith({  String? id,
     map['created_at'] = _createdAt;
     map['updated_at'] = _updatedAt;
     map['deleted_at'] = _deletedAt;
+    map['has_submission'] = _hasSubmission;
+    map['allow_material_access'] = _allowMaterialAccess;
     map['status'] = _status;
     if (_topics != null) {
       map['topics'] = _topics?.map((v) => v.toJson()).toList();

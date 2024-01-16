@@ -18,8 +18,6 @@ import '../model/CommonResponseModel.dart';
 import '../utils/base_class.dart';
 import '../viewmodels/CommonViewModel.dart';
 import 'AddHolidayScreen.dart';
-import '../viewmodels/CommonViewModel.dart';
-
 
 class HolidayScreen extends StatefulWidget {
   const HolidayScreen({super.key});
@@ -48,39 +46,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
   void initState(){
     super.initState();
     getHolidayList(true);
-
-    _scrollViewController = ScrollController();
-    _scrollViewController.addListener(() {
-      if (_scrollViewController.position.userScrollDirection == ScrollDirection.reverse) {
-        if (!isScrollingDown) {
-          isScrollingDown = true;
-          //setState(() {});
-        }
-      }
-      if (_scrollViewController.position.userScrollDirection == ScrollDirection.forward) {
-        if (isScrollingDown) {
-          isScrollingDown = false;
-          //setState(() {});
-        }
-      }
-      pagination();
-    });
-
   }
-
-  void pagination() {
-    var maxScroll = _scrollViewController.position.maxScrollExtent - 200;
-
-    if (!_isLastPage && !_isLoadingMore) {
-      if ((_scrollViewController.position.pixels >= maxScroll)) {
-        setState(() {
-          _isLoadingMore = true;
-          getHolidayList(false);
-        });
-      }
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +210,6 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                               removeTop: true,
                               removeBottom: true,
                               child: ListView.builder(
-                                controller: _scrollViewController,
                                 physics: const BouncingScrollPhysics(),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
@@ -274,10 +239,10 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                                             scrollDirection: Axis.vertical,
                                             shrinkWrap: true,
                                             physics: const NeverScrollableScrollPhysics(),
-                                            itemCount: separatedHolidays[year]!.length,
+                                            itemCount: separatedHolidays[year]?.length,
                                             itemBuilder: (context, monthIndex) {
-                                              int month = separatedHolidays[year]!.keys.elementAt(monthIndex);
-                                              List<HolidayList> holidays = separatedHolidays[year]![month]!;
+                                              int month = separatedHolidays[year]?.keys.elementAt(monthIndex) ?? 0;
+                                              List<HolidayList> holidays = separatedHolidays[year]?[month] ?? [];
                                               return Column(
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,7 +277,12 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                                     children: [
-                                                                      Text(universalDateConverter("dd-MM-yyyy","dd MMMM",holidays[index].holidayDate ?? ''),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400,),),
+                                                                      Text(
+                                                                        (holidays[index].toDate ?? '').isNotEmpty
+                                                                            ? "${universalDateConverter("dd-MM-yyyy","dd MMMM",holidays[index].toDate ?? '')} - ${universalDateConverter("dd-MM-yyyy","dd MMMM",holidays[index].holidayDate ?? '')}"
+                                                                            : universalDateConverter("dd-MM-yyyy","dd MMMM",holidays[index].holidayDate ?? ''),
+                                                                        style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400,),
+                                                                      ),
                                                                       Text(holidays[index].title ?? '',style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400,),)
                                                                     ],
                                                                   ),
@@ -446,17 +416,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
     );
   }
 
-
   void holiday() {
-  // Assume jsonString is the JSON data you provided
-  String jsonString = '{"success":"1","message":"List Found","total_records":"8","list":[{"id":"3","title":"Diwali","description":"Festival of Lights","holiday_date":"12-11-2023","status":"1","created_at":"1698304510","updated_at":"1699342843","deleted_at":""},{"id":"4","title":"Christmas","description":"Christmas ","holiday_date":"25-12-2023","status":"1","created_at":"1698304935","updated_at":"1699343379","deleted_at":""},{"id":"13","title":"Vasi Uttarayan","description":"Festival of Kites","holiday_date":"15-01-2024","status":"1","created_at":"1699342900","updated_at":"1699342946","deleted_at":""},{"id":"14","title":"Republic Day","description":"Republic Day","holiday_date":"26-01-2024","status":"1","created_at":"1699342989","updated_at":"","deleted_at":""},{"id":"15","title":"Mahashivratri","description":"Festival of Lord Shiva","holiday_date":"08-03-2024","status":"1","created_at":"1699343093","updated_at":"","deleted_at":""},{"id":"16","title":"Dhuleti","description":"Festival of Colors","holiday_date":"25-03-2024","status":"1","created_at":"1699343160","updated_at":"","deleted_at":""},{"id":"17","title":"Independence Day","description":"Independence Day","holiday_date":"15-08-2024","status":"1","created_at":"1699343233","updated_at":"","deleted_at":""},{"id":"18","title":"Rakshabandhan","description":"Rakshabandhan","holiday_date":"19-08-2024","status":"1","created_at":"1699343277","updated_at":"","deleted_at":""}]}';
-
-  // Parse JSON
-  Map<String, dynamic> jsonData = json.decode(jsonString);
-
-  // Extract the list of holidays
-  List<Map<String, dynamic>> holidayData = List<Map<String, dynamic>>.from(jsonData['list']);
-
   // Create a HolidayManager instance
   HolidayManager holidayManager = HolidayManager();
 
@@ -487,7 +447,6 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
   });
   }
 
-
   Future<void> getHolidayList(bool isFirstTime) async {
     if (isFirstTime) {
       setState(() {
@@ -497,7 +456,6 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
       });
     }
 
-    /*page: 1, limit: 10, search: "", total: 0, status: 1, filter: "upcoming", filter_by: "upcoming",…}*/
     Map<String, String> jsonBody = {
       'limit': _pageResult.toString(),
       'page': _pageIndex.toString(),
@@ -508,7 +466,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
     var holidayViewModel = Provider.of<HolidayViewModel>(context,listen: false);
     await holidayViewModel.getHolidayList(jsonBody);
     if (isFirstTime) {
-      if (listHoliday?.isNotEmpty ?? false) {
+      if (listHoliday.isNotEmpty ?? false) {
         listHoliday = [];
       }
     }
@@ -517,14 +475,14 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
     {
       List<HolidayList>? _tempList = [];
       _tempList = holidayViewModel.response.holidayList;
-      listHoliday?.addAll(_tempList!);
+      listHoliday.addAll(_tempList ?? []);
       holiday();
-      print(listHoliday?.length);
+      print(listHoliday.length);
 
 
       if (_tempList?.isNotEmpty ?? false) {
         _pageIndex += 1;
-        if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
+        if (_tempList?.isEmpty ?? false || (_tempList?.length ?? 0) % _pageResult != 0 ) {
           _isLastPage = true;
         }
       }

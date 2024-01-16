@@ -10,6 +10,8 @@ import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
+import 'package:shivalik_institute/constant/global_context.dart';
+import 'package:shivalik_institute/screen/DashboardScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common_widget/common_widget.dart';
@@ -22,6 +24,7 @@ import '../model/MaterialDetailResponseModel.dart';
 import '../model/ModuleResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
+import '../utils/pdf_viewer.dart';
 import '../viewmodels/CommonViewModel.dart';
 import 'package:http/http.dart' as http;
 import '../viewmodels/MaterialDetailViewModel.dart';
@@ -104,7 +107,14 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
           leading:  InkWell(
             borderRadius: BorderRadius.circular(52),
             onTap: () {
-              Navigator.pop(context);
+              if (Navigator.canPop(context))
+                {
+                  Navigator.pop(context);
+                }
+              else
+                {
+                  startActivityRemove(context, const DashboardScreen());
+                }
             },
             child: getBackArrow(),
           ),
@@ -112,7 +122,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
           centerTitle: false,
           title: getTitle("Material",),
           actions: [
-            InkWell(
+            /*InkWell(
               onTap: () {
                 setState(() {
                   _isSearchHideShow = !_isSearchHideShow;
@@ -129,7 +139,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                   color: black,
                 ),
               ),
-            ),
+            ),*/
             const Gap(12),
           ],
         ),
@@ -245,57 +255,64 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                     ),
                     const Gap(12),
                     Expanded(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        itemCount: listDocument.length,
-                        physics: const BouncingScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return MediaQuery.removePadding(
-                            context: context,
-                            removeTop: true,
-                            removeBottom: true,
-                            child: GridView.builder(
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisExtent: 150, crossAxisSpacing: 10, mainAxisSpacing: 10),
-                              controller: _scrollViewController,
-                              physics: const BouncingScrollPhysics(),
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemCount: listDocument.length,
-                              itemBuilder: (context, indexInner) {
-                                // var getSet = listDocument[index].?[indexInner];
-                                return GestureDetector(
-                                  behavior: HitTestBehavior.opaque,
-                                  onTap: () async {
+                      child: MediaQuery.removePadding(
+                        context: context,
+                        removeTop: true,
+                        removeBottom: true,
+                        child: GridView.builder(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisExtent: 130,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10
+                          ),
+                          controller: _scrollViewController,
+                          physics: const BouncingScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: listDocument.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () async {
+                                if (listDocument[index].fileType == "pdf")
+                                  {
+                                    startActivity(context, PdfViewer(listDocument[index].fullPath ?? ""));
+                                  }
+                                else
+                                  {
                                     await launchUrl(Uri.parse(listDocument[index].fullPath ?? ""),mode: LaunchMode.externalApplication);
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(bottom: 12),
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: white,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Stack(
+                                  }
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Icon(Icons.file_copy_outlined,size: 28,),
-                                            const Gap(18),
-                                            Text("${listDocument[index].file.toString()}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
-                                          ],
-                                        ),
-                                        Container(height: 12,),
+                                        const Icon(Icons.file_copy_outlined,size: 28,),
+                                        const Gap(18),
+                                        Text(
+                                          listDocument[index].file.toString(),
+                                          maxLines: 3,
+                                          style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400,overflow: TextOverflow.ellipsis),
+                                        )
                                       ],
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
+                                    Container(height: 12,),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ],
@@ -304,7 +321,14 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
             : const MyNoDataNewWidget(msg: "No Material Found",  img: ''),
       ),
       onWillPop: () {
-        Navigator.pop(context);
+        if (Navigator.canPop(context))
+        {
+          Navigator.pop(context);
+        }
+        else
+        {
+          startActivityRemove(context, const DashboardScreen());
+        }
         return Future.value(true);
       },
     );
@@ -564,7 +588,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
     final url = Uri.parse(materialDetailListUrl);
     Map<String, String> jsonBody = {
       'batch_id': "",
-      'class_id': (widget as MaterialDetailScreen).classGetSet.id ?? '',
+      'class_id': NavigationService.notif_id.isNotEmpty ? NavigationService.notif_id : (widget as MaterialDetailScreen).classGetSet.id ?? '',
       'flag': "",
       'limit': _pageResult.toString(),
       'page': _pageIndex.toString(),
@@ -572,8 +596,8 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
       'module_id': (widget as MaterialDetailScreen).getSet.id ?? '',
       'status': "1",
       'total': "0",
-      'student_id': "",
-      "type":"material",
+      'student_id': sessionManager.getUserId() ?? '',
+      "type": "material",
       'from_app' : FROM_APP
     };
 
@@ -585,7 +609,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
     var dataResponse = MaterialDResponseModel.fromJson(order);
 
     if (isFirstTime) {
-      if (listDocument?.isNotEmpty ?? false) {
+      if (listDocument.isNotEmpty ?? false) {
         listDocument = [];
       }
     }
@@ -595,7 +619,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
       if (dataResponse.list?.isNotEmpty ?? false) {
         List<MaterialDataList>? _tempList = [];
         _tempList = dataResponse.list;
-        listDocument?.addAll(_tempList!);
+        listDocument.addAll(_tempList!);
 
         if (_tempList?.isNotEmpty ?? false) {
           _pageIndex += 1;

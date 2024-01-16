@@ -12,6 +12,7 @@ import '../model/LecturesResponseModel.dart';
 import '../model/ModuleResponseModel.dart';
 import '../utils/base_class.dart';
 import '../viewmodels/LectureViewModel.dart';
+import 'MaterialDetailScreen.dart';
 import 'MaterialScreen.dart';
 import 'ResourceMaterialScreen.dart';
 
@@ -37,10 +38,12 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
   bool isScrollingDown = false;
   bool _isLastPage = false;
   bool _isLoadingMore = false;
+  bool isForSubmission = false;
 
   @override
   void initState(){
     super.initState();
+    isForSubmission = (widget as ResourceCenterClassScreen).isForSubmission;
     getClassesData();
 
     _scrollViewController = ScrollController();
@@ -93,9 +96,9 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
             ),
             titleSpacing: 0,
             centerTitle: false,
-            title: getTitle("Resource Center",),
+            title: getTitle(isForSubmission ? "Submission" : "Resource Center",),
             actions: [
-              InkWell(
+              /*InkWell(
                 onTap: () {
                   setState(() {
                     _isSearchHideShow = !_isSearchHideShow;
@@ -112,7 +115,7 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
                     color: black,
                   ),
                 ),
-              ),
+              ),*/
               const Gap(12),
             ],
           ),
@@ -235,8 +238,7 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
                         ),
                         const Gap(12),
                         Expanded(
-                          child: GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisExtent: 162, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                          child: ListView.builder(
                             controller: _scrollViewController,
                             physics: const BouncingScrollPhysics(),
                             scrollDirection: Axis.vertical,
@@ -244,33 +246,38 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
                             itemCount: listClasses.length ?? 0,
                             itemBuilder: (context, index) {
                               var getSet = listClasses[index];
-                              return GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () {
-                                  if ((widget as ResourceCenterClassScreen).isForSubmission)
+                              return Visibility(
+                                visible: getSet.allowMaterialAccess == "1",
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () {
+
+                                    if ((widget as ResourceCenterClassScreen).isForSubmission)
                                     {
                                       startActivity(context, ResourceMaterialScreen((widget as ResourceCenterClassScreen).getSet,listClasses[index]));
                                     }
-                                  else
+                                    else
                                     {
-                                      startActivity(context, MaterialScreen((widget as ResourceCenterClassScreen).getSet, listClasses[index]));
+                                      startActivity(context, MaterialDetailScreen((widget as ResourceCenterClassScreen).getSet,listClasses[index]));
                                     }
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: white,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Icon(Icons.folder_copy_outlined,size: 28,),
-                                      Gap(12),
-                                      Text("${getSet.session1Topic}, ${getSet.session2Topic}",style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)
-                                    ],
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: white,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Image.asset(isForSubmission ? "assets/images/ic_submission.png" : "assets/images/ic_resource.png" , height: 22,width: 22),
+                                        const Gap(12),
+                                        Expanded(child: Text("${getSet.classNoFormat}, ${getSet.date}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)),
+                                        Image.asset("assets/images/ic_arrow_right.png",width: 22,height: 22,),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
@@ -318,8 +325,33 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
 
     if (moduleViewModel.response.success == '1')
     {
+      var listClassesTemp = moduleViewModel.response.lectureList ?? [];
 
-      listClasses = moduleViewModel.response.lectureList ?? [];
+      print("DATA LENGHT === ${listClassesTemp.length}");
+
+      listClasses = [];
+
+      if ((widget as ResourceCenterClassScreen).isForSubmission)
+        {
+          for (var i=0; i < listClassesTemp.length; i++)
+          {
+            if (listClassesTemp[i].allowUploadSubmissions == "1")
+            {
+              listClasses.add(listClassesTemp[i]);
+            }
+          }
+        }
+      else
+        {
+          for (var i=0; i < listClassesTemp.length; i++)
+          {
+            if (listClassesTemp[i].allowMaterialAccess == "1")
+            {
+              listClasses.add(listClassesTemp[i]);
+            }
+          }
+        }
+
     }
 
   }

@@ -6,6 +6,7 @@ class NavigationService {
   static GlobalKey<NavigatorState> navigatorKeyHome = GlobalKey<NavigatorState>();
   static String notif_type = "";
   static String notif_id = "";
+  static bool isForPendingFees = false;
 
 }
 
