@@ -112,7 +112,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
             title: getTitle("Lecture",),
             actions: [
               Visibility(
-                visible: true,
+                visible: false,
                 child: InkWell(
                   customBorder: const CircleBorder(),
                   onTap: () {
@@ -334,134 +334,119 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                         ),
                         listLecture.isNotEmpty
                             ? Expanded(
-                          child: ListView.builder(
-                            controller: _scrollViewController,
-                            physics: const BouncingScrollPhysics(),
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemCount: listLecture.length ?? 0,
-                            itemBuilder: (context, index) {
-                              var getSet = listLecture[index];
-                              return GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () {
-                                  startActivity(context, LectureDetailsScreen(getSet.id ?? ''));
+                              child: ListView.builder(
+                                controller: _scrollViewController,
+                                physics: const BouncingScrollPhysics(),
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: listLecture.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  var getSet = listLecture[index];
+                                  return GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: () {
+                                      startActivity(context, LectureDetailsScreen(getSet.id ?? ''));
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.only(bottom: 12),
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: white,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset('assets/images/ic_class.png', width: 22, height: 22, color: black,),
+                                              const Gap(8),
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(getSet.classNoFormat ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                              ),
+                                            ],
+                                          ),
+                                          const Gap(12),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset('assets/images/ic_class_date.png', width: 22, height: 22, color: black,),
+                                              const Gap(8),
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text("${getSet.date}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                              ),
+                                            ],
+                                          ),
+                                          const Gap(12),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset('assets/images/ic_class_time.png', width: 22, height: 22, color: black,),
+                                              const Gap(8),
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text("${getSet.startTime} - ${getSet.endTime}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                              ),
+                                            ],
+                                          ),
+                                          const Gap(12),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset('assets/images/ic_module.png', width: 22, height: 22, color: black,),
+                                              const Gap(8),
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(getSet.moduleDetails?.name ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                              ),
+                                            ],
+                                          ),
+                                          const Gap(12),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset('assets/images/ic_faculty.png', width: 22, height: 22, color: black,),
+                                              const Gap(8),
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(getSet.session2FacultyName?.isNotEmpty ?? false ? "${getSet.session1FacultyName},${getSet.session2FacultyName}" : getSet.session1FacultyName ?? '',style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                              ),
+                                            ],
+                                          ),
+                                          Visibility(
+                                            visible: false,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                const Expanded(
+                                                  flex: 1,
+                                                  child: Text("Status ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                ),
+                                                const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(getSet.isActive == "1" ? "Active" : "InActive",style: TextStyle(color: getSet.isActive == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w600),),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  );
                                 },
-                                child: Container(
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: white,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Expanded(
-                                            flex: 1,
-                                            child: Text("No ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(getSet.classNoFormat ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
-                                          ),
-                                        ],
-                                      ),
-                                      const Gap(12),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Expanded(
-                                            flex: 1,
-                                            child: Text("Date",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text("${getSet.date}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
-                                          ),
-                                        ],
-                                      ),
-                                      const Gap(12),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Expanded(
-                                            flex: 1,
-                                            child: Text("Time",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text("${getSet.startTime} - ${getSet.endTime}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
-                                          ),
-                                        ],
-                                      ),
-                                      const Gap(12),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Expanded(
-                                            flex: 1,
-                                            child: Text("Module ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(getSet.moduleDetails?.name ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
-                                          ),
-                                        ],
-                                      ),
-                                      const Gap(12),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Expanded(
-                                            flex: 1,
-                                            child: Text("Faculty ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          ),
-                                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(getSet.session2FacultyName?.isNotEmpty ?? false ? "${getSet.session1FacultyName},${getSet.session2FacultyName}" : getSet.session1FacultyName ?? '',style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
-                                          ),
-                                        ],
-                                      ),
-                                      Visibility(
-                                        visible: false,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Expanded(
-                                              flex: 1,
-                                              child: Text("Status ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                            ),
-                                            const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                                            Expanded(
-                                              flex: 2,
-                                              child: Text(getSet.isActive == "1" ? "Active" : "InActive",style: TextStyle(color: getSet.isActive == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w600),),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        )
+                              ),
+                            )
                             : const MyNoDataNewWidget(msg: "No Lecture Founds", img: ""),
                         Visibility(
                             visible: _isLoadingMore,
@@ -870,8 +855,6 @@ class _LectureScreenState extends BaseState<LectureScreen> {
   }
 
   showFacultyBottomSheet() {
-    print(listFaculty.length);
-
     showModalBottomSheet<void>(
       isScrollControlled: true,
       isDismissible: true,
@@ -929,18 +912,39 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                   Navigator.pop(context);
                                 },
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
                                       alignment: Alignment.center,
                                       padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                                       margin: const EdgeInsets.only(top: 6, right: 12),
-                                      child: Text(
-                                        "${getSet.firstName} ${getSet.lastName}",
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            color: black,
-                                            fontSize: 14
-                                        ),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "${getSet.firstName} ${getSet.lastName}",
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                color: black,
+                                                fontSize: 14,
+                                              overflow: TextOverflow.ellipsis
+                                            ),
+                                          ),
+                                          Visibility(
+                                            visible: getSet.designation?.isNotEmpty ?? false,
+                                            child: Flexible(
+                                              child: Text(
+                                                " (${getSet.designation ?? ''})",
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    color: black,
+                                                    fontSize: 14,
+                                                    overflow: TextOverflow.ellipsis
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     const Divider(

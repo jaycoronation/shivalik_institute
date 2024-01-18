@@ -328,7 +328,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: (){
-                                startActivity(context, PdfViewer(getSet.invoiceFile ?? ''));
+                                startActivity(context, PdfViewer(getSet.invoiceFile ?? '',"0"));
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
@@ -345,7 +345,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                         children:  [
                                           Padding(
                                             padding: EdgeInsets.only(bottom: 8.0,),
-                                            child: Text("Invoice",
+                                            child: Text(
+                                              "Invoice",
                                               style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w400, height: 1.4),
                                             ),
                                           ),
@@ -512,7 +513,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                           ),
                         ],
                       ),
-                    )
+                    ),
+                    Gap(22)
                   ],
                 ),
               );

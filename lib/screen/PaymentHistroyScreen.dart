@@ -133,7 +133,7 @@ class _PaymentHistoryScreenState extends BaseState<PaymentHistoryScreen> {
                                                   const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                                                   Expanded(
                                                     flex: 2,
-                                                    child: Text("${getSet.paymentMode}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                                    child: Text(getSet.paymentMode ?? getSet.transactionPlatform.toString(),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
                                                   ),
                                                 ],
                                               ),
@@ -160,7 +160,7 @@ class _PaymentHistoryScreenState extends BaseState<PaymentHistoryScreen> {
                                             child: GestureDetector(
                                                 behavior: HitTestBehavior.opaque,
                                                 onTap: () {
-                                                  startActivity(context, PdfViewer(getSet.receiptName ?? ''));
+                                                  startActivity(context, PdfViewer(getSet.receiptName ?? '',"0"));
                                                 },
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(6.0),

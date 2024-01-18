@@ -10,6 +10,7 @@ import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/constant/api_end_point.dart';
 import 'package:shivalik_institute/constant/colors.dart';
 import 'package:shivalik_institute/screen/DashboardScreen.dart';
+import 'package:shivalik_institute/utils/pdf_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,6 +36,7 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
   String classId = '';
   Details lectureGetSet = Details();
   late CommonViewModel commonViewModel;
+  List<ClassMaterial> listClassMaterial = [];
 
   @override
   void initState(){
@@ -76,301 +78,201 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
               ? const LoadingWidget()
               : SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Visibility(
-                        visible: lectureGetSet.isCancelled == "1",
-                        child: Column(
-                          children: [
-                            const Gap(12),
-                            Card(
-                              elevation: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.fromLTRB(6, 3, 6, 3),
-                                      decoration: BoxDecoration(color: brandColor,borderRadius: BorderRadius.circular(6)),
-                                      child: const Text("Lecture is Cancelled",style: TextStyle(fontWeight: FontWeight.w500,color: white,fontSize: 16)),
-                                    ),
-                                    const Gap(12),
-                                    Text("${lectureGetSet.cancelReason}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Gap(12),
-                      Card(
-                        elevation: 1,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  elevation: 1,
+                  margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Visibility(
+                          visible: lectureGetSet.isCancelled == "1",
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
+                              const Gap(12),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text("Class No. -", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                  Text("${lectureGetSet.classNo}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text("Dated on - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                  Text("${lectureGetSet.date}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-                                ],
-                              ),
+                                  Container(
+                                    padding: const EdgeInsets.fromLTRB(6, 3, 6, 3),
+                                    decoration: BoxDecoration(color: brandColor,borderRadius: BorderRadius.circular(6)),
+                                    child: const Text("Lecture is Cancelled",style: TextStyle(fontWeight: FontWeight.w500,color: white,fontSize: 16)),
+                                  ),
+                                  const Gap(12),
+                                  Text(lectureGetSet.cancelReason ?? '', style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
 
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Gap(12),
-                      Card(
-                        elevation: 1,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text("Session 1", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("Faculty - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                  Flexible(child: Text("${lectureGetSet.session1FacultyName}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
                                 ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("Topic - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                  Flexible(child: Text("${lectureGetSet.session1Topic}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("Type - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                  Flexible(child: Text("${lectureGetSet.session1LectureType}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
-                                ],
-                              ),
-                              Visibility(
-                                visible: lectureGetSet.session1Starttime?.isNotEmpty ?? false,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("Time - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                    Text(lectureGetSet.session1Endtime?.isEmpty ?? false ? lectureGetSet.session1Starttime ?? '' : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-                                  ],
-                                ),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                      Visibility(
-                        visible: lectureGetSet.session2FacultyName?.isNotEmpty ?? false,
-                        child: Column(
+                        const Gap(12),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Gap(12),
-                            Card(
-                              elevation: 1,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("Session 2", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
-                                    Row(
-                                      children: [
-                                        const Text("Faculty - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                        Text("${lectureGetSet.session2FacultyName}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        const Text("Topic - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                        Text("${lectureGetSet.session2Topic}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        const Text("Type - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                        Text("${lectureGetSet.session2LectureType}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-                                      ],
-                                    ),
-                                    Visibility(
-                                      visible: lectureGetSet.session1Starttime?.isNotEmpty ?? false,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Text("Time - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                          Text(lectureGetSet.session1Endtime?.isEmpty ?? false ? lectureGetSet.session1Starttime ?? '' : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-                                        ],
-                                      ),
-                                    ),
+                            Row(
+                              children: [
+                                const Text("Class No. - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                Text("${lectureGetSet.classNo}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Text("Dated on - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                Text(universalDateConverter("yyy-MM-dd", "dd MMM, yyyy", lectureGetSet.date ?? ''), style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                              ],
+                            ),
 
-                                  ],
-                                ),
+                          ],
+                        ),
+                        const Gap(12),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Session 1", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Faculty - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                Flexible(child: Text("${lectureGetSet.session1FacultyName}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Topic - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                Flexible(child: Text("${lectureGetSet.session1Topic}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Type - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                Flexible(child: Text("${lectureGetSet.session1LectureType}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
+                              ],
+                            ),
+                            Visibility(
+                              visible: lectureGetSet.session1Starttime?.isNotEmpty ?? false,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("Time - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                  Text(lectureGetSet.session1Endtime?.isEmpty ?? false ? lectureGetSet.session1Starttime ?? '' : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      const Gap(12),
-                      Card(
-                        elevation: 1,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        Visibility(
+                          visible: lectureGetSet.session2FacultyName?.isNotEmpty ?? false,
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text("Module", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
-                              Row(
+                              const Gap(12),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text("Name - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                  Text("${lectureGetSet.moduleDetails?.name}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                  const Text("Session 2", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
+                                  Row(
+                                    children: [
+                                      const Text("Faculty - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                      Text("${lectureGetSet.session2FacultyName}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Text("Topic - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                      Text("${lectureGetSet.session2Topic}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Text("Type - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                      Text("${lectureGetSet.session2LectureType}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                    ],
+                                  ),
+                                  Visibility(
+                                    visible: lectureGetSet.session1Starttime?.isNotEmpty ?? false,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text("Time - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                        Text(lectureGetSet.session1Endtime?.isEmpty ?? false ? lectureGetSet.session1Starttime ?? '' : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                      ],
+                                    ),
+                                  ),
+
                                 ],
                               ),
-                              Text("${lectureGetSet.moduleDetails?.description}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-
                             ],
                           ),
                         ),
-                      ),
-                      Visibility(
-                        visible: lectureGetSet.classMaterial?.isNotEmpty ?? false,
-                        child: Column(
+                        const Gap(12),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Gap(12),
-                            Card(
-                              elevation: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("Material", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
-                                    const Gap(12),
-                                    MediaQuery.removePadding(
-                                      context: context,
-                                      removeTop: true,
-                                      removeBottom: true,
-                                      child: ListView.builder(
-                                        physics: const NeverScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemCount: lectureGetSet.classMaterial?.length ?? 0,
-                                          scrollDirection: Axis.vertical,
-                                          itemBuilder: (context, index) {
-                                          var getSet = lectureGetSet.classMaterial?[index] ?? ClassMaterial();
-                                            return GestureDetector(
-                                              behavior: HitTestBehavior.opaque,
-                                              onTap: () async {
-                                                if (await canLaunchUrl(Uri.parse(getSet.fullPath ?? '')))
-                                                  {
-                                                    launchUrl(Uri.parse(getSet.fullPath ?? ''),mode: LaunchMode.externalApplication);
-                                                  }
-                                              },
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        const Icon(Icons.file_present,color: brandColor,size: 28,),
-                                                        const Gap(6),
-                                                        Expanded(child: Text(getSet.file ?? '', style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: black,overflow: TextOverflow.clip),)),
-                                                        RotatedBox(
-                                                            quarterTurns: 3,
-                                                            child: Image.asset('assets/images/ic_arrow_down.png',width: 18,height: 18,)
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const Divider(color: grayNew,height: 0.7,thickness: 0.7,)
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            const Text("Module", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
+                            Row(
+                              children: [
+                                const Text("Name - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                Text("${lectureGetSet.moduleDetails?.name}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                              ],
                             ),
+                            Text("${lectureGetSet.moduleDetails?.description}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+
                           ],
                         ),
-                      ),
-                      Visibility(
-                        visible: lectureGetSet.allowUploadSubmissions == "1",
-                        child: Column(
-                          children: [
-                            const Gap(12),
-                            Card(
-                              elevation: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("Submission", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
-                                    const Gap(12),
-                                    MediaQuery.removePadding(
-                                      context: context,
-                                      removeTop: true,
-                                      removeBottom: true,
-                                      child: ListView.builder(
-                                        physics: const NeverScrollableScrollPhysics(),
+                        Visibility(
+                          visible: listClassMaterial.isNotEmpty,
+                          child: Column(
+                            children: [
+                              const Gap(12),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("Material", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
+                                  const Gap(12),
+                                  MediaQuery.removePadding(
+                                    context: context,
+                                    removeTop: true,
+                                    removeBottom: true,
+                                    child: ListView.builder(
+                                      physics: const NeverScrollableScrollPhysics(),
                                         shrinkWrap: true,
-                                        itemCount: lectureGetSet.classWorksheet?.length ?? 0,
+                                        itemCount: listClassMaterial.length,
                                         scrollDirection: Axis.vertical,
                                         itemBuilder: (context, index) {
-                                          var getSet = lectureGetSet.classWorksheet?[index] ?? ClassWorksheet();
+                                        var getSet = listClassMaterial[index];
                                           return GestureDetector(
                                             behavior: HitTestBehavior.opaque,
                                             onTap: () async {
-                                              if (await canLaunchUrl(Uri.parse(getSet.fullPath ?? '')))
-                                              {
-                                                launchUrl(Uri.parse(getSet.fullPath ?? ''),mode: LaunchMode.externalApplication);
-                                              }
+
+                                              if (getSet.fileType == "pdf")
+                                                {
+                                                  startActivity(context, PdfViewer(getSet.fullPath ?? '', '0'));
+                                                }
+                                              else
+                                                {
+                                                  if (await canLaunchUrl(Uri.parse(getSet.fullPath ?? '')))
+                                                    {
+                                                      launchUrl(Uri.parse(getSet.fullPath ?? ''),mode: LaunchMode.externalApplication);
+                                                    }
+                                                }
                                             },
                                             child: Column(
                                               mainAxisAlignment: MainAxisAlignment.start,
@@ -380,24 +282,15 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                                                   padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
                                                   child: Row(
                                                     mainAxisAlignment: MainAxisAlignment.start,
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
                                                     children: [
                                                       const Icon(Icons.file_present,color: brandColor,size: 28,),
                                                       const Gap(6),
                                                       Expanded(child: Text(getSet.file ?? '', style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: black,overflow: TextOverflow.clip),)),
-                                                      GestureDetector(
-                                                        behavior: HitTestBehavior.opaque,
-                                                        onTap: () {
-                                                          showDeleteBottomSheet(getSet.id ?? '');
-                                                        },
-                                                        child: Container(
-                                                          width: 32,
-                                                          height: 32,
-                                                          padding: const EdgeInsets.all(8.0),
-                                                          child: Image.asset('assets/images/ic_delete.png',width: 18,height: 18,),
-                                                        ),
+                                                      RotatedBox(
+                                                          quarterTurns: 3,
+                                                          child: Image.asset('assets/images/ic_arrow_down.png',width: 18,height: 18,)
                                                       )
-
                                                     ],
                                                   ),
                                                 ),
@@ -406,24 +299,94 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                                             ),
                                           );
                                         },
-                                      ),
                                     ),
-                                    const Gap(18),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width,
-                                      child: getCommonButton("Upload Submission", () {
-                                        pickImageFromGallery();
-                                      }, isLoading),
-                                    ),
-                                    const Gap(18),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                        Visibility(
+                          visible: lectureGetSet.allowUploadSubmissions == "1",
+                          child: Column(
+                            children: [
+                              const Gap(12),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("Submission", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
+                                  const Gap(12),
+                                  MediaQuery.removePadding(
+                                    context: context,
+                                    removeTop: true,
+                                    removeBottom: true,
+                                    child: ListView.builder(
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: lectureGetSet.classWorksheet?.length ?? 0,
+                                      scrollDirection: Axis.vertical,
+                                      itemBuilder: (context, index) {
+                                        var getSet = lectureGetSet.classWorksheet?[index] ?? ClassWorksheet();
+                                        return GestureDetector(
+                                          behavior: HitTestBehavior.opaque,
+                                          onTap: () async {
+                                            if (await canLaunchUrl(Uri.parse(getSet.fullPath ?? '')))
+                                            {
+                                              launchUrl(Uri.parse(getSet.fullPath ?? ''),mode: LaunchMode.externalApplication);
+                                            }
+                                          },
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Icon(Icons.file_present,color: brandColor,size: 28,),
+                                                    const Gap(6),
+                                                    Expanded(child: Text(getSet.file ?? '', style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: black,overflow: TextOverflow.clip),)),
+                                                    GestureDetector(
+                                                      behavior: HitTestBehavior.opaque,
+                                                      onTap: () {
+                                                        showDeleteBottomSheet(getSet.id ?? '');
+                                                      },
+                                                      child: Container(
+                                                        width: 32,
+                                                        height: 32,
+                                                        padding: const EdgeInsets.all(8.0),
+                                                        child: Image.asset('assets/images/ic_delete.png',width: 18,height: 18,),
+                                                      ),
+                                                    )
+
+                                                  ],
+                                                ),
+                                              ),
+                                              const Divider(color: grayNew,height: 0.7,thickness: 0.7,)
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const Gap(18),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: getCommonButton("Upload Submission", () {
+                                      pickImageFromGallery();
+                                    }, isLoading),
+                                  ),
+                                  const Gap(18),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -660,6 +623,19 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
       {
         setState(() {
           lectureGetSet = dataResponse.details ?? Details();
+
+          if (lectureGetSet.classMaterial?.isNotEmpty ?? false)
+            {
+              List<ClassMaterial> listTempMaterial = lectureGetSet.classMaterial ?? [];
+              for (var i=0; i < listTempMaterial.length;i++)
+                {
+                  if (listTempMaterial[i].allowMaterialAccess == "1")
+                    {
+                      listClassMaterial.add(listTempMaterial[i]);
+                    }
+                }
+            }
+
           isLoading = false;
         });
       }

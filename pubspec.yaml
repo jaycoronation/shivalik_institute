@@ -71,6 +71,9 @@ dependencies:
   simple_circular_progress_bar: ^1.0.2
   syncfusion_flutter_pdfviewer:
   flutter_bounceable: ^1.1.0
+  screen_protector: ^1.4.2
+  package_info_plus: ^5.0.1
+  flutter_pptx: ^0.1.2+1
 
 
 dev_dependencies:

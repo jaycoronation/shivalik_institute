@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
+import 'package:screen_protector/screen_protector.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shivalik_institute/common_widget/common_widget.dart';
 import 'package:shivalik_institute/constant/colors.dart';
@@ -15,8 +16,9 @@ import 'base_class.dart';
 
 class PdfViewer extends StatefulWidget {
   final String pdfUrl;
+  final String isPrivate;
 
-  const PdfViewer(this.pdfUrl, {Key? key}) : super(key: key);
+  const PdfViewer(this.pdfUrl,this.isPrivate,  {Key? key}) : super(key: key);
 
   @override
   _PdfViewer createState() => _PdfViewer();
@@ -24,7 +26,7 @@ class PdfViewer extends StatefulWidget {
 
 class _PdfViewer extends BaseState<PdfViewer> {
   String pdfUrl = "";
-  String postId = "";
+  String isPrivate = "";
   bool isLoading = false;
   final bool _isNoData = false;
   final PdfViewerController _pdfViewerController = PdfViewerController();
@@ -32,6 +34,10 @@ class _PdfViewer extends BaseState<PdfViewer> {
   @override
   void initState() {
     pdfUrl = (widget as PdfViewer).pdfUrl;
+    isPrivate = (widget as PdfViewer).isPrivate;
+
+    print(pdfUrl);
+
     if (pdfUrl.isEmpty)
       {
         setState(() {
@@ -39,12 +45,21 @@ class _PdfViewer extends BaseState<PdfViewer> {
         });
       }
 
+    if (isPrivate == "1")
+      {
+        secureScreen();
+      }
+
     super.initState();
+  }
+
+  Future<void> secureScreen() async {
+    await ScreenProtector.preventScreenshotOn();
+    await ScreenProtector.protectDataLeakageWithBlur();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: () {
         Navigator.pop(context);
@@ -123,5 +138,12 @@ class _PdfViewer extends BaseState<PdfViewer> {
   @override
   void castStatefulWidget() {
     widget is PdfViewer;
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+    await ScreenProtector.preventScreenshotOff();
+    await ScreenProtector.protectDataLeakageOff();
   }
 }

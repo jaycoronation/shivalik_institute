@@ -13,9 +13,9 @@ import '../viewmodels/VerifyOtpViewModel.dart';
 import 'DashboardScreen.dart';
 
 class VerifyOTPScreen extends StatefulWidget {
-  String? mobileNumber="";
+  final String? mobileNumber;
 
-  VerifyOTPScreen({Key? key, this.mobileNumber,}) : super(key: key);
+  const VerifyOTPScreen({Key? key, this.mobileNumber,}) : super(key: key);
 
   @override
   BaseState<VerifyOTPScreen> createState() => _VerifyOTPScreenState();
@@ -199,7 +199,6 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                               value.user?.accessToken ?? "",
                                             );
                                             startActivity(context, DashboardScreen());
-                                            showToast(value.message, context);
                                           }
                                           else
                                           {

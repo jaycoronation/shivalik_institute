@@ -80,29 +80,28 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
                         children: [
                           Text(checkValidString(getSet.title).toString(),style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
                           const Gap(12),
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(22),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    universalDateConverter("dd-MM-yyyy hh:MM a","dd MMM, yyyy", getSet.date.toString()),
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: black,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                )
-                              ],
+                          Text(
+                            universalDateConverter("yyyy-MM-dd","dd MMM, yyyy", getSet.date.toString()),
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: black,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
+                          Visibility(
+                            visible: getSet.eventType == "Master Class",
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                color: brandColor
+                              ),
+                              padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+                              child: Text(getSet.eventType ?? '',style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
+                            ),
+                          )
                         ],
                       ),
                     ),

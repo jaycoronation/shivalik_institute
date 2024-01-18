@@ -93,6 +93,13 @@ class PushNotificationService {
       print('<><> onMessageOpenedApp contentType--->$contentType');
 
       NavigationService.notif_id = id;
+
+      if (contentType == "session_feedback")
+        {
+           //NavigationService.class_id = id;
+           SessionManager().setClassId(id);
+        }
+
       openPage(contentType);
     });
   }
@@ -167,6 +174,7 @@ class PushNotificationService {
 
         print(payload.notificationResponseType.name);
         print(payload.notificationResponseType.index);
+        print(payload.actionId);
         print(payload.payload);
 
         openPage(payload.payload ?? '');
@@ -221,6 +229,12 @@ class PushNotificationService {
 
           NavigationService.notif_id = id;
 
+          if (contentType == "session_feedback")
+            {
+              ///NavigationService.class_id = id;
+              SessionManager().setClassId(id);
+            }
+
           const DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails(
               presentSound: true, presentAlert: true);
 
@@ -274,7 +288,6 @@ class PushNotificationService {
 
   void openPage(String contentId) {
 
-    print("Content Type ==== $contentId");
 
     NavigationService.notif_type = contentId;
     if (contentId == "event_scheduled")
@@ -324,6 +337,18 @@ class PushNotificationService {
       {
         NavigationService.navigatorKey.currentState!.pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => LectureDetailsScreen(NavigationService.notif_id ?? '')), (Route<dynamic> route) => false
+        );
+      }
+    else if (contentId == "module_completed")
+      {
+        NavigationService.navigatorKey.currentState!.pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => LectureDetailsScreen(NavigationService.notif_id ?? '')), (Route<dynamic> route) => false
+        );
+      }
+    else if (contentId == "session_feedback")
+      {
+        NavigationService.navigatorKey.currentState!.pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const DashboardScreen()), (Route<dynamic> route) => false
         );
       }
     else

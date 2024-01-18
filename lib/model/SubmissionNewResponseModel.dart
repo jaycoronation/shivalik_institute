@@ -94,7 +94,8 @@ class ListData {
       String? deletedAt, 
       String? fullPath, 
       String? isPending, 
-      ClassData? classData, 
+      String? isPrivate,
+      ClassData? classData,
       StudentData? studentData, 
       ModuleData? moduleData,}){
     _id = id;
@@ -110,6 +111,7 @@ class ListData {
     _deletedAt = deletedAt;
     _fullPath = fullPath;
     _isPending = isPending;
+    _isPrivate = isPrivate;
     _classData = classData;
     _studentData = studentData;
     _moduleData = moduleData;
@@ -129,6 +131,7 @@ class ListData {
     _deletedAt = json['deleted_at'];
     _fullPath = json['full_path'];
     _isPending = json['is_pending'];
+    _isPrivate = json['is_private'];
     _classData = json['class_data'] != null ? ClassData.fromJson(json['class_data']) : null;
     _studentData = json['student_data'] != null ? StudentData.fromJson(json['student_data']) : null;
     _moduleData = json['module_data'] != null ? ModuleData.fromJson(json['module_data']) : null;
@@ -146,6 +149,7 @@ class ListData {
   String? _deletedAt;
   String? _fullPath;
   String? _isPending;
+  String? _isPrivate;
   ClassData? _classData;
   StudentData? _studentData;
   ModuleData? _moduleData;
@@ -162,6 +166,7 @@ ListData copyWith({  String? id,
   String? deletedAt,
   String? fullPath,
   String? isPending,
+  String? isPrivate,
   ClassData? classData,
   StudentData? studentData,
   ModuleData? moduleData,
@@ -178,6 +183,7 @@ ListData copyWith({  String? id,
   deletedAt: deletedAt ?? _deletedAt,
   fullPath: fullPath ?? _fullPath,
   isPending: isPending ?? _isPending,
+  isPrivate: isPrivate ?? _isPrivate,
   classData: classData ?? _classData,
   studentData: studentData ?? _studentData,
   moduleData: moduleData ?? _moduleData,
@@ -195,6 +201,7 @@ ListData copyWith({  String? id,
   String? get deletedAt => _deletedAt;
   String? get fullPath => _fullPath;
   String? get isPending => _isPending;
+  String? get isPrivate => _isPrivate;
   ClassData? get classData => _classData;
   StudentData? get studentData => _studentData;
   ModuleData? get moduleData => _moduleData;
@@ -214,6 +221,7 @@ ListData copyWith({  String? id,
     map['deleted_at'] = _deletedAt;
     map['full_path'] = _fullPath;
     map['is_pending'] = _isPending;
+    map['is_private'] = _isPrivate;
     if (_classData != null) {
       map['class_data'] = _classData?.toJson();
     }

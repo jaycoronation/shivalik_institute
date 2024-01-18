@@ -19,6 +19,7 @@ class SessionManager {
   final String userType = "user_type";
   final String accessToken = "access_token";
   final String deviceToken = "deviceToken";
+  final String feedbackClassId = "feedbackClassId";
 
 
   //set data into shared preferences...
@@ -43,6 +44,15 @@ class SessionManager {
   Future<void> setUserId(String apiUserId)
   async {
     await SessionManagerMethods.setString(userId, apiUserId);
+  }
+
+  String? getClassId() {
+    return SessionManagerMethods.getString(feedbackClassId);
+  }
+
+  Future<void> setClassId(String apiClassId)
+  async {
+    await SessionManagerMethods.setString(feedbackClassId, apiClassId);
   }
 
   Future<void> setName(String apiFirstName)

@@ -9,6 +9,7 @@
     <application
         android:label="SIRE"
         android:name="${applicationName}"
+        android:networkSecurityConfig="@xml/network_config"
         android:icon="@mipmap/ic_launcher">
 
         <activity

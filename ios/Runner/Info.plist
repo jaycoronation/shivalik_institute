@@ -26,13 +26,20 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Shivalik Institute is Asking your photo permission for Better understanding of the app</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Shaivlik Institute is Asking your photo permission for uploading the profile picture</string>
+	<string>Shivalik Institute is Asking your photo permission for uploading the profile picture</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>processing</string>
+		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

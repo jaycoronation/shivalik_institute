@@ -247,7 +247,6 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
                                 decoration:  BoxDecoration(
                                   border: Border.all(color: white, width: 0.5),
                                   borderRadius:const BorderRadius.all(Radius.circular(8),) ,
-                                  color: grayNew,
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(0.0),
@@ -256,10 +255,7 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       ClipRRect(
-                                        borderRadius: const BorderRadius.only(
-                                            topRight: Radius.circular(8.0),
-                                            topLeft: Radius.circular(8.0)
-                                        ),
+                                        borderRadius: BorderRadius.circular(8),
                                         child: CachedNetworkImage(
                                             imageUrl: "${getSet.coverImage}&h=500&zc=2",
                                             fit: BoxFit.cover,

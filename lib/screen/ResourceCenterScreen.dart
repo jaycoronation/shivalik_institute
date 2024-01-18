@@ -335,10 +335,7 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
            {
              for (var i=0; i < listModuleTemp.length; i++)
              {
-               if (listModuleTemp[i].allowMaterialAccess == "1")
-               {
-                 listModule.add(listModuleTemp[i]);
-               }
+               listModule.add(listModuleTemp[i]);
              }
            }
 

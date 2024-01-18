@@ -27,7 +27,6 @@ import '../utils/base_class.dart';
 import '../utils/pdf_viewer.dart';
 import '../viewmodels/CommonViewModel.dart';
 import 'package:http/http.dart' as http;
-import '../viewmodels/MaterialDetailViewModel.dart';
 import '../viewmodels/MultipartApiViewModel.dart';
 
 class MaterialDetailScreen extends StatefulWidget {
@@ -259,13 +258,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                         context: context,
                         removeTop: true,
                         removeBottom: true,
-                        child: GridView.builder(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisExtent: 130,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10
-                          ),
+                        child: ListView.builder(
                           controller: _scrollViewController,
                           physics: const BouncingScrollPhysics(),
                           scrollDirection: Axis.vertical,
@@ -277,7 +270,12 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                               onTap: () async {
                                 if (listDocument[index].fileType == "pdf")
                                   {
-                                    startActivity(context, PdfViewer(listDocument[index].fullPath ?? ""));
+                                    startActivity(context, PdfViewer(listDocument[index].fullPath ?? "",listDocument[index].isPrivate ?? ""));
+                                  }
+                                else if (listDocument[index].fileType == "pptx")
+                                  {
+                                    //startActivity(context, PowerFileScreen(listDocument[index].fullPath ?? ""));
+                                    await launchUrl(Uri.parse(listDocument[index].fullPath ?? ""),mode: LaunchMode.externalApplication);
                                   }
                                 else
                                   {
@@ -293,17 +291,20 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                                 ),
                                 child: Stack(
                                   children: [
-                                    Column(
+                                    Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        const Icon(Icons.file_copy_outlined,size: 28,),
-                                        const Gap(18),
-                                        Text(
-                                          listDocument[index].file.toString(),
-                                          maxLines: 3,
-                                          style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400,overflow: TextOverflow.ellipsis),
-                                        )
+                                        Image.asset("assets/images/ic_resource.png" , height: 22,width: 22),
+                                        const Gap(12),
+                                        Expanded(
+                                          child: Text(
+                                            listDocument[index].file.toString(),
+                                            maxLines: 3,
+                                            style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400,overflow: TextOverflow.ellipsis),
+                                          ),
+                                        ),
+                                        Image.asset("assets/images/ic_arrow_right.png",width: 22,height: 22,),
                                       ],
                                     ),
                                     Container(height: 12,),
@@ -609,7 +610,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
     var dataResponse = MaterialDResponseModel.fromJson(order);
 
     if (isFirstTime) {
-      if (listDocument.isNotEmpty ?? false) {
+      if (listDocument.isNotEmpty) {
         listDocument = [];
       }
     }
@@ -621,12 +622,14 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
         _tempList = dataResponse.list;
         listDocument.addAll(_tempList!);
 
-        if (_tempList?.isNotEmpty ?? false) {
-          _pageIndex += 1;
-          if (_tempList?.isEmpty ?? false || _tempList!.length % _pageResult != 0 ) {
-            _isLastPage = true;
+        if (_tempList.isNotEmpty)
+          {
+            _pageIndex += 1;
+            if (_tempList.isEmpty || _tempList.length % _pageResult != 0 )
+              {
+                _isLastPage = true;
+              }
           }
-        }
       }
       else
       {

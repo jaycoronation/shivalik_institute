@@ -154,7 +154,7 @@ class _EnrollScreenState extends BaseState<EnrollScreen> {
                               style: getTextFiledStyle(),
                               decoration: const InputDecoration(
                                 labelText: 'Select Batch',
-
+                                  suffixIcon: Icon(Icons.arrow_drop_down,size: 22,color: black),
                               ),
                             ),
                             Visibility(
@@ -242,6 +242,7 @@ class _EnrollScreenState extends BaseState<EnrollScreen> {
   }
 
   void openBatchBottomSheet(List<BatchList> list) {
+
     showModalBottomSheet<void>(
       isScrollControlled: true,
       isDismissible: true,
@@ -285,33 +286,36 @@ class _EnrollScreenState extends BaseState<EnrollScreen> {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: ( context, index, ) {
-                            return GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () {
-                                setState((){
-                                  batchId = list[index].id ?? '';
-                                  batchName = list[index].name ?? '';
-                                  batchController.text = "${list[index].name ?? "" } - ${list[index].formatedDateTime ?? "" }";
-                                });
-                                Navigator.pop(context);
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 18.0, right: 18, top: 8, bottom: 8),
-                                    child: Text("${list[index].name ?? "" } - ${list[index].formatedDateTime ?? "" }",
-                                        style: const TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
-                                  ),
-                                  const Divider(
-                                    thickness: 0.5,
-                                    endIndent: 22,
-                                    indent: 22,
-                                    color: grayLight,
-                                  ),
+                            return Visibility(
+                              visible: (index == 0) || (index == 1),
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () {
+                                  setState((){
+                                    batchId = list[index].id ?? '';
+                                    batchName = list[index].name ?? '';
+                                    batchController.text = "${list[index].name ?? "" } - ${list[index].formatedDateTime ?? "" }";
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 18.0, right: 18, top: 8, bottom: 8),
+                                      child: Text("${list[index].name ?? "" } - ${list[index].formatedDateTime ?? "" }",
+                                          style: const TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
+                                    ),
+                                    const Divider(
+                                      thickness: 0.5,
+                                      endIndent: 22,
+                                      indent: 22,
+                                      color: grayLight,
+                                    ),
 
-                                ],
+                                  ],
+                                ),
                               ),
                             );
                           },

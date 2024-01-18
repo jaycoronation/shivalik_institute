@@ -648,6 +648,8 @@ class ClassMaterial {
       String? createdAt,
       String? updatedAt,
       String? deletedAt,
+      String? hasSubmission,
+      String? allowMaterialAccess,
       String? fullPath,}){
     _id = id;
     _classId = classId;
@@ -660,6 +662,8 @@ class ClassMaterial {
     _createdAt = createdAt;
     _updatedAt = updatedAt;
     _deletedAt = deletedAt;
+    _hasSubmission = hasSubmission;
+    _allowMaterialAccess = allowMaterialAccess;
     _fullPath = fullPath;
 }
 
@@ -675,6 +679,8 @@ class ClassMaterial {
     _createdAt = json['created_at'];
     _updatedAt = json['updated_at'];
     _deletedAt = json['deleted_at'];
+    _hasSubmission = json['has_submission'];
+    _allowMaterialAccess = json['allow_material_access'];
     _fullPath = json['full_path'];
   }
   String? _id;
@@ -688,6 +694,8 @@ class ClassMaterial {
   String? _createdAt;
   String? _updatedAt;
   String? _deletedAt;
+  String? _hasSubmission;
+  String? _allowMaterialAccess;
   String? _fullPath;
 ClassMaterial copyWith({  String? id,
   String? classId,
@@ -700,6 +708,8 @@ ClassMaterial copyWith({  String? id,
   String? createdAt,
   String? updatedAt,
   String? deletedAt,
+  String? hasSubmission,
+  String? allowMaterialAccess,
   String? fullPath,
 }) => ClassMaterial(  id: id ?? _id,
   classId: classId ?? _classId,
@@ -712,6 +722,8 @@ ClassMaterial copyWith({  String? id,
   createdAt: createdAt ?? _createdAt,
   updatedAt: updatedAt ?? _updatedAt,
   deletedAt: deletedAt ?? _deletedAt,
+  hasSubmission: hasSubmission ?? _hasSubmission,
+  allowMaterialAccess: allowMaterialAccess ?? _allowMaterialAccess,
   fullPath: fullPath ?? _fullPath,
 );
   String? get id => _id;
@@ -724,7 +736,9 @@ ClassMaterial copyWith({  String? id,
   String? get isActive => _isActive;
   String? get createdAt => _createdAt;
   String? get updatedAt => _updatedAt;
+  String? get hasSubmission => _hasSubmission;
   String? get deletedAt => _deletedAt;
+  String? get allowMaterialAccess => _allowMaterialAccess;
   String? get fullPath => _fullPath;
 
   Map<String, dynamic> toJson() {
@@ -740,6 +754,8 @@ ClassMaterial copyWith({  String? id,
     map['created_at'] = _createdAt;
     map['updated_at'] = _updatedAt;
     map['deleted_at'] = _deletedAt;
+    map['has_submission'] = _hasSubmission;
+    map['allow_material_access'] = _allowMaterialAccess;
     map['full_path'] = _fullPath;
     return map;
   }

@@ -283,7 +283,7 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                                                 ),
                                               ),
                                             ),
-                                            Gap(12),
+                                            const Gap(12),
                                             Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               mainAxisAlignment: MainAxisAlignment.start,
@@ -293,12 +293,19 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                                                   maxLines: 2,
                                                   style: const TextStyle(fontSize: 20, color: black, fontWeight: FontWeight.w500),
                                                 ),
-                                                const Gap(10),
-                                                Text(
-                                                  checkValidString(listEvent[index].description.toString().replaceAll(htmlExp, "").replaceAll("&nbsp;", "").replaceAll("&quot;", "").replaceAll("&#39;", "'").replaceAll("<br />", "").trim()).toString(),
-                                                  textAlign: TextAlign.start,
-                                                  maxLines: 5,
-                                                  style: const TextStyle(fontSize: 16, color: grayDark, fontWeight: FontWeight.w400),
+                                                Visibility(
+                                                  visible: listEvent[index].shortDescription?.isNotEmpty ?? false,
+                                                  child: Column(
+                                                    children: [
+                                                      const Gap(10),
+                                                      Text(
+                                                        checkValidString(listEvent[index].shortDescription.toString().replaceAll(htmlExp, "").replaceAll("&amp;", "&").replaceAll("&nbsp;", "").replaceAll("&quot;", "").replaceAll("&#39;", "'").replaceAll("<br />", "").trim()).toString(),
+                                                        textAlign: TextAlign.start,
+                                                        maxLines: 5,
+                                                        style: const TextStyle(fontSize: 16, color: grayDark, fontWeight: FontWeight.w400),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                                 const Gap(8),
                                                 Text(universalDateConverter("yyyy-MM-dd", "dd MMM,yyyy", listEvent[index].date ?? ''),
@@ -326,7 +333,7 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                     }
                   else
                     {
-                      return MyNoDataNewWidget(msg: "No Events Found", img: "");
+                      return const MyNoDataNewWidget(msg: "No Events Found", img: "");
                     }
                 }
             },

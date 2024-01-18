@@ -328,7 +328,7 @@ class ApiService {
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
 
-    final response = await http.post(Uri.parse(deelteHolidayAddUrl),body: jsonBody);
+    final response = await http.post(Uri.parse(deleteHolidayAddUrl),body: jsonBody);
     if (response.statusCode == 200) {
       final dynamic data = json.decode(response.body);
       return CommonResponseModel.fromJson(data);

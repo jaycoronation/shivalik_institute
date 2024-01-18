@@ -81,8 +81,10 @@ class EventList {
       String? date, 
       String? day, 
       String? monthyear, 
-      String? description, 
-      String? createdAt, 
+      String? eventType,
+      String? description,
+      String? shortDescription,
+      String? createdAt,
       String? isActive, 
       List<EventGallery>? eventGallery,}){
     _id = id;
@@ -91,7 +93,9 @@ class EventList {
     _date = date;
     _day = day;
     _monthyear = monthyear;
+    _eventType = eventType;
     _description = description;
+    _shortDescription = shortDescription;
     _createdAt = createdAt;
     _isActive = isActive;
     _eventGallery = eventGallery;
@@ -104,7 +108,9 @@ class EventList {
     _date = json['date'];
     _day = json['day'];
     _monthyear = json['monthyear'];
+    _eventType = json['event_type'];
     _description = json['description'];
+    _shortDescription = json['short_description'];
     _createdAt = json['created_at'];
     _isActive = json['is_active'];
     if (json['event_gallery'] != null) {
@@ -120,7 +126,9 @@ class EventList {
   String? _date;
   String? _day;
   String? _monthyear;
+  String? _eventType;
   String? _description;
+  String? _shortDescription;
   String? _createdAt;
   String? _isActive;
   List<EventGallery>? _eventGallery;
@@ -130,7 +138,9 @@ EventList copyWith({  String? id,
   String? date,
   String? day,
   String? monthyear,
+  String? eventType,
   String? description,
+  String? shortDescription,
   String? createdAt,
   String? isActive,
   List<EventGallery>? eventGallery,
@@ -140,6 +150,8 @@ EventList copyWith({  String? id,
   date: date ?? _date,
   day: day ?? _day,
   monthyear: monthyear ?? _monthyear,
+  eventType: eventType ?? _eventType,
+  shortDescription: shortDescription ?? _shortDescription,
   description: description ?? _description,
   createdAt: createdAt ?? _createdAt,
   isActive: isActive ?? _isActive,
@@ -151,7 +163,9 @@ EventList copyWith({  String? id,
   String? get date => _date;
   String? get day => _day;
   String? get monthyear => _monthyear;
+  String? get eventType => _eventType;
   String? get description => _description;
+  String? get shortDescription => _shortDescription;
   String? get createdAt => _createdAt;
   String? get isActive => _isActive;
   List<EventGallery>? get eventGallery => _eventGallery;
@@ -164,7 +178,9 @@ EventList copyWith({  String? id,
     map['date'] = _date;
     map['day'] = _day;
     map['monthyear'] = _monthyear;
+    map['event_type'] = _eventType;
     map['description'] = _description;
+    map['short_description'] = _shortDescription;
     map['created_at'] = _createdAt;
     map['is_active'] = _isActive;
     if (_eventGallery != null) {

@@ -94,7 +94,8 @@ class MaterialDataList {
       String? deletedAt, 
       String? fullPath, 
       String? isPending, 
-      ClassData? classData, 
+      String? isPrivate,
+      ClassData? classData,
       String? studentData, 
       ModuleData? moduleData,}){
     _id = id;
@@ -110,6 +111,7 @@ class MaterialDataList {
     _deletedAt = deletedAt;
     _fullPath = fullPath;
     _isPending = isPending;
+    _isPrivate = isPrivate;
     _classData = classData;
     _studentData = studentData;
     _moduleData = moduleData;
@@ -129,6 +131,7 @@ class MaterialDataList {
     _deletedAt = json['deleted_at'];
     _fullPath = json['full_path'];
     _isPending = json['is_pending'];
+    _isPrivate = json['is_private'];
     _classData = json['class_data'] != null ? ClassData.fromJson(json['class_data']) : null;
     _studentData = json['student_data'];
     _moduleData = json['module_data'] != null ? ModuleData.fromJson(json['module_data']) : null;
@@ -146,6 +149,7 @@ class MaterialDataList {
   String? _deletedAt;
   String? _fullPath;
   String? _isPending;
+  String? _isPrivate;
   ClassData? _classData;
   String? _studentData;
   ModuleData? _moduleData;
@@ -162,6 +166,7 @@ MaterialDataList copyWith({  String? id,
   String? deletedAt,
   String? fullPath,
   String? isPending,
+  String? isPrivate,
   ClassData? classData,
   String? studentData,
   ModuleData? moduleData,
@@ -178,6 +183,7 @@ MaterialDataList copyWith({  String? id,
   deletedAt: deletedAt ?? _deletedAt,
   fullPath: fullPath ?? _fullPath,
   isPending: isPending ?? _isPending,
+  isPrivate: isPrivate ?? _isPrivate,
   classData: classData ?? _classData,
   studentData: studentData ?? _studentData,
   moduleData: moduleData ?? _moduleData,
@@ -195,6 +201,7 @@ MaterialDataList copyWith({  String? id,
   String? get deletedAt => _deletedAt;
   String? get fullPath => _fullPath;
   String? get isPending => _isPending;
+  String? get isPrivate => _isPrivate;
   ClassData? get classData => _classData;
   String? get studentData => _studentData;
   ModuleData? get moduleData => _moduleData;
@@ -214,6 +221,7 @@ MaterialDataList copyWith({  String? id,
     map['deleted_at'] = _deletedAt;
     map['full_path'] = _fullPath;
     map['is_pending'] = _isPending;
+    map['is_private'] = _isPrivate;
     if (_classData != null) {
       map['class_data'] = _classData?.toJson();
     }

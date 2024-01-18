@@ -237,7 +237,8 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
                           ),
                         ),
                         const Gap(12),
-                        Expanded(
+                        listClasses.isNotEmpty
+                            ? Expanded(
                           child: ListView.builder(
                             controller: _scrollViewController,
                             physics: const BouncingScrollPhysics(),
@@ -284,6 +285,7 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
                             },
                           ),
                         )
+                            : Expanded(child: MyNoDataNewWidget(msg: "No Module Found", img: ""))
                       ],
                     ),
                   );
