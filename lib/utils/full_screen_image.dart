@@ -29,7 +29,7 @@ class FullScreenImage extends StatelessWidget {
                             imageUrl,
                           ),
                           loadingBuilder: (context, event) => Image.asset(
-                                'assets/images/placeholder.png',
+                                'assets/images/bg_gray.jpeg',
                                 fit: BoxFit.cover,
                               ),
                           enablePanAlways: true,
@@ -56,13 +56,13 @@ class FullScreenImage extends StatelessWidget {
                       itemCount: images!.length,
                       pageController: controller,
                       loadingBuilder: (context, event) => Image.asset(
-                        'assets/images/placeholder.png',
+                        'assets/images/bg_gray.jpeg',
                         fit: BoxFit.contain,
                       ),
                       builder: (context, index) {
                         return PhotoViewGalleryPageOptions(
                           imageProvider:
-                              NetworkImage(images![index] + "&w=720"),
+                              NetworkImage("${images![index]}&w=720"),
                           initialScale: PhotoViewComputedScale.contained,
                           minScale: PhotoViewComputedScale.contained * 0.8,
                           maxScale: PhotoViewComputedScale.covered * 2,
@@ -92,7 +92,7 @@ class FullScreenImage extends StatelessWidget {
                             child: SmoothPageIndicator(
                               controller: controller,
                               count: images!.length,
-                              effect:  ExpandingDotsEffect(
+                              effect:  const ExpandingDotsEffect(
                                 dotHeight: 7,
                                 dotWidth: 7,
                                 activeDotColor: black,

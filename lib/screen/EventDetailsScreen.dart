@@ -12,6 +12,7 @@ import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/common_widget/placeholder.dart';
 import 'package:shivalik_institute/constant/global_context.dart';
 import 'package:shivalik_institute/model/EventResponseModel.dart';
+import 'package:shivalik_institute/utils/full_screen_image.dart';
 import '../common_widget/common_widget.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
@@ -127,6 +128,79 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
                           )
                         ),
                       ],
+                    ),
+                    Visibility(
+                      visible: getSet.eventGallery?.isNotEmpty ?? false,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 12),
+                        height: 100,
+                        child: ListView.builder(
+                          itemCount: (getSet.eventGallery?.length ?? 0) > 7 ? 8 : getSet.eventGallery?.length ?? 0,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                            if (index == 7)
+                              {
+                                return GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () {
+                                    List<String> tempImages = [];
+
+                                    for (var i=0; i < (getSet.eventGallery?.length ?? 0); i++)
+                                    {
+                                      tempImages.add("${getSet.eventGallery?[i].image ?? ''}&h=900&zc=2");
+                                    }
+
+                                    startActivity(context, FullScreenImage("${getSet.eventGallery?[0].image ?? ''}&h=900&zc=2", tempImages, 0));
+                                  },
+                                  child: Container(
+                                      margin: const EdgeInsets.only(right: 12),
+                                      height: 100,
+                                      width: 100,
+                                      color: grayNew,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset('assets/images/ic_viewall_images.png',width: 28,height: 28,),
+                                          const Gap(8),
+                                          const Text("View all",style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),)
+                                        ],
+                                      )
+                                  ),
+                                );
+                              }
+                            else
+                              {
+                                return GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () {
+                                    List<String> tempImages = [];
+
+                                    for (var i=0; i < (getSet.eventGallery?.length ?? 0); i++)
+                                      {
+                                        tempImages.add("${getSet.eventGallery?[i].image ?? ''}&h=900&zc=2");
+                                      }
+
+                                    startActivity(context, FullScreenImage("${getSet.eventGallery?[index].image ?? ''}&h=900&zc=2", tempImages, index));
+                                  },
+                                  child: Container(
+                                      margin: const EdgeInsets.only(right: 12),
+                                      height: 100,
+                                      width: 100,
+                                      child: Image.network(
+                                        "${getSet.eventGallery?[index].image ?? ''}&h=500&zc=2",
+                                        fit: BoxFit.cover,
+                                        width: 100,
+                                        height: 100,
+                                      )
+                                  ),
+                                );
+                              }
+
+                            },
+                        ),
+                      ),
                     ),
                     Container(
                       margin: const EdgeInsets.fromLTRB(22, 32, 22, 12),

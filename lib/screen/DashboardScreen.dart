@@ -34,8 +34,8 @@ import 'package:shivalik_institute/utils/app_utils.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../common_widget/PlaceholderTile.dart';
 import '../common_widget/VideoProjectWidget.dart';
-import '../common_widget/placeholder.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../constant/global_context.dart';
@@ -111,6 +111,9 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
  void initState() {
 
     //getTestimonialsList(true);
+
+    getDashboardData();
+
     getUserData();
     getModuleData();
     getCaseStudyList(true);
@@ -202,7 +205,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 alignment: Alignment.center,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(50),
-                  child: getSet.profilePic?.isEmpty ?? true
+                  child: sessionManager.getProfilePic()?.isEmpty ?? true
                       ? Image.asset(
                         'assets/images/ic_user_placeholder.png',
                         height: 42,
@@ -233,19 +236,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 ),
               ),
               const Gap(12),
-              InkWell(
-                onTap: (){
-                  startActivity(context, const FeedbackFormScreen());
-                },
-                customBorder: const CircleBorder(),
-                child: Container(
-                    padding: const EdgeInsets.all(4),
-                    height: 34,
-                    width: 34,
-                    child: Image.asset('assets/images/ic_notification.png',color: black,width: 26,height: 26)
-                ),
-              ),
-              const Gap(12)
             ],
           ),
           body: Consumer<DashboardViewModel>(
@@ -253,67 +243,33 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
               if (value.isLoading)
                 {
                   return Shimmer.fromColors(
-                    baseColor: Colors.grey.shade100 ,
-                    highlightColor: Colors.grey.shade400,
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const BannerPlaceholder(),
-                          Container(
-                            margin: const EdgeInsets.only(top: 22),
-                            color: lightgrey,
-                            child: Column(
-                              children: [
-                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
-                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
-                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
-                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
-                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
-                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
-                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
-                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
-                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
-                              ],
-                            ),
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    enabled: true,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: 120.0,
+                          margin: const EdgeInsets.all(16.0),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
                           ),
-                          Container(
-                            margin: const EdgeInsets.only(top: 42,bottom: 22),
-                            child: Column(
-                              children: [
-                                const Gap(12),
-                                Center(
-                                  child: SimpleCircularProgressBar(
-                                    size: 160,
-                                    backStrokeWidth: 22,
-                                    valueNotifier: valueNotifier,
-                                    progressColors: [brandColor,brandColor.withOpacity(0.6)],
-                                    backColor: grayNew,
-                                    mergeMode: true,
-                                  ),
-                                ),
-                                const Gap(12),
-                              ],
-                            ),
+                        ),
+                        const BannerPlaceholder(),
+                        Container(
+                          width: double.infinity,
+                          height: 250.0,
+                          margin: const EdgeInsets.all(16.0),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
                           ),
-                          Container(
-                            margin: const EdgeInsets.only(left: 18,right: 18),
-                           width: MediaQuery.of(context).size.width,
-                           child: Column(
-                             children: [
-                               SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
-                               SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
-                               SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
-                             ],
-                           ),
-                          )
-
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                      
                   );
                 }
               else
@@ -326,99 +282,143 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Container(
+                            height: 50,
+                            margin: const EdgeInsets.only(left: 12,top: 22),
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(),
+                                scrollDirection: Axis.horizontal,
+                                itemCount: listCalenderData.length,
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: () {
 
+                                      print(listCalenderData[index].name ?? '');
+
+                                      setState(() {
+                                        selectedDateFaculty = listCalenderData[index].name ?? '';
+                                      });
+                                      _eventDialog(listCalenderData[index].date ?? '', listCalenderData[index].title ?? '', listCalenderData[index].eventType ?? '');
+                                    },
+                                    child: LimitedBox(
+                                      maxWidth: 220,
+                                      child: Container(
+                                        margin: const EdgeInsets.only(right: 12),
+                                        decoration: BoxDecoration(
+                                          color: white,
+
+                                          borderRadius: BorderRadius.circular(4)
+                                        ),
+                                        padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: white,
+                                                shape: BoxShape.rectangle,
+                                                borderRadius: BorderRadius.circular(4)
+                                              ),
+                                              padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                                              child: Text(
+                                                  universalDateConverter("dd-MM-yyyy", "dd\nMMM", listCalenderData[index].date ?? ''),
+                                                  style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),
+                                                  textAlign: TextAlign.center
+                                              ),
+                                            ),
+                                            const Gap(8),
+                                            Flexible(
+                                              child: Text(
+                                                listCalenderData[index].title ?? '',
+                                                style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              )
+                                            ),
+
+                                          ],
+                                        )
+                                      ),
+                                    ),
+                                  );
+                                },
+                            ),
+                          ),
                           Visibility(
                             visible: false,
                             child: Container(
-                              height: 50,
-                              margin: const EdgeInsets.only(left: 12),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                  physics: const BouncingScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: listCalenderData.length,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      margin: const EdgeInsets.only(right: 12),
-                                      decoration: BoxDecoration(
-                                        color: redbg,
-                                        borderRadius: BorderRadius.circular(4)
-                                      ),
-                                      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                                      child: Text(listCalenderData[index].title ?? '',style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500),)
-                                    );
-                                  },
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 110 ,
-                            child: CalendarWeek(
-                              controller: calendarController,
-                              height: 110,
-                              showMonth: true,
-                              backgroundColor: grayButton,
-                              minDate: DateTime.now(),
-                              maxDate: DateTime.now().add(
-                                const Duration(days: 365),
-                              ),
-                              onDatePressed: (DateTime datetime) {
-                                // Do something
-
-                                DateTime selectedDate = DateTime.now();
-
-                                for(int i=0;i<listCalenderEvents.length;i++)
-                                {
-                                  if(DateFormat('yyyy-MM-dd').format(listCalenderEvents[i].date ?? DateTime.now()) == DateFormat('yyyy-MM-dd').format(datetime))
-                                  {
-                                    selectedDate = listCalenderEvents[i].date ?? DateTime.now();
-                                  }
-                                }
-
-                                for (var i=0; i < listUpcomingLectures.length; i++)
-                                {
-                                  if (DateFormat('dd-MM-yyyy').format(datetime) == listUpcomingLectures[i].date.toString())
-                                  {
-                                    selectedDateFaculty = listUpcomingLectures[i].session2FacultyName?.isNotEmpty ?? false ? "${listUpcomingLectures[i].session1FacultyName ?? ''} and ${listUpcomingLectures[i].session2FacultyName ?? ''}" : listUpcomingLectures[i].session1FacultyName ?? '';
-                                    _eventDialog(listUpcomingLectures[i].date ?? '', listUpcomingLectures[i].moduleDetails?.name ?? '',"Upcoming Lecture");
-                                  }
-                                }
-
-                                for (var i=0; i < listUpcomingHolidays.length; i++)
-                                {
-                                  if (DateFormat('dd-MM-yyyy').format(datetime) == listUpcomingHolidays[i].holidayDate.toString())
-                                  {
-                                    _eventDialog(listUpcomingHolidays[i].holidayDate ?? '', listUpcomingHolidays[i].title?? '',"Holiday");
-                                  }
-                                }
-
-                              },
-                              onDateLongPressed: (DateTime datetime) {},
-                              onWeekChanged: () {},
-                              pressedDateBackgroundColor: brandColor,
-                              todayBackgroundColor: Colors.transparent,
-                              todayDateStyle: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),
-                              pressedDateStyle: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w400),
-                              dateStyle: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),
-                              dayOfWeekStyle: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),
-                              weekendsStyle: const TextStyle(color: Colors.red,fontSize: 14,fontWeight: FontWeight.w400),
-                              marginMonth: const EdgeInsets.symmetric(vertical: 12,horizontal: 18),
-                              monthViewBuilder: (DateTime time) => Align(
-                                alignment: FractionalOffset.centerLeft,
-                                child: Container(
-                                    margin: const EdgeInsets.symmetric(vertical: 4,horizontal: 12),
-                                    child: Text(
-                                      DateFormat.yMMMM().format(time),
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: black, fontWeight: FontWeight.w600, overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )
+                              margin: const EdgeInsets.only(top: 12),
+                              height: 110 ,
+                              child: CalendarWeek(
+                                controller: calendarController,
+                                height: 110,
+                                showMonth: true,
+                                backgroundColor: grayButton,
+                                minDate: DateTime.now(),
+                                maxDate: DateTime.now().add(
+                                  const Duration(days: 365),
                                 ),
-                              ),
-                              decorations: listCalenderEvents,
+                                onDatePressed: (DateTime datetime) {
+                                  // Do something
 
+                                  DateTime selectedDate = DateTime.now();
+
+                                  for(int i=0;i<listCalenderEvents.length;i++)
+                                  {
+                                    if(DateFormat('yyyy-MM-dd').format(listCalenderEvents[i].date ?? DateTime.now()) == DateFormat('yyyy-MM-dd').format(datetime))
+                                    {
+                                      selectedDate = listCalenderEvents[i].date ?? DateTime.now();
+                                    }
+                                  }
+
+                                  for (var i=0; i < listUpcomingLectures.length; i++)
+                                  {
+                                    if (DateFormat('dd-MM-yyyy').format(datetime) == listUpcomingLectures[i].date.toString())
+                                    {
+                                      selectedDateFaculty = listUpcomingLectures[i].session2FacultyName?.isNotEmpty ?? false ? "${listUpcomingLectures[i].session1FacultyName ?? ''} and ${listUpcomingLectures[i].session2FacultyName ?? ''}" : listUpcomingLectures[i].session1FacultyName ?? '';
+                                      _eventDialog(listUpcomingLectures[i].date ?? '', listUpcomingLectures[i].moduleDetails?.name ?? '',"Upcoming Lecture");
+                                    }
+                                  }
+
+                                  for (var i=0; i < listUpcomingHolidays.length; i++)
+                                  {
+                                    if (DateFormat('dd-MM-yyyy').format(datetime) == listUpcomingHolidays[i].holidayDate.toString())
+                                    {
+                                      _eventDialog(listUpcomingHolidays[i].holidayDate ?? '', listUpcomingHolidays[i].title?? '',"Holiday");
+                                    }
+                                  }
+
+                                },
+                                onDateLongPressed: (DateTime datetime) {},
+                                onWeekChanged: () {},
+                                pressedDateBackgroundColor: brandColor,
+                                todayBackgroundColor: Colors.transparent,
+                                todayDateStyle: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500,fontFamily: "Poppins"),
+                                pressedDateStyle: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500,fontFamily: "Poppins"),
+                                dateStyle: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500,fontFamily: "Poppins"),
+                                dayOfWeekStyle: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500,fontFamily: "Poppins"),
+                                weekendsStyle: const TextStyle(color: Colors.red,fontSize: 14,fontWeight: FontWeight.w500,fontFamily: "Poppins"),
+                                marginMonth: const EdgeInsets.symmetric(vertical: 12,horizontal: 18),
+                                monthViewBuilder: (DateTime time) => Align(
+                                  alignment: FractionalOffset.centerLeft,
+                                  child: Container(
+                                      margin: const EdgeInsets.symmetric(vertical: 4,horizontal: 12),
+                                      child: Text(
+                                        DateFormat.yMMMM().format(time),
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: black, fontWeight: FontWeight.w600, overflow: TextOverflow.ellipsis,fontFamily: "Poppins"
+                                        ),
+                                      )
+                                  ),
+                                ),
+                                decorations: listCalenderEvents,
+
+                              ),
                             ),
                           ),
 
@@ -446,7 +446,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                   child: Container(
                                     margin: const EdgeInsets.only(top: 26),
                                     padding: const EdgeInsets.only(top: 12,bottom: 12),
-                                    color: lightPink,
                                     child: Column(
                                       children: [
                                         Row(
@@ -496,8 +495,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                       decoration: BoxDecoration(
                                                         color: white,
                                                         border: Border.all(
-                                                            color: lightPinkBorder,
-                                                            width: 1
+                                                            color: black,
+                                                            width: 0.2
                                                         ),
                                                         borderRadius: BorderRadius.circular(8),
                                                       ),
@@ -875,8 +874,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                   onTap: () {
                                                     var storeData = value.response.upcomingEvents?[index] ?? UpcomingEvents();
                                                     var getSet = EventList(id: storeData.id, title: storeData.title, description: storeData.description,
-                                                        date: storeData.date, bannerImage: storeData.bannerImage, createdAt: storeData.createdAt,
-                                                        day: "",  isActive: "", monthyear: "");
+                                                        date: universalDateConverter("dd-MM-yyyy hh:mm a", "yyyy-MM-dd", storeData.date.toString()), bannerImage: storeData.bannerImage, createdAt: storeData.createdAt,
+                                                        day: "",  isActive: "", monthyear: "",eventGallery: storeData.eventGallery ?? []);
 
                                                     startActivity(context, EventsDetailsScreen(getSet));
                                                   },
@@ -890,7 +889,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                       color: grayNew,
                                                     ),
                                                     child: Stack(
-                                                      alignment: Alignment.bottomLeft,
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius: BorderRadius.circular(8),
@@ -927,6 +925,19 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                                     1.0
                                                                   ]),
                                                               borderRadius: BorderRadius.circular(8)
+                                                          ),
+                                                        ),
+                                                        Positioned(
+                                                          top: 12,
+                                                          right: 12,
+                                                          child: Container(
+                                                            height: 30,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius: BorderRadius.circular(4),
+                                                                color: brandColor
+                                                            ),
+                                                            padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+                                                            child: Text(value.response.upcomingEvents?[index].eventType ?? '',style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
                                                           ),
                                                         ),
                                                         Padding(
@@ -1100,7 +1111,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                   else
                   {
                     return const MyNoDataNewWidget(msg: "No Data Found", img: '',);
-                    // NO Data
                   }
                 }
             },
@@ -1522,7 +1532,9 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
           valueNotifier.value = double.parse(userViewModel.response.completedModule ?? '0');
 
-          for(int i=0;i<listUpcomingLectures.length;i++)
+          List<CalendarEventModel> listCalenderDataTemp = [];
+
+          for(int i=0; i < listUpcomingLectures.length; i++)
             {
               var setDecoration = DecorationItem(
                 date: DateFormat('dd-MM-yyyy').parse(listUpcomingLectures[i].date.toString()),
@@ -1530,10 +1542,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
               );
               listCalenderEvents.add(setDecoration);
 
-              listCalenderData.add(CalendarEventModel(date: listUpcomingLectures[i].date.toString(),title: listUpcomingLectures[i].session1Topic ?? '',eventType: "Lecture"));
+              listCalenderDataTemp.add(CalendarEventModel(date: universalDateConverter("dd-MM-yyyy", "dd-MM-yyyy", listUpcomingLectures[i].date.toString()),title: listUpcomingLectures[i].session1Topic ?? '',eventType: "Lecture",name: listUpcomingLectures[i].session2FacultyName?.isNotEmpty ?? false ? "${listUpcomingLectures[i].session1FacultyName} and ${listUpcomingLectures[i].session2FacultyName}" : listUpcomingLectures[i].session1FacultyName));
             }
 
-          for(int i=0;i<listUpcomingHolidays.length;i++)
+          for(int i=0; i < listUpcomingHolidays.length; i++)
             {
               var setDecoration = DecorationItem(
                 date: DateFormat('dd-MM-yyyy').parse(listUpcomingHolidays[i].holidayDate.toString()),
@@ -1541,8 +1553,21 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
               );
               listCalenderEvents.add(setDecoration);
 
-              listCalenderData.add(CalendarEventModel(date: listUpcomingHolidays[i].holidayDate.toString(),title: listUpcomingHolidays[i].title ?? '',eventType: "Holiday"));
+              listCalenderDataTemp.add(CalendarEventModel(date: universalDateConverter("dd-MM-yyyy", "dd-MM-yyyy", listUpcomingHolidays[i].holidayDate.toString()),title: listUpcomingHolidays[i].title ?? '',eventType: "Holiday",name: ''));
             }
+
+          List<UpcomingEvents> listEventsTemp = [];
+
+          listEventsTemp = userViewModel.response.upcomingEvents ?? [] ;
+
+          for(int i=0; i < (listEventsTemp.length); i++)
+            {
+              listCalenderDataTemp.add(CalendarEventModel(date: universalDateConverter("dd-MM-yyyy hh:mm a", "dd-MM-yyyy", listEventsTemp[i].date.toString()),title: listEventsTemp[i].title ?? '',eventType: listEventsTemp[i].eventType,name: ""));
+            }
+
+          listCalenderDataTemp.sort((a, b) => DateFormat("dd-MM-yyyy").parse(a.date.toString()).compareTo(DateFormat("dd-MM-yyyy").parse(b.date.toString())),);
+
+          listCalenderData = listCalenderDataTemp.where((date) => !DateFormat("dd-MM-yyyy").parse(date.date.toString()).isBefore(DateTime.now())).toList();
 
         });
         print("NavigationService.class_id ===== ${NavigationService.class_id}");

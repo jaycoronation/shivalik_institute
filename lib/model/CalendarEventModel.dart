@@ -9,35 +9,43 @@ class CalendarEventModel {
   CalendarEventModel({
       String? title, 
       String? date, 
+      String? name,
       String? eventType,}){
     _title = title;
     _date = date;
+    _name = name;
     _eventType = eventType;
 }
 
   CalendarEventModel.fromJson(dynamic json) {
     _title = json['title'];
     _date = json['date'];
+    _name = json['name'];
     _eventType = json['event_type'];
   }
   String? _title;
   String? _date;
+  String? _name;
   String? _eventType;
 CalendarEventModel copyWith({  String? title,
   String? date,
+  String? name,
   String? eventType,
 }) => CalendarEventModel(  title: title ?? _title,
   date: date ?? _date,
+  name: name ?? _name,
   eventType: eventType ?? _eventType,
 );
   String? get title => _title;
   String? get date => _date;
+  String? get name => _name;
   String? get eventType => _eventType;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['title'] = _title;
     map['date'] = _date;
+    map['name'] = _name;
     map['event_type'] = _eventType;
     return map;
   }

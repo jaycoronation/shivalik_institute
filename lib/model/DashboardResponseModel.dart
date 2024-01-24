@@ -1,4 +1,6 @@
 import 'dart:convert';
+
+import 'EventResponseModel.dart';
 /// success : "1"
 /// message : ""
 /// total_events : "2"
@@ -940,7 +942,8 @@ class UpcomingEvents {
       String? title, 
       String? bannerImage, 
       String? date, 
-      String? dateTimestamp, 
+      String? eventType,
+      String? dateTimestamp,
       String? description, 
       String? createdAt, 
       List<EventGallery>? eventGallery,}){
@@ -948,6 +951,7 @@ class UpcomingEvents {
     _title = title;
     _bannerImage = bannerImage;
     _date = date;
+    _eventType = eventType;
     _dateTimestamp = dateTimestamp;
     _description = description;
     _createdAt = createdAt;
@@ -959,6 +963,7 @@ class UpcomingEvents {
     _title = json['title'];
     _bannerImage = json['banner_image'];
     _date = json['date'];
+    _eventType = json['event_type'];
     _dateTimestamp = json['date_timestamp'];
     _description = json['description'];
     _createdAt = json['created_at'];
@@ -973,6 +978,7 @@ class UpcomingEvents {
   String? _title;
   String? _bannerImage;
   String? _date;
+  String? _eventType;
   String? _dateTimestamp;
   String? _description;
   String? _createdAt;
@@ -981,6 +987,7 @@ UpcomingEvents copyWith({  String? id,
   String? title,
   String? bannerImage,
   String? date,
+  String? eventType,
   String? dateTimestamp,
   String? description,
   String? createdAt,
@@ -989,6 +996,7 @@ UpcomingEvents copyWith({  String? id,
   title: title ?? _title,
   bannerImage: bannerImage ?? _bannerImage,
   date: date ?? _date,
+  eventType: eventType ?? _eventType,
   dateTimestamp: dateTimestamp ?? _dateTimestamp,
   description: description ?? _description,
   createdAt: createdAt ?? _createdAt,
@@ -998,6 +1006,7 @@ UpcomingEvents copyWith({  String? id,
   String? get title => _title;
   String? get bannerImage => _bannerImage;
   String? get date => _date;
+  String? get eventType => _eventType;
   String? get dateTimestamp => _dateTimestamp;
   String? get description => _description;
   String? get createdAt => _createdAt;
@@ -1009,6 +1018,7 @@ UpcomingEvents copyWith({  String? id,
     map['title'] = _title;
     map['banner_image'] = _bannerImage;
     map['date'] = _date;
+    map['event_type'] = _eventType;
     map['date_timestamp'] = _dateTimestamp;
     map['description'] = _description;
     map['created_at'] = _createdAt;
@@ -1020,6 +1030,7 @@ UpcomingEvents copyWith({  String? id,
 
 }
 
+/*
 /// event_id : "2"
 /// image : "http://shivalik.institute/api/assets/uploads/events/1697870301Chitrak-Shah.jpeg"
 /// created_at : "21-10-2023"
@@ -1063,4 +1074,4 @@ EventGallery copyWith({  String? eventId,
     return map;
   }
 
-}
+}*/

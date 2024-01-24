@@ -7,6 +7,7 @@ import '../constant/colors.dart';
 import '../model/CaseStudyResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
+import '../utils/pdf_viewer.dart';
 
 class CaseStudyDetailScreen extends StatefulWidget {
   final CaseStudyList getSet;
@@ -141,27 +142,11 @@ class _CaseStudyDetailScreen extends BaseState<CaseStudyDetailScreen> {
                   ),
                 ),
                 Container(height: 18,),
-                Visibility(
-                  visible: getSet.brochure!.isNotEmpty,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () async {
-                      await launchUrl(Uri.parse(getSet?.brochure ?? ""),mode: LaunchMode.externalApplication);
-                      // startActivity(context, PdfViewer(getSet.brochure ?? "", getSet.title ?? ""));
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(left: 18),
-                      decoration: BoxDecoration(
-                        color: black,
-                        border: Border.all(
-                          width: 8,
-                          color: black,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Text("Read More",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w400,color: white),),
-                    ),
-                  ),
+
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.fromLTRB(12, 22, 12, 22),
+                    child: getCommonButton("Read More", () {startActivity(context, PdfViewer(getSet.brochure ?? "", getSet.title ?? "")); }, false)
                 ),
                 Container(height: 18,),
               ],

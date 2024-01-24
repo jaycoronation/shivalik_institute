@@ -218,7 +218,7 @@ class _BlogListScreenState extends BaseState<BlogListScreen> {
                                               Text(checkValidString(listBlog[index].description.toString().replaceAll(htmlExp, "").replaceAll("&nbsp;", "").replaceAll("&quot;", "").replaceAll("&#39;", "'").trim()).toString(),
                                                 textAlign: TextAlign.start,
                                                 maxLines: 5,
-                                                style: const TextStyle(fontSize: 16, color: grayDark, fontWeight: FontWeight.w400),
+                                                style:const TextStyle(fontSize: 16, color: grayDark, fontWeight: FontWeight.w400),
                                               ),
                                               const Gap(8),
                                               Text(listBlog[index].publishedDate.toString(),

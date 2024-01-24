@@ -188,7 +188,7 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                             'from_app' : FROM_APP
                                           };
                                           await verifyOtpViewModel.verifyOTP(jsonBody);
-                                          VerifyOtpResponseModel value = await verifyOtpViewModel.response;
+                                          VerifyOtpResponseModel value = verifyOtpViewModel.response;
                                           if (value.success == "1")
                                           {
                                             await sessionManager.createLoginSession(
@@ -197,8 +197,9 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                               value.user?.lastName ?? "",
                                               value.user?.userType ?? "",
                                               value.user?.accessToken ?? "",
+                                              value.user?.profilePic ?? "",
                                             );
-                                            startActivity(context, DashboardScreen());
+                                            startActivity(context, const DashboardScreen());
                                           }
                                           else
                                           {
@@ -330,6 +331,7 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                               value.user?.lastName ?? "",
                                               value.user?.userType ?? "",
                                               value.user?.accessToken ?? "",
+                                              value.user?.profilePic ?? "",
                                             );
                                             startActivity(context, DashboardScreen());
                                             showToast(value.message, context);

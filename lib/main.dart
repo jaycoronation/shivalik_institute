@@ -183,7 +183,7 @@ class MyApp extends StatelessWidget {
                 fontSize: 14,
                 fontWeight: FontWeight.w400),
           ),
-          fontFamily: 'Poppins',
+          fontFamily: 'Colfax',
           textSelectionTheme: TextSelectionThemeData(selectionColor: black.withOpacity(0.3)),
           colorScheme: ColorScheme.fromSwatch(primarySwatch: createMaterialColor(white)).copyWith(secondary: white)
       ),
@@ -448,9 +448,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   {
                     if (Platform.isIOS)
                     {
-                      if (await canLaunchUrl(Uri.parse("https://apps.apple.com/in/app/shivalik-channel-partner-app/id1560302550")))
+                      if (await canLaunchUrl(Uri.parse("https://apps.apple.com/in/app/shivalik-institute/id6471340089")))
                       {
-                        launchUrl(Uri.parse("https://apps.apple.com/in/app/shivalik-channel-partner-app/id1560302550"),mode: LaunchMode.externalApplication);
+                        launchUrl(Uri.parse("https://apps.apple.com/in/app/shivalik-institute/id6471340089"),mode: LaunchMode.externalApplication);
                       }
                     }
                     else
