@@ -3,8 +3,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
+import 'package:shivalik_institute/common_widget/placeholder.dart';
 import 'package:shivalik_institute/viewmodels/EventViewModel.dart';
 
 import '../common_widget/common_widget.dart';
@@ -120,7 +122,32 @@ class _EventsScreenState extends BaseState<EventsScreen> {
             builder: (context, value, child) {
               if ((value.isLoading) && (_isLoadingMore == false))
                 {
-                  return const LoadingWidget();
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey.shade100 ,
+                    highlightColor: Colors.grey.shade400,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                              MediumContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                              Gap(8),
+                              TitlePlaceholder(width: MediaQuery.of(context).size.width),
+                              Gap(12),
+                              MediumContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                              Gap(8),
+                              TitlePlaceholder(width: MediaQuery.of(context).size.width),
+                              Gap(12),
+                              MediumContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                              Gap(8),
+                              TitlePlaceholder(width: MediaQuery.of(context).size.width),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
                 }
               else
                 {

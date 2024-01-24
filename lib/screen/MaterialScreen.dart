@@ -45,7 +45,6 @@ class _MaterialScreenState extends BaseState<MaterialScreen> {
               titleSpacing: 0,
               centerTitle: false,
               title: getTitle("Resource Center",),
-
             ),
           body: SingleChildScrollView(
             child: Padding(

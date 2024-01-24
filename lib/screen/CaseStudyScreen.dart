@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/model/CaseStudyResponseModel.dart';
 import 'package:shivalik_institute/viewmodels/CaseStudyViewModel.dart';
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
 import '../common_widget/loading_more.dart';
 import '../common_widget/no_data_new.dart';
+import '../common_widget/placeholder.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../utils/base_class.dart';
@@ -117,7 +119,51 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
             builder: (context, value, child) {
               if ((value.isLoading) && (_isLoadingMore == false))
               {
-                return const LoadingWidget();
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey.shade100 ,
+                  highlightColor: Colors.grey.shade400,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 12, 18, 12),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 25),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                MediumContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                                Container(height: 12,),
+                                SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                Container(height: 8,),
+                                SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 25),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                MediumContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                                Container(height: 12,),
+                                SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                Container(height: 8,),
+                                SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                );
               }
               else
               {

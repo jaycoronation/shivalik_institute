@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/viewmodels/ModuleViewModel.dart';
 
 import '../common_widget/common_widget.dart';
+import '../common_widget/placeholder.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../model/ModuleResponseModel.dart';
@@ -121,7 +123,41 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
             builder: (context, value, child) {
               if (value.isLoading)
               {
-                return const LoadingWidget();
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey.shade100 ,
+                  highlightColor: Colors.grey.shade400,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 18.0, right: 18,top: 12),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SingleContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                        Container(height: 14,),
+                        SingleContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                        Container(height: 14,),
+                        SingleContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                        Container(height: 14,),
+                        SingleContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                        Container(height: 14,),
+                        SingleContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                        Container(height: 14,),
+                        SingleContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                        Container(height: 14,),
+                        SingleContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                        Container(height: 14,),
+                        SingleContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                        Container(height: 14,),
+                        SingleContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                        Container(height: 14,),
+                        SingleContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                        Container(height: 14,),
+                        SingleContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                      ],
+                    ),
+                  ),
+
+                );
               }
               else
               {

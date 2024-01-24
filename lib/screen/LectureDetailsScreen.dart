@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
+import 'package:shivalik_institute/common_widget/placeholder.dart';
 import 'package:shivalik_institute/constant/api_end_point.dart';
 import 'package:shivalik_institute/constant/colors.dart';
 import 'package:shivalik_institute/screen/DashboardScreen.dart';
@@ -75,7 +77,22 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
             title: getTitle("Lecture Details",),
           ),
           body: isLoading
-              ? const LoadingWidget()
+              ? Shimmer.fromColors(
+                      baseColor: Colors.grey.shade100 ,
+                      highlightColor: Colors.grey.shade400,
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child:Container(
+                          margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                          child: Column(
+                            children: [
+                              LargeContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                            ],
+                          ),
+                        )
+                      ),
+              )
+
               : SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Card(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/model/BatchResponseModel.dart';
 import 'package:shivalik_institute/model/CityResponseModel.dart';
 import 'package:shivalik_institute/model/CountryResponseModel.dart';
@@ -15,7 +16,7 @@ import 'package:shivalik_institute/viewmodels/UserViewModel.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:http/http.dart' as http;
 import '../common_widget/common_widget.dart';
-import '../common_widget/loading.dart';
+import '../common_widget/placeholder.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../model/CommonResponseModel.dart';
@@ -189,7 +190,48 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
             builder: (context, value, child) {
               if (value.isLoading)
                 {
-                  return const LoadingWidget();
+                  return  Shimmer.fromColors(
+                    baseColor: Colors.grey.shade100 ,
+                    highlightColor: Colors.grey.shade400,
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 18.0, right: 18),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 12),
+                                decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(150)), color: grayLight),
+                                width: 100,
+                                height: 100,
+                                child:  ClipOval(
+                                    child:Image.asset('assets/images/ic_user_placeholder.png', fit: BoxFit.cover,)
+                                ),
+                              ),
+                            ),
+                            Container(height: 26,),
+                            TitleWithContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                            Container(height: 18,),
+                            TitleWithContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                            Container(height: 18,),
+                            TitleWithContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                            Container(height: 18,),
+                            TitleWithContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                            Container(height: 18,),
+                            TitleWithContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                            Container(height: 18,),
+                            TitleWithContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                            Container(height: 18,),
+                            TitleWithContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                            Container(height: 18,),
+                            TitleWithContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
                 }
               else
                 {

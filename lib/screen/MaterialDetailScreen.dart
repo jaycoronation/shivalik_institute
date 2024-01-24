@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/constant/global_context.dart';
@@ -15,6 +16,7 @@ import 'package:shivalik_institute/screen/DashboardScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common_widget/common_widget.dart';
+import '../common_widget/placeholder.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../model/CommonResponseModel.dart';
@@ -120,7 +122,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
           titleSpacing: 0,
           centerTitle: false,
           title: getTitle("Material",),
-          actions: [
+          actions: const [
             /*InkWell(
               onTap: () {
                 setState(() {
@@ -139,11 +141,29 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                 ),
               ),
             ),*/
-            const Gap(12),
+            Gap(12),
           ],
         ),
         body: _isLoading
-            ? const LoadingWidget()
+            ? Shimmer.fromColors(
+                baseColor: Colors.grey.shade100 ,
+                highlightColor: Colors.grey.shade400,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 18.0, right: 18),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                         LargeContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                         Container(height: 18,),
+                         LargeContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                      ],
+                    ),
+                  ),
+              ),
+          )
             : listDocument.isNotEmpty
             ? Padding(
                 padding: const EdgeInsets.only(left: 18.0, right: 18),

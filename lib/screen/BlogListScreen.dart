@@ -5,6 +5,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/constant/api_end_point.dart';
@@ -13,6 +14,7 @@ import '../../model/BlogListResponseModel.dart';
 import '../../utils/app_utils.dart';
 import '../../utils/base_class.dart';
 import '../common_widget/common_widget.dart';
+import '../common_widget/placeholder.dart';
 import 'BlogDetailsScreen.dart';
 
 class BlogListScreen extends StatefulWidget {
@@ -76,7 +78,64 @@ class _BlogListScreenState extends BaseState<BlogListScreen> {
           backgroundColor: white,
         ),
         body: _isLoading
-            ? const LoadingWidget()
+            ? Shimmer.fromColors(
+              baseColor: Colors.grey.shade100 ,
+                highlightColor: Colors.grey.shade400,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 12),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 30),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: LargeContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                              ),
+                              const Gap(12),
+                              SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                              const Gap(12),
+                              SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                              const Gap(12),
+                              SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                              const Gap(12),
+                              SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: LargeContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                              ),
+                              const Gap(12),
+                              SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                              const Gap(12),
+                              SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                              const Gap(12),
+                              SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                              const Gap(12),
+                              SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                            ],
+                          ),
+                        ),
+
+                      ],
+                    ),
+                  ),
+                ),
+              )
             : listBlog.isEmpty
             ? const Center(child: MyNoDataNewWidget(msg: 'No Articles Found!', img: '',))
             : _setData()

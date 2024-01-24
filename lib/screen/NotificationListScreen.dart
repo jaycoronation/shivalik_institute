@@ -5,7 +5,9 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
+import 'package:shivalik_institute/common_widget/placeholder.dart';
 import 'package:shivalik_institute/constant/api_end_point.dart';
 import 'package:shivalik_institute/constant/colors.dart';
 import 'package:shivalik_institute/constant/global_context.dart';
@@ -63,7 +65,276 @@ class _NotificationListScreenState extends BaseState<NotificationListScreen> {
             title: getTitle("Notification",),
           ),
           body: isLoading
-              ? const LoadingWidget()
+              ? Shimmer.fromColors(
+                  baseColor: Colors.grey.shade100 ,
+                  highlightColor: Colors.grey.shade400,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                                Container(
+                                height: 60,
+                                  width: 60,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey.shade200,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.grey.shade500,
+                                          width: 0.8
+                                      )
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Image.asset("assets/images/ic_placeholder.png",width: 40,height: 40),
+                                  ),
+                                ),
+                                const Gap(12),
+                                Expanded(
+                                    child: Column(
+                                      children: [
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      ],
+                                  )
+                                )
+                            ],
+                          ),
+                          const Gap(12),
+                          const Divider(color: grayDark,thickness: 0.5,height: 0.7,),
+                          const Gap(12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                                Container(
+                                height: 60,
+                                  width: 60,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey.shade200,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.grey.shade500,
+                                          width: 0.8
+                                      )
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Image.asset("assets/images/ic_placeholder.png",width: 40,height: 40),
+                                  ),
+                                ),
+                                const Gap(12),
+                                Expanded(
+                                    child: Column(
+                                      children: [
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      ],
+                                  )
+                                )
+                            ],
+                          ),
+                          const Gap(12),
+                          const Divider(color: grayDark,thickness: 0.5,height: 0.7,),
+                          const Gap(12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                                Container(
+                                height: 60,
+                                  width: 60,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey.shade200,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.grey.shade500,
+                                          width: 0.8
+                                      )
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Image.asset("assets/images/ic_placeholder.png",width: 40,height: 40),
+                                  ),
+                                ),
+                                const Gap(12),
+                                Expanded(
+                                    child: Column(
+                                      children: [
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                          const Gap(8),
+                                          SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      ],
+                                  )
+                                )
+                            ],
+                          ),
+                          const Gap(12),
+                          const Divider(color: grayDark,thickness: 0.5,height: 0.7,),
+                          const Gap(12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 60,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey.shade200,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        color: Colors.grey.shade500,
+                                        width: 0.8
+                                    )
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Image.asset("assets/images/ic_placeholder.png",width: 40,height: 40),
+                                ),
+                              ),
+                              const Gap(12),
+                              Expanded(
+                                  child: Column(
+                                    children: [
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                    ],
+                                  )
+                              )
+                            ],
+                          ),
+                          const Gap(12),
+                          const Divider(color: grayDark,thickness: 0.5,height: 0.7,),
+                          const Gap(12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 60,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey.shade200,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        color: Colors.grey.shade500,
+                                        width: 0.8
+                                    )
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Image.asset("assets/images/ic_placeholder.png",width: 40,height: 40),
+                                ),
+                              ),
+                              const Gap(12),
+                              Expanded(
+                                  child: Column(
+                                    children: [
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                    ],
+                                  )
+                              )
+                            ],
+                          ),
+                          const Gap(12),
+                          const Divider(color: grayDark,thickness: 0.5,height: 0.7,),
+                          const Gap(12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 60,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey.shade200,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        color: Colors.grey.shade500,
+                                        width: 0.8
+                                    )
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Image.asset("assets/images/ic_placeholder.png",width: 40,height: 40),
+                                ),
+                              ),
+                              const Gap(12),
+                              Expanded(
+                                  child: Column(
+                                    children: [
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                      const Gap(8),
+                                      SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                                    ],
+                                  )
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              )
               : SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,

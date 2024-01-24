@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/model/ModuleResponseModel.dart';
@@ -12,6 +13,7 @@ import 'package:shivalik_institute/viewmodels/LectureViewModel.dart';
 import 'package:shivalik_institute/viewmodels/UserListViewModel.dart';
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading_more.dart';
+import '../common_widget/placeholder.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../model/LecturesResponseModel.dart';
@@ -152,7 +154,31 @@ class _LectureScreenState extends BaseState<LectureScreen> {
             builder: (context, value, child) {
               if ((value.isLoading) && (_isLoadingMore == false))
                 {
-                  return const LoadingWidget();
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey.shade100 ,
+                    highlightColor: Colors.grey.shade400,
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(18, 12, 18, 12),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SingleContainerPlaceholder(width: 170,),
+                            Container(height: 12,),
+                            MediumContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                            Container(height: 12,),
+                            MediumContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                            Container(height: 12,),
+                            MediumContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                            Container(height: 12,),
+                            MediumContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  );
                 }
               else
                 {

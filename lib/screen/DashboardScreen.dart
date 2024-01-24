@@ -15,6 +15,7 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/common_widget.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/model/CommonResponseModel.dart';
@@ -34,6 +35,7 @@ import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../common_widget/VideoProjectWidget.dart';
+import '../common_widget/placeholder.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../constant/global_context.dart';
@@ -250,7 +252,69 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
             builder: (context, value, child) {
               if (value.isLoading)
                 {
-                  return const LoadingWidget();
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey.shade100 ,
+                    highlightColor: Colors.grey.shade400,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const BannerPlaceholder(),
+                          Container(
+                            margin: const EdgeInsets.only(top: 22),
+                            color: lightgrey,
+                            child: Column(
+                              children: [
+                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
+                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
+                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
+                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
+                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
+                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
+                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
+                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
+                                TitlePlaceholder(width: MediaQuery.sizeOf(context).width,),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(top: 42,bottom: 22),
+                            child: Column(
+                              children: [
+                                const Gap(12),
+                                Center(
+                                  child: SimpleCircularProgressBar(
+                                    size: 160,
+                                    backStrokeWidth: 22,
+                                    valueNotifier: valueNotifier,
+                                    progressColors: [brandColor,brandColor.withOpacity(0.6)],
+                                    backColor: grayNew,
+                                    mergeMode: true,
+                                  ),
+                                ),
+                                const Gap(12),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(left: 18,right: 18),
+                           width: MediaQuery.of(context).size.width,
+                           child: Column(
+                             children: [
+                               SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                               SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                               SingleTitlePlaceholder(width: MediaQuery.of(context).size.width),
+                             ],
+                           ),
+                          )
+
+                        ],
+                      ),
+                    ),
+                      
+                  );
                 }
               else
                 {

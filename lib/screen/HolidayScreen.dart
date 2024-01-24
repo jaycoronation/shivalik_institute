@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:shivalik_institute/common_widget/placeholder.dart';
 import 'package:shivalik_institute/model/HolidayResponseModel.dart';
 import 'package:shivalik_institute/utils/app_utils.dart';
 import 'package:shivalik_institute/viewmodels/HolidayViewModel.dart';
@@ -92,7 +94,64 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
             builder: (context, value, child) {
               if ((value.isLoading) && (_isLoadingMore == false))
               {
-                return const LoadingWidget();
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey.shade100 ,
+                  highlightColor: Colors.grey.shade400,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(child: Divider(height: 0.5,color: graySemiDark,thickness: 0.5,endIndent: 12,)),
+                              SingleTitlePlaceholder(width: 50),
+                              Flexible(child: Divider(height: 0.5,color: graySemiDark,thickness: 0.5,indent: 12,)),
+                            ],
+                          ),
+                          const Gap(12),
+                          SizedBox(child: SingleTitlePlaceholder(width: MediaQuery.of(context).size.width)),
+                          const Gap(12),
+                          SingleContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                          const Gap(20),
+                          SizedBox(child: SingleTitlePlaceholder(width: MediaQuery.of(context).size.width)),
+                          const Gap(12),
+                          SingleContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                          const Gap(20),
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(child: Divider(height: 0.5,color: graySemiDark,thickness: 0.5,endIndent: 12,)),
+                              SingleTitlePlaceholder(width: 50),
+                              Flexible(child: Divider(height: 0.5,color: graySemiDark,thickness: 0.5,indent: 12,)),
+                            ],
+                          ),
+                          const Gap(12),
+                          SizedBox(child: SingleTitlePlaceholder(width: MediaQuery.of(context).size.width)),
+                          const Gap(12),
+                          SmallListContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                          const Gap(20),
+                          SizedBox(child: SingleTitlePlaceholder(width: MediaQuery.of(context).size.width)),
+                          const Gap(12),
+                          SmallListContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                          const Gap(20),
+                          SizedBox(child: SingleTitlePlaceholder(width: MediaQuery.of(context).size.width)),
+                          const Gap(12),
+                          SmallListContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                          const Gap(20),
+                          SizedBox(child: SingleTitlePlaceholder(width: MediaQuery.of(context).size.width)),
+                          const Gap(12),
+                          SmallListContainerPlaceholder(width: MediaQuery.of(context).size.width,),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
               }
               else
               {

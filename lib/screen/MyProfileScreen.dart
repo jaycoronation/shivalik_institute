@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:shivalik_institute/common_widget/placeholder.dart';
 import 'package:shivalik_institute/screen/HolidayScreen.dart';
 import 'package:shivalik_institute/screen/NotificationListScreen.dart';
 import 'package:shivalik_institute/screen/PaymentHistroyScreen.dart';
@@ -58,7 +60,39 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
           builder: (context, value, child) {
             if ((value.isLoading) && (_isLoadingMore == false))
             {
-              return const LoadingWidget();
+              return Shimmer.fromColors(
+                baseColor: Colors.grey.shade100 ,
+                highlightColor: Colors.grey.shade400,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 12),
+                          decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(150)), color: grayLight),
+                          width: 100,
+                          height: 100,
+                          child:  ClipOval(
+                              child:Image.asset('assets/images/ic_user_placeholder.png', fit: BoxFit.cover,)
+                          ),
+                        ),
+                      ),
+                      Container(height: 38,),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: LargeContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                      ),
+                      Container(height: 12,),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: LargeContainerPlaceholder(width: MediaQuery.of(context).size.width),
+                      )
+                    ],
+                  ),
+                ),
+              );
             }
             else
             {
@@ -150,7 +184,6 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                           ],
                                         ),
                                       ),
-
                                     ],
                                   ),
                                 ),

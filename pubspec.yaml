@@ -74,6 +74,7 @@ dependencies:
   screen_protector: ^1.4.2
   package_info_plus: ^5.0.1
   flutter_pptx: ^0.1.2+1
+  shimmer:  ^3.0.0
 
 
 dev_dependencies:

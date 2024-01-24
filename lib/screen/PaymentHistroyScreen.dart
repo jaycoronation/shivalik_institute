@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/constant/api_end_point.dart';
@@ -12,6 +13,7 @@ import 'package:shivalik_institute/model/PaymentHistoryResponseModel.dart';
 import 'package:shivalik_institute/utils/pdf_viewer.dart';
 
 import '../common_widget/common_widget.dart';
+import '../common_widget/placeholder.dart';
 import '../utils/base_class.dart';
 
 class PaymentHistoryScreen extends StatefulWidget {
@@ -52,7 +54,28 @@ class _PaymentHistoryScreenState extends BaseState<PaymentHistoryScreen> {
             title: getTitle("Payment History",),
           ),
           body: isLoading
-              ? const LoadingWidget()
+              ? Shimmer.fromColors(
+                  baseColor: Colors.grey.shade100 ,
+                  highlightColor: Colors.grey.shade400,
+                  child: const SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(12, 8, 12, 8),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          BannerPlaceholder(),
+                          Gap(12),
+                          BannerPlaceholder(),
+                          Gap(12),
+                          BannerPlaceholder(),
+                          Gap(12),
+                          BannerPlaceholder(),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
               : listPayments.isEmpty
               ? const MyNoDataNewWidget(msg: "No Payment History Found", img: '')
               : SingleChildScrollView(
