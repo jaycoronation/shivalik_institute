@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/placeholder.dart';
@@ -69,7 +70,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
             centerTitle: false,
             title: getTitle("Holiday List",),
             actions: [
-              InkWell(
+              /*InkWell(
                 onTap: () {
                   setState(() {
                     _isSearchHideShow = !_isSearchHideShow;
@@ -87,7 +88,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                   ),
                 ),
               ),
-              const Gap(12),
+              const Gap(12),*/
             ],
           ),
           body: Consumer<HolidayViewModel>(
@@ -455,7 +456,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                               ),
                             ),
                           )
-                          : const MyNoDataNewWidget(msg: "No Holiday Founds", img: ""),
+                          : const MyNoDataNewWidget(msg: "No Holidays Found", img: ""),
                       Visibility(
                           visible: _isLoadingMore,
                           child: const LoadingMoreWidget()
@@ -475,35 +476,26 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
     );
   }
 
-  void holiday() {
+  void saparateHolidayDateWise() {
   // Create a HolidayManager instance
   HolidayManager holidayManager = HolidayManager();
 
   // Populate the holidays list
-  holidayManager.holidays = listHoliday.map((data) => HolidayList(
-  id: data.id,
-  title: data.title,
-  description: data.description,
-  holidayDate: data.holidayDate,
-  status: data.status,
-  createdAt: data.createdAt,
-  updatedAt: data.updatedAt,
-  deletedAt: data.deletedAt,
-  )).toList();
+  holidayManager.holidays = listHoliday.map(
+          (data) => HolidayList(
+                id: data.id,
+                title: data.title,
+                description: data.description,
+                holidayDate: data.holidayDate,
+                status: data.status,
+                createdAt: data.createdAt,
+                updatedAt: data.updatedAt,
+                deletedAt: data.deletedAt,
+                )).toList();
 
   // Separate holidays by year and month
   separatedHolidays = holidayManager.separateHolidaysByYearAndMonth();
 
-  // Print the result
-  separatedHolidays.forEach((year, monthMap) {
-  print('Year: $year');
-  monthMap.forEach((month, holidays) {
-  print('  Month: $month');
-  holidays.forEach((holiday) {
-  print('    $holiday');
-  });
-  });
-  });
   }
 
   Future<void> getHolidayList(bool isFirstTime) async {
@@ -525,7 +517,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
     var holidayViewModel = Provider.of<HolidayViewModel>(context,listen: false);
     await holidayViewModel.getHolidayList(jsonBody);
     if (isFirstTime) {
-      if (listHoliday.isNotEmpty ?? false) {
+      if (listHoliday.isNotEmpty) {
         listHoliday = [];
       }
     }
@@ -534,9 +526,15 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
     {
       List<HolidayList>? _tempList = [];
       _tempList = holidayViewModel.response.holidayList;
-      listHoliday.addAll(_tempList ?? []);
-      holiday();
-      print(listHoliday.length);
+
+      for (var i=0; i < _tempList!.length; i++)
+        {
+          if (DateFormat("dd-MM-yyyy").parse(_tempList[i].holidayDate ?? '').isAfter(DateTime.now()))
+            {
+              listHoliday.add(_tempList[i]);
+            }
+        }
+      saparateHolidayDateWise();
 
 
       if (_tempList?.isNotEmpty ?? false) {

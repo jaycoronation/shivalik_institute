@@ -9,6 +9,7 @@ import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/model/ModuleResponseModel.dart';
 import 'package:shivalik_institute/model/UserListResponseModel.dart';
 import 'package:shivalik_institute/screen/LectureDetailsScreen.dart';
+import 'package:shivalik_institute/utils/app_utils.dart';
 import 'package:shivalik_institute/viewmodels/LectureViewModel.dart';
 import 'package:shivalik_institute/viewmodels/UserListViewModel.dart';
 import '../common_widget/common_widget.dart';
@@ -51,7 +52,8 @@ class _LectureScreenState extends BaseState<LectureScreen> {
   String toDateDisplay = "";
   String selectedFaculty = '';
   String selectedFacultyId = '';
-  List<String> dateFilterList = ["All", "Today", "Yesterday", "Last 7 Days", "Last 30 Days", "This Month", "Last Month", "Custom range"];
+  //List<String> dateFilterList = ["All", "Today", "Yesterday", "Last 7 Days", "Last 30 Days", "This Month", "Last Month", "Custom range"];
+  List<String> dateFilterList = ["All", "Today", "Tomorrow", "Next 7 Days", "Next 30 Days", "This Month", "Next Month", "Custom range"];
 
   @override
   void initState(){
@@ -113,19 +115,16 @@ class _LectureScreenState extends BaseState<LectureScreen> {
             centerTitle: false,
             title: getTitle("Lecture",),
             actions: [
-              Visibility(
-                visible: false,
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: () {
-                    showDateFilterBottomSheet();
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    alignment: Alignment.center,
-                    child: Padding(padding: const EdgeInsets.all(10.0), child: Image.asset('assets/images/ic_calendar_new.png', width: 24, height: 24)),
-                  ),
+              InkWell(
+                customBorder: const CircleBorder(),
+                onTap: () {
+                  showDateFilterBottomSheet();
+                },
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  alignment: Alignment.center,
+                  child: Padding(padding: const EdgeInsets.all(10.0), child: Image.asset('assets/images/ic_calendar_new.png', width: 24, height: 24)),
                 ),
               ),
               const Gap(8),
@@ -233,7 +232,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                     child: Row(
                                       children: [
                                         Text(toDateDisplay == fromDateDisplay ? fromDateDisplay :"$fromDateDisplay - $toDateDisplay", textAlign: TextAlign.start,
-                                          style: const TextStyle(fontSize: 16, color: black, fontWeight: FontWeight.w600),
+                                          style: const TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w600),
                                         ),
                                         const Gap(5),
                                         GestureDetector(
@@ -504,8 +503,8 @@ class _LectureScreenState extends BaseState<LectureScreen> {
     Map<String, String> jsonBody = {
       'batch_id': "",
       'faculty_id': selectedFacultyId,
-      'filter': '',
-      'filter_by_class_status': "",
+      'filter': 'upcoming_class',
+      'filter_by_class_status': "active",
       'filter_name': "Filter",
       'from_date_filter': fromDateApi,
       'to_date_filter': toDateApi,
@@ -642,39 +641,39 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                 Navigator.pop(context);
                               }
                               else if (selectedDateFilter == "Today")
-                              {
-                                var now = DateTime.now();
-                                var formatter = DateFormat('yyyy-MM-dd');
-                                String formattedDate = formatter.format(now);
-                                fromDateApi = formattedDate;
-                                toDateApi = formattedDate;
+                                {
+                                  var now = DateTime.now();
+                                  var formatter = DateFormat('yyyy-MM-dd');
+                                  String formattedDate = formatter.format(now);
+                                  fromDateApi = formattedDate;
+                                  toDateApi = formattedDate;
 
-                                String startDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
-                                String endDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
+                                  String startDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
+                                  String endDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
 
-                                fromDateDisplay = startDateFormatDisplay;
-                                toDateDisplay = endDateFormatDisplay;
+                                  fromDateDisplay = startDateFormatDisplay;
+                                  toDateDisplay = endDateFormatDisplay;
 
-                                getLectureList(true);
-                                Navigator.pop(context);
-                              }
+                                  getLectureList(true);
+                                  Navigator.pop(context);
+                                }
                               else if (selectedDateFilter == "Tomorrow")
-                              {
-                                var now = DateTime.now().add(const Duration(days: 1));
-                                var formatter = DateFormat('yyyy-MM-dd');
-                                String formattedDate = formatter.format(now);
-                                fromDateApi = formattedDate;
-                                toDateApi = formattedDate;
+                                {
+                                  var now = DateTime.now().add(const Duration(days: 1));
+                                  var formatter = DateFormat('yyyy-MM-dd');
+                                  String formattedDate = formatter.format(now);
+                                  fromDateApi = formattedDate;
+                                  toDateApi = formattedDate;
 
-                                String startDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
-                                String endDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
+                                  String startDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
+                                  String endDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
 
-                                fromDateDisplay = startDateFormatDisplay;
-                                toDateDisplay = endDateFormatDisplay;
+                                  fromDateDisplay = startDateFormatDisplay;
+                                  toDateDisplay = endDateFormatDisplay;
 
-                                getLectureList(true);
-                                Navigator.pop(context);
-                              }
+                                  getLectureList(true);
+                                  Navigator.pop(context);
+                                }
                               else if (selectedDateFilter == "Yesterday")
                               {
                                 var now = DateTime.now().subtract(const Duration(days: 1));
@@ -712,26 +711,66 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                 getLectureList(true);
                                 Navigator.pop(context);
                               }
+                              else if (selectedDateFilter == "Next 7 Days")
+                                {
+                                  var now = DateTime.now().add(const Duration(days: 6));
+                                  var formatter = DateFormat('yyyy-MM-dd');
+                                  String formattedDate = formatter.format(now);
+                                  var todayDate = DateTime.now();
+                                  var formatterToday = DateFormat('yyyy-MM-dd');
+                                  String formattedDateToday = formatterToday.format(todayDate);
+                                  fromDateApi = formattedDateToday;
+                                  toDateApi = formattedDate;
+
+                                  String startDateFormatDisplay = DateFormat('dd MMM yyyy').format(todayDate);
+                                  String endDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
+
+                                  fromDateDisplay = startDateFormatDisplay;
+                                  toDateDisplay = endDateFormatDisplay;
+
+                                  getLectureList(true);
+                                  Navigator.pop(context);
+                                }
                               else if (selectedDateFilter == "Last 30 Days")
-                              {
-                                var now = DateTime.now().subtract(const Duration(days: 30));
-                                var formatter = DateFormat('yyyy-MM-dd');
-                                String formattedDate = formatter.format(now);
-                                var todayDate = DateTime.now();
-                                var formatterToday = DateFormat('yyyy-MM-dd');
-                                String formattedDateToday = formatterToday.format(todayDate);
-                                fromDateApi = formattedDate;
-                                toDateApi = formattedDateToday;
+                                {
+                                  var now = DateTime.now().subtract(const Duration(days: 30));
+                                  var formatter = DateFormat('yyyy-MM-dd');
+                                  String formattedDate = formatter.format(now);
+                                  var todayDate = DateTime.now();
+                                  var formatterToday = DateFormat('yyyy-MM-dd');
+                                  String formattedDateToday = formatterToday.format(todayDate);
+                                  fromDateApi = formattedDate;
+                                  toDateApi = formattedDateToday;
 
-                                String startDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
-                                String endDateFormatDisplay = DateFormat('dd MMM yyyy').format(todayDate);
+                                  String startDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
+                                  String endDateFormatDisplay = DateFormat('dd MMM yyyy').format(todayDate);
 
-                                fromDateDisplay = startDateFormatDisplay;
-                                toDateDisplay = endDateFormatDisplay;
+                                  fromDateDisplay = startDateFormatDisplay;
+                                  toDateDisplay = endDateFormatDisplay;
 
-                                getLectureList(true);
-                                Navigator.pop(context);
-                              }
+                                  getLectureList(true);
+                                  Navigator.pop(context);
+                                }
+                              else if (selectedDateFilter == "Next 30 Days")
+                                {
+                                  var now = DateTime.now();
+                                  var formatter = DateFormat('yyyy-MM-dd');
+                                  String formattedDate = formatter.format(now);
+                                  var todayDate = DateTime.now().add(const Duration(days: 30));
+                                  var formatterToday = DateFormat('yyyy-MM-dd');
+                                  String formattedDateToday = formatterToday.format(todayDate);
+                                  fromDateApi = formattedDate;
+                                  toDateApi = formattedDateToday;
+
+                                  String startDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
+                                  String endDateFormatDisplay = DateFormat('dd MMM yyyy').format(todayDate);
+
+                                  fromDateDisplay = startDateFormatDisplay;
+                                  toDateDisplay = endDateFormatDisplay;
+
+                                  getLectureList(true);
+                                  Navigator.pop(context);
+                                }
                               else if (selectedDateFilter == "This Month")
                               {
                                 var now = DateTime.now();
@@ -753,29 +792,52 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                 Navigator.pop(context);
                               }
                               else if (selectedDateFilter == "Last Month")
-                              {
-                                var formatterToday = DateFormat('yyyy-MM-dd');
-                                final now = DateTime.now();
-                                var firstDayOfMonth = DateTime(now.year, now.month, 1);
-                                var lastDayOfMonth = DateTime(now.year, now.month, 0);
-                                final nowFinalStart = DateTime.now();
-                                String formattedDateStart =
-                                formatterToday.format(DateTime(nowFinalStart.year, nowFinalStart.month - 1, firstDayOfMonth.day));
-                                final nowFinalStartEnd = DateTime.now();
-                                String formattedDateEnd = formatterToday
-                                    .format(DateTime(nowFinalStartEnd.year, nowFinalStartEnd.month - 1, lastDayOfMonth.day));
-                                fromDateApi = formattedDateStart;
-                                toDateApi = formattedDateEnd;
+                                {
+                                  var formatterToday = DateFormat('yyyy-MM-dd');
+                                  final now = DateTime.now();
+                                  var firstDayOfMonth = DateTime(now.year, now.month, 1);
+                                  var lastDayOfMonth = DateTime(now.year, now.month, 0);
+                                  final nowFinalStart = DateTime.now();
+                                  String formattedDateStart =
+                                  formatterToday.format(DateTime(nowFinalStart.year, nowFinalStart.month - 1, firstDayOfMonth.day));
+                                  final nowFinalStartEnd = DateTime.now();
+                                  String formattedDateEnd = formatterToday
+                                      .format(DateTime(nowFinalStartEnd.year, nowFinalStartEnd.month - 1, lastDayOfMonth.day));
+                                  fromDateApi = formattedDateStart;
+                                  toDateApi = formattedDateEnd;
 
-                                String startDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
-                                String endDateFormatDisplay = DateFormat('dd MMM yyyy').format(nowFinalStartEnd);
+                                  String startDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
+                                  String endDateFormatDisplay = DateFormat('dd MMM yyyy').format(nowFinalStartEnd);
 
-                                fromDateDisplay = startDateFormatDisplay;
-                                toDateDisplay = endDateFormatDisplay;
+                                  fromDateDisplay = startDateFormatDisplay;
+                                  toDateDisplay = endDateFormatDisplay;
 
-                                getLectureList(true);
-                                Navigator.pop(context);
-                              }
+                                  getLectureList(true);
+                                  Navigator.pop(context);
+                                }
+                              else if (selectedDateFilter == "Next Month")
+                                {
+                                  var formatterToday = DateFormat('yyyy-MM-dd');
+                                  final now = DateTime.now();
+                                  var firstDayOfMonth = DateTime(now.year, now.month, 1);
+                                  var lastDayOfMonth = DateTime(now.year, now.month, 0);
+                                  final nowFinalStart = DateTime.now();
+                                  String formattedDateStart = formatterToday.format(DateTime(nowFinalStart.year, nowFinalStart.month + 1, firstDayOfMonth.day));
+                                  final nowFinalStartEnd = DateTime.now();
+                                  String formattedDateEnd = formatterToday.format(DateTime(nowFinalStartEnd.year, nowFinalStartEnd.month + 1, lastDayOfMonth.day));
+
+                                  fromDateApi = formattedDateStart;
+                                  toDateApi = formattedDateEnd;
+
+                                  String startDateFormatDisplay = universalDateConverter("yyyy-MM-dd", "dd MMM yyyy", formattedDateStart);
+                                  String endDateFormatDisplay = universalDateConverter("yyyy-MM-dd", "dd MMM yyyy", formattedDateEnd);
+
+                                  fromDateDisplay = startDateFormatDisplay;
+                                  toDateDisplay = endDateFormatDisplay;
+
+                                  getLectureList(true);
+                                  Navigator.pop(context);
+                                }
                               else if (selectedDateFilter == "Custom range")
                               {
                                 Navigator.pop(context);
@@ -824,26 +886,6 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                   getLectureList(true);
                                   Navigator.pop(context);
                                 }
-                              }
-                              else if (selectedDateFilter == "Next 7 Days")
-                              {
-                                var now = DateTime.now().add(const Duration(days: 6));
-                                var formatter = DateFormat('yyyy-MM-dd');
-                                String formattedDate = formatter.format(now);
-                                var todayDate = DateTime.now();
-                                var formatterToday = DateFormat('yyyy-MM-dd');
-                                String formattedDateToday = formatterToday.format(todayDate);
-                                fromDateApi = formattedDate;
-                                toDateApi = formattedDateToday;
-
-                                String startDateFormatDisplay = DateFormat('dd MMM yyyy').format(now);
-                                String endDateFormatDisplay = DateFormat('dd MMM yyyy').format(todayDate);
-
-                                fromDateDisplay = startDateFormatDisplay;
-                                toDateDisplay = endDateFormatDisplay;
-
-                                getLectureList(true);
-                                Navigator.pop(context);
                               }
 
 

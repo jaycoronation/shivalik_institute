@@ -13,6 +13,7 @@ import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/constant/global_context.dart';
 import 'package:shivalik_institute/screen/DashboardScreen.dart';
+import 'package:shivalik_institute/utils/FileReaderPage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common_widget/common_widget.dart';
@@ -294,8 +295,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                                   }
                                 else if (listDocument[index].fileType == "pptx")
                                   {
-                                    //startActivity(context, PowerFileScreen(listDocument[index].fullPath ?? ""));
-                                    await launchUrl(Uri.parse(listDocument[index].fullPath ?? ""),mode: LaunchMode.externalApplication);
+                                    startActivity(context, FileReaderPage(filePath: listDocument[index].fullPath ?? "",isPrivate: listDocument[index].isPrivate ?? "",));
                                   }
                                 else
                                   {

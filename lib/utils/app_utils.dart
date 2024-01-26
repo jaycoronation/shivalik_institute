@@ -122,7 +122,7 @@ String universalDateConverter(String inputDateFormat,String outputDateFormat, St
 
     var outputFormat = DateFormat(outputDateFormat);
     outputDate = outputFormat.format(inputDate);
-    print(outputDate); // 12/31/2000 11:59 PM <-- MM/dd 12H format
+    //print(outputDate); // 12/31/2000 11:59 PM <-- MM/dd 12H format
   } catch (e) {
   }
   return outputDate;
@@ -147,7 +147,7 @@ String getDateFromTimestamp(String timeStamp){
 
   String formattedDate = DateFormat('dd MMM, yyyy').format(date); // format DateTime object to desired date format
 
-  print(formattedDate); // output: 2022-03-09
+  //print(formattedDate); // output: 2022-03-09
   return formattedDate;
 }
 

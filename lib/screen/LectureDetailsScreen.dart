@@ -12,6 +12,7 @@ import 'package:shivalik_institute/common_widget/placeholder.dart';
 import 'package:shivalik_institute/constant/api_end_point.dart';
 import 'package:shivalik_institute/constant/colors.dart';
 import 'package:shivalik_institute/screen/DashboardScreen.dart';
+import 'package:shivalik_institute/screen/FacultyProfileScreen.dart';
 import 'package:shivalik_institute/utils/pdf_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -155,13 +156,19 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text("Session 1", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text("Faculty - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                Flexible(child: Text("${lectureGetSet.session1FacultyName}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
-                              ],
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                startActivity(context, FacultyProfileScreen(lectureGetSet.session1Faculty ?? ''));
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("Faculty - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                  Flexible(child: Text("${lectureGetSet.session1FacultyName}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
+                                ],
+                              ),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -202,11 +209,17 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text("Session 2", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
-                                  Row(
-                                    children: [
-                                      const Text("Faculty - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                      Text("${lectureGetSet.session2FacultyName}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-                                    ],
+                                  GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: () {
+                                      startActivity(context, FacultyProfileScreen(lectureGetSet.session2Faculty ?? ''));
+                                    },
+                                    child: Row(
+                                      children: [
+                                        const Text("Faculty - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
+                                        Text("${lectureGetSet.session2FacultyName}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                      ],
+                                    ),
                                   ),
                                   Row(
                                     children: [

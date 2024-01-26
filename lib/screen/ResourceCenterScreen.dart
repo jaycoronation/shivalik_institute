@@ -356,15 +356,11 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
        setState(() {
          var listModuleTemp = moduleViewModel.response.list ?? [];
 
-
          if (isForSubmission)
            {
              for (var i=0; i < listModuleTemp.length; i++)
              {
-               if (listModuleTemp[i].hasSubmission == "1")
-               {
-                 listModule.add(listModuleTemp[i]);
-               }
+               listModule.add(listModuleTemp[i]);
              }
            }
          else
@@ -375,7 +371,6 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
              }
            }
 
-         print("listModule ==== ${listModule.length}");
        });
 
     }

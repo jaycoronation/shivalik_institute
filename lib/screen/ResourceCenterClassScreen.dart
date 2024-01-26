@@ -321,14 +321,14 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
                             },
                           ),
                         )
-                            : Expanded(child: MyNoDataNewWidget(msg: "No Module Found", img: ""))
+                            : Expanded(child: MyNoDataNewWidget(msg: "No Lectures Found", img: ""))
                       ],
                     ),
                   );
                 }
                 else
                 {
-                  return const MyNoDataNewWidget(msg: "No Module Found", img: "");
+                  return const MyNoDataNewWidget(msg: "No Lectures Found", img: "");
                 }
               }
             },

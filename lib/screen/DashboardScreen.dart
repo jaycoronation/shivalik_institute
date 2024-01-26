@@ -21,6 +21,7 @@ import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/model/CommonResponseModel.dart';
 import 'package:shivalik_institute/screen/CaseStudyScreen.dart';
 import 'package:shivalik_institute/screen/EventsScreen.dart';
+import 'package:shivalik_institute/screen/FacultyProfileScreen.dart';
 import 'package:shivalik_institute/screen/FeedbackFormScreen.dart';
 import 'package:shivalik_institute/screen/HolidayScreen.dart';
 import 'package:shivalik_institute/screen/LectureDetailsScreen.dart';
@@ -77,13 +78,13 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   final int _pageResult = 10;
   bool _isLastPage = false;
   bool isSubmision = false;
-  String selectedFaculty = '';
-  String selectedFacultyId = '';
   bool _isLoadingMore = false;
   String fromDateApi = "";
   String toDateApi = "";
   String selectedDateFilter = "Today";
   String selectedDateFaculty = "";
+  String selectedFacultyId1 = "";
+  String selectedFacultyId2 = "";
   ModuleList moduleGetSet = ModuleList();
   List<ModuleList> listModule = [];
   List<ModuleList> listSubmission = [];
@@ -109,11 +110,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
   @override
  void initState() {
-
-    //getTestimonialsList(true);
-
     getDashboardData();
-
     getUserData();
     getModuleData();
     getCaseStudyList(true);
@@ -299,6 +296,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
                                       setState(() {
                                         selectedDateFaculty = listCalenderData[index].name ?? '';
+                                        selectedFacultyId1 = listCalenderData[index].facultyId1 ?? '';
+                                        selectedFacultyId1 = listCalenderData[index].facultyId2 ?? '';
                                       });
                                       _eventDialog(listCalenderData[index].date ?? '', listCalenderData[index].title ?? '', listCalenderData[index].eventType ?? '');
                                     },
@@ -308,7 +307,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                         margin: const EdgeInsets.only(right: 12),
                                         decoration: BoxDecoration(
                                           color: white,
-
                                           borderRadius: BorderRadius.circular(4)
                                         ),
                                         padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
@@ -318,7 +316,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                           children: [
                                             Container(
                                               decoration: BoxDecoration(
-                                                color: white,
+                                                color: grayButton,
                                                 shape: BoxShape.rectangle,
                                                 borderRadius: BorderRadius.circular(4)
                                               ),
@@ -529,23 +527,20 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                             mainAxisAlignment: MainAxisAlignment.start,
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
-                                                              Expanded(
-                                                                child: Row(
-                                                                  children: [
-                                                                    Image.asset('assets/images/ic_calender.png', width: 22,height: 22,),
-                                                                    Container(width: 10,),
-                                                                    Text(universalDateConverter("dd-MM-yyyy", "dd MMM, yyyy", getSet?.date ?? ''),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                                  ],
-                                                                ),
+                                                              Row(
+                                                                children: [
+                                                                  Image.asset('assets/images/ic_calender.png', width: 22,height: 22,),
+                                                                  Container(width: 10,),
+                                                                  Text(universalDateConverter("dd-MM-yyyy", "dd MMM, yyyy", getSet?.date ?? ''),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                                ],
                                                               ),
-                                                              Expanded(
-                                                                child: Row(
-                                                                  children: [
-                                                                    Image.asset('assets/images/ic_clock.png', width: 22,height: 22,),
-                                                                    Container(width: 10,),
-                                                                    Text("${getSet?.startTime} onwards",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                                                  ],
-                                                                ),
+                                                              const Gap(12),
+                                                              Row(
+                                                                children: [
+                                                                  Image.asset('assets/images/ic_clock.png', width: 22,height: 22,),
+                                                                  Container(width: 10,),
+                                                                  Text(getSet?.endTime?.isNotEmpty ?? false ? "${getSet?.startTime} - ${getSet?.endTime}" : "${getSet?.startTime} onwards",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                                ],
                                                               ),
                                                             ],
                                                           )
@@ -968,7 +963,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.only(left: 18, right: 18,top: 12),
+                                  padding: const EdgeInsets.only(left: 18, right: 18,top: 22),
                                   alignment: Alignment.centerLeft,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1283,20 +1278,26 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                   const Gap(8),
                   Visibility(
                     visible: selectedDateFaculty.isNotEmpty,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          flex: 1,
-                          child: Text("Faculty",style: TextStyle(color: grayDarkNew,fontSize: 12,fontWeight: FontWeight.w400),),
-                        ),
-                        const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                        Expanded(
-                          flex: 3,
-                          child: Text(selectedDateFaculty ?? "",style:  const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
-                        ),
-                      ],
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        startActivity(context, FacultyProfileScreen(selectedFacultyId1));
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Expanded(
+                            flex: 1,
+                            child: Text("Faculty",style: TextStyle(color: grayDarkNew,fontSize: 12,fontWeight: FontWeight.w400),),
+                          ),
+                          const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                          Expanded(
+                            flex: 3,
+                            child: Text(selectedDateFaculty ?? "",style:  const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -1542,7 +1543,16 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
               );
               listCalenderEvents.add(setDecoration);
 
-              listCalenderDataTemp.add(CalendarEventModel(date: universalDateConverter("dd-MM-yyyy", "dd-MM-yyyy", listUpcomingLectures[i].date.toString()),title: listUpcomingLectures[i].session1Topic ?? '',eventType: "Lecture",name: listUpcomingLectures[i].session2FacultyName?.isNotEmpty ?? false ? "${listUpcomingLectures[i].session1FacultyName} and ${listUpcomingLectures[i].session2FacultyName}" : listUpcomingLectures[i].session1FacultyName));
+              listCalenderDataTemp.add(
+                  CalendarEventModel(
+                      date: universalDateConverter("dd-MM-yyyy", "dd-MM-yyyy", listUpcomingLectures[i].date.toString()),
+                      title: listUpcomingLectures[i].session1Topic ?? '',
+                      eventType: "Lecture",
+                      name: listUpcomingLectures[i].session2FacultyName?.isNotEmpty ?? false ? "${listUpcomingLectures[i].session1FacultyName} and ${listUpcomingLectures[i].session2FacultyName}" : listUpcomingLectures[i].session1FacultyName,
+                    facultyId1: listUpcomingLectures[i].session1Faculty,
+                    facultyId2: listUpcomingLectures[i].session2Faculty
+                  )
+              );
             }
 
           for(int i=0; i < listUpcomingHolidays.length; i++)
@@ -1567,7 +1577,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
           listCalenderDataTemp.sort((a, b) => DateFormat("dd-MM-yyyy").parse(a.date.toString()).compareTo(DateFormat("dd-MM-yyyy").parse(b.date.toString())),);
 
-          listCalenderData = listCalenderDataTemp.where((date) => !DateFormat("dd-MM-yyyy").parse(date.date.toString()).isBefore(DateTime.now())).toList();
+          //listCalenderData = listCalenderDataTemp.where((date) => !DateFormat("dd-MM-yyyy").parse(date.date.toString()).isBefore(DateTime.now())).toList();
+          listCalenderData = listCalenderDataTemp;
 
         });
         print("NavigationService.class_id ===== ${NavigationService.class_id}");
@@ -1723,6 +1734,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     showModalBottomSheet<bool>(
       isScrollControlled: true,
       isDismissible: false,
+      enableDrag: false,
       context: context,
       builder: (BuildContext context) {
         return ConstrainedBox(

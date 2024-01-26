@@ -435,6 +435,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     showCupertinoModalPopup<void>(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) => CupertinoAlertDialog(
         title: Text(titleText,style: const TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16)),
         content: Text(messageText,style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14)),

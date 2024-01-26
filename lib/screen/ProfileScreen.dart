@@ -1905,13 +1905,10 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     var responseString = utf8.decode(responseBytes);
     print("responseString == ${responseString}");
     final statusCode = response.statusCode;
-
     print(statusCode);
-
     Map<String, dynamic> user = jsonDecode(responseString);
     print(jsonEncode(user));
     var apiData = CommonResponseModel.fromJson(user);
-
     print(jsonEncode(apiData));
 
     if (statusCode == 200 && apiData.success == "1")

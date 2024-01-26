@@ -37,6 +37,8 @@
 	<string>Shivalik Institute is Asking your photo permission for uploading the profile picture</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+    <key>io.flutter.embedded_views_preview</key>
+    <true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

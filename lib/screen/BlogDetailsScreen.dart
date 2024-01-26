@@ -57,7 +57,7 @@ class _BlogDetailsScreen extends BaseState<BlogDetailsScreen> {
               InkWell(
                 customBorder: const CircleBorder(),
                 onTap: () {
-                  var shareText = "Hello,\n\nSharing our latest article, '${getSet.title},' which is now available on our website. For the insightful read, click the link below \n\n ${getSet.shareUrl?.websiteUrl.toString()}\n\nHope you find it engaging and valuable.";
+                  var shareText = "Hello,\n\nSharing our latest article, '${getSet.title},' which is now available on our website. For the insightful read, click the link below \n\nhttps://www.shivalik.institute/articles/${getSet.slug.toString()}\n\nHope you find it engaging and valuable.";
                   Share.share(shareText);
                 },
                 child: SizedBox(

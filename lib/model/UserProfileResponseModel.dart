@@ -19,9 +19,9 @@ class UserProfileResponseModel {
     _success = json['success'];
     _message = json['message'];
     _details = json['details'] != null
-        ? Details.fromJson(json['details'])
-        : json['details'] is String
-        ? null
+        ? json['details'] is String
+        ? Details()
+        : Details.fromJson(json['details'])
         : null;
   }
   String? _success;
@@ -121,8 +121,9 @@ Details detailsFromJson(String str) => Details.fromJson(json.decode(str));
 String detailsToJson(Details data) => json.encode(data.toJson());
 class Details {
   Details({
-      String? id, 
-      String? courseId, 
+      String? about,
+      String? id,
+      String? courseId,
       String? prefixName, 
       String? batchName,
       String? courseName,
@@ -191,6 +192,7 @@ class Details {
       String? invoiceFile,
       String? paymentLink,}){
     _id = id;
+    _about = about;
     _courseId = courseId;
     _prefixName = prefixName;
     _batchName = batchName;
@@ -263,6 +265,7 @@ class Details {
 
   Details.fromJson(dynamic json) {
     _id = json['id'];
+    _about = json['about'];
     _courseId = json['course_id'];
     _prefixName = json['prefix_name'];
     _batchName = json['batch_name'];
@@ -332,6 +335,7 @@ class Details {
     _invoiceFile = json['invoice_file'];
     _paymentLink = json['payment_link'];
   }
+  String? _about;
   String? _id;
   String? _courseId;
   String? _prefixName;
@@ -402,6 +406,7 @@ class Details {
   String? _invoiceFile;
   String? _paymentLink;
 Details copyWith({  String? id,
+  String? about,
   String? courseId,
   String? prefixName,
   String? batchName,
@@ -471,6 +476,7 @@ Details copyWith({  String? id,
   String? invoiceFile,
   String? paymentLink,
 }) => Details(  id: id ?? _id,
+  about: about ?? _about,
   courseId: courseId ?? _courseId,
   prefixName: prefixName ?? _prefixName,
   batchName: batchName ?? _batchName,
@@ -541,6 +547,7 @@ Details copyWith({  String? id,
   paymentLink: paymentLink ?? _paymentLink,
 );
   String? get id => _id;
+  String? get about => _about;
   String? get courseId => _courseId;
   String? get prefixName => _prefixName;
   String? get batchName => _batchName;
@@ -613,6 +620,7 @@ Details copyWith({  String? id,
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['id'] = _id;
+    map['about'] = _about;
     map['course_id'] = _courseId;
     map['prefix_name'] = _prefixName;
     map['batch_name'] = _batchName;

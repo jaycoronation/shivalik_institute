@@ -75,6 +75,9 @@ dependencies:
   package_info_plus: ^5.0.1
   flutter_pptx: ^0.1.2+1
   shimmer: ^3.0.0
+  flutter_filereader: ^3.0.0
+  flutter_file_downloader: ^1.2.1
+  flutter_cache_manager: ^3.3.1
 
 
 dev_dependencies:
