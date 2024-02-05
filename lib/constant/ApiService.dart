@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shivalik_institute/model/AddHolidayResponseModel.dart';
 import 'package:shivalik_institute/model/CaseStudyResponseModel.dart';
 import 'package:shivalik_institute/model/EventResponseModel.dart';
+import 'package:shivalik_institute/model/GenerateOTPResponseModel.dart';
 import 'package:shivalik_institute/model/LecturesResponseModel.dart';
 import 'package:shivalik_institute/model/ModuleResponseModel.dart';
 import 'package:shivalik_institute/model/UserListResponseModel.dart';
@@ -24,7 +25,7 @@ import 'package:pretty_http_logger/pretty_http_logger.dart';
 
 
 class ApiService {
-  static Future<CommonResponseModel> generateOtp(Map<String, String> jsonBody) async {
+  static Future<GenerateOtpResponseModel> generateOtp(Map<String, String> jsonBody) async {
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
@@ -32,7 +33,7 @@ class ApiService {
     final response = await http.post(Uri.parse(generateOTPUrl),body: jsonBody);
     if (response.statusCode == 200) {
       final dynamic data = json.decode(response.body);
-      return CommonResponseModel.fromJson(data);
+      return GenerateOtpResponseModel.fromJson(data);
     } else {
       throw Exception('Failed to load users');
     }

@@ -645,6 +645,7 @@ class ClassMaterial {
       String? file,
       String? caption,
       String? isActive,
+      String? isPrivate,
       String? createdAt,
       String? updatedAt,
       String? deletedAt,
@@ -659,6 +660,7 @@ class ClassMaterial {
     _file = file;
     _caption = caption;
     _isActive = isActive;
+    _isPrivate = isPrivate;
     _createdAt = createdAt;
     _updatedAt = updatedAt;
     _deletedAt = deletedAt;
@@ -676,6 +678,7 @@ class ClassMaterial {
     _file = json['file'];
     _caption = json['caption'];
     _isActive = json['is_active'];
+    _isPrivate = json['is_private'];
     _createdAt = json['created_at'];
     _updatedAt = json['updated_at'];
     _deletedAt = json['deleted_at'];
@@ -691,6 +694,7 @@ class ClassMaterial {
   String? _file;
   String? _caption;
   String? _isActive;
+  String? _isPrivate;
   String? _createdAt;
   String? _updatedAt;
   String? _deletedAt;
@@ -705,6 +709,7 @@ ClassMaterial copyWith({  String? id,
   String? file,
   String? caption,
   String? isActive,
+  String? isPrivate,
   String? createdAt,
   String? updatedAt,
   String? deletedAt,
@@ -719,6 +724,7 @@ ClassMaterial copyWith({  String? id,
   file: file ?? _file,
   caption: caption ?? _caption,
   isActive: isActive ?? _isActive,
+  isPrivate: isPrivate ?? _isPrivate,
   createdAt: createdAt ?? _createdAt,
   updatedAt: updatedAt ?? _updatedAt,
   deletedAt: deletedAt ?? _deletedAt,
@@ -734,6 +740,7 @@ ClassMaterial copyWith({  String? id,
   String? get file => _file;
   String? get caption => _caption;
   String? get isActive => _isActive;
+  String? get isPrivate => _isPrivate;
   String? get createdAt => _createdAt;
   String? get updatedAt => _updatedAt;
   String? get hasSubmission => _hasSubmission;
@@ -751,6 +758,7 @@ ClassMaterial copyWith({  String? id,
     map['file'] = _file;
     map['caption'] = _caption;
     map['is_active'] = _isActive;
+    map['is_private'] = _isPrivate;
     map['created_at'] = _createdAt;
     map['updated_at'] = _updatedAt;
     map['deleted_at'] = _deletedAt;

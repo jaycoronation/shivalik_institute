@@ -9,7 +9,7 @@ class CommonViewModel extends ChangeNotifier {
   CommonResponseModel get response => _response;
   bool get isLoading => _isLoading;
 
-  Future<void> generateOTP(Map<String, String> jsonBody) async {
+  /*Future<void> generateOTP(Map<String, String> jsonBody) async {
     _isLoading = true;
     notifyListeners();
 
@@ -21,7 +21,7 @@ class CommonViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
-  }
+  }*/
 
   Future<void> saveUserData(Map<String, String> jsonBody) async {
     _isLoading = true;

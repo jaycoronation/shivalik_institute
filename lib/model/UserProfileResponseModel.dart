@@ -124,7 +124,9 @@ class Details {
       String? about,
       String? id,
       String? courseId,
-      String? prefixName, 
+      String? pincode,
+      String? lastFeedbackClassId,
+      String? prefixName,
       String? batchName,
       String? courseName,
       String? firstName,
@@ -193,6 +195,8 @@ class Details {
       String? paymentLink,}){
     _id = id;
     _about = about;
+    _pincode = pincode;
+    _lastFeedbackClassId = lastFeedbackClassId;
     _courseId = courseId;
     _prefixName = prefixName;
     _batchName = batchName;
@@ -266,6 +270,8 @@ class Details {
   Details.fromJson(dynamic json) {
     _id = json['id'];
     _about = json['about'];
+    _pincode = json['pincode'];
+    _lastFeedbackClassId = json['last_feedback_class_id'];
     _courseId = json['course_id'];
     _prefixName = json['prefix_name'];
     _batchName = json['batch_name'];
@@ -338,6 +344,8 @@ class Details {
   String? _about;
   String? _id;
   String? _courseId;
+  String? _pincode;
+  String? _lastFeedbackClassId;
   String? _prefixName;
   String? _batchName;
   String? _courseName;
@@ -408,6 +416,8 @@ class Details {
 Details copyWith({  String? id,
   String? about,
   String? courseId,
+  String? pincode,
+  String? lastFeedbackClassId,
   String? prefixName,
   String? batchName,
   String? courseName,
@@ -478,6 +488,8 @@ Details copyWith({  String? id,
 }) => Details(  id: id ?? _id,
   about: about ?? _about,
   courseId: courseId ?? _courseId,
+  pincode: pincode ?? _pincode,
+  lastFeedbackClassId: lastFeedbackClassId ?? _lastFeedbackClassId,
   prefixName: prefixName ?? _prefixName,
   batchName: batchName ?? _batchName,
   courseName: courseName ?? _courseName,
@@ -548,6 +560,8 @@ Details copyWith({  String? id,
 );
   String? get id => _id;
   String? get about => _about;
+  String? get pincode => _pincode;
+  String? get lastFeedbackClassId => _lastFeedbackClassId;
   String? get courseId => _courseId;
   String? get prefixName => _prefixName;
   String? get batchName => _batchName;
@@ -621,6 +635,8 @@ Details copyWith({  String? id,
     final map = <String, dynamic>{};
     map['id'] = _id;
     map['about'] = _about;
+    map['pincode'] = _pincode;
+    map['last_feedback_class_id'] = _lastFeedbackClassId;
     map['course_id'] = _courseId;
     map['prefix_name'] = _prefixName;
     map['batch_name'] = _batchName;

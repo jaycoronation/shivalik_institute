@@ -9,6 +9,7 @@ import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:shivalik_institute/firebase_options.dart';
 import 'package:shivalik_institute/model/LecturesResponseModel.dart';
 import 'package:shivalik_institute/screen/DashboardScreen.dart';
+import 'package:shivalik_institute/screen/FacultyProfileScreen.dart';
 import 'package:shivalik_institute/screen/LectureDetailsScreen.dart';
 import '../constant/global_context.dart';
 import '../model/EventResponseModel.dart';
@@ -72,7 +73,7 @@ class PushNotificationService {
       var messageData = "";
       print('Data Payload:${message.data.toString()}');
       message.data.forEach((key, value) {
-        if (key == "id") {
+        if (key == "content_id") {
           id = value;
         }
 
@@ -94,9 +95,8 @@ class PushNotificationService {
 
       NavigationService.notif_id = id;
 
-      if (contentType == "session_feedback")
+      if (contentType == "lecture_complete")
         {
-           //NavigationService.class_id = id;
            SessionManager().setClassId(id);
         }
 
@@ -229,9 +229,8 @@ class PushNotificationService {
 
           NavigationService.notif_id = id;
 
-          if (contentType == "session_feedback")
+          if (contentType == "lecture_complete")
             {
-              ///NavigationService.class_id = id;
               SessionManager().setClassId(id);
             }
 
@@ -283,7 +282,6 @@ class PushNotificationService {
         description: 'This channel is used for important notifications.', // description
         importance: Importance.max,
         playSound: true,
-        sound: RawResourceAndroidNotificationSound('notification_sound_tone.mp3'),
       );
 
   void openPage(String contentId) {
@@ -299,7 +297,7 @@ class PushNotificationService {
     else if (contentId == "lecture_complete")
       {
         NavigationService.navigatorKey.currentState!.pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => LectureDetailsScreen(NavigationService.notif_id ?? '')), (Route<dynamic> route) => false
+            MaterialPageRoute(builder: (context) => DashboardScreen()), (Route<dynamic> route) => false
         );
       }
     else if (contentId == "lecture_reminder")
@@ -345,10 +343,16 @@ class PushNotificationService {
             MaterialPageRoute(builder: (context) => LectureDetailsScreen(NavigationService.notif_id ?? '')), (Route<dynamic> route) => false
         );
       }
-    else if (contentId == "session_feedback")
+    else if (contentId == "lecture_complete")
       {
         NavigationService.navigatorKey.currentState!.pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const DashboardScreen()), (Route<dynamic> route) => false
+        );
+      }
+    else if (contentId == "faculty_profile")
+      {
+        NavigationService.navigatorKey.currentState!.pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => FacultyProfileScreen(NavigationService.notif_id ?? '')), (Route<dynamic> route) => false
         );
       }
     else

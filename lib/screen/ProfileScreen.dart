@@ -70,6 +70,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _educationController = TextEditingController();
+  final TextEditingController _pincodeController = TextEditingController();
   final TextEditingController _designationController = TextEditingController();
   final TextEditingController _pendingFeesController = TextEditingController();
   final TextEditingController _experienceController = TextEditingController();
@@ -108,6 +109,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     _chequeController.text = getSet.paymentModeChequeAmount.toString() ?? "";
     _enrollController.text = getSet.enrolledInCourseDesc.toString() ?? "";
     _courseNameController.text = getSet.courseName.toString() ?? "";
+    _pincodeController.text = getSet.pincode ?? '';
 
     isCashSelected = getSet.paymentModeCash == 1 ? true : false;
     isChequeSelected = getSet.paymentModeCheque == 1 ? true : false;
@@ -122,7 +124,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
 
      _courseId = getSet.courseId ?? '';
 
-     print("_courseId === ${_courseId}");
+     print("_courseId === $_courseId");
 
     for (var element in listBatches) {
       if (element.id == _batchId)
@@ -148,8 +150,6 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    final commonViewModel = Provider.of<CommonViewModel>(context);
 
     return WillPopScope(
         child: Scaffold(
@@ -248,44 +248,40 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                               showFilePickerActionDialog();
                             },
                             child:  Center(
-                              child: Column(
+                              child: Stack(
                                 children: [
-                                  Stack(
-                                    children: [
-                                      Container(
-                                        alignment: Alignment.center,
-                                        width: 120,
-                                        height: 120,
-                                        child: CircleAvatar(
-                                          maxRadius: 120,
-                                          backgroundColor: grayLight,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(1),
-                                            child: ClipOval(
-                                                child: file.path.isNotEmpty
-                                                    ? Image.file(file,height: 150,width: 120, fit: BoxFit.cover,)
-                                                    : userGetSet.profilePic.toString().isEmpty
-                                                    ? Image.asset('assets/images/ic_user_placeholder.png',height: 120,width: 120,)
-                                                    : Image.network(userGetSet.profilePic.toString(),height: 120,width: 120,fit: BoxFit.cover,)
-                                            ),
-                                          ),
+                                  Container(
+                                    alignment: Alignment.center,
+                                    width: 120,
+                                    height: 120,
+                                    child: CircleAvatar(
+                                      maxRadius: 120,
+                                      backgroundColor: grayLight,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(1),
+                                        child: ClipOval(
+                                            child: file.path.isNotEmpty
+                                                ? Image.file(file,height: 150,width: 120, fit: BoxFit.cover,)
+                                                : userGetSet.profilePic.toString().isEmpty
+                                                ? Image.asset('assets/images/ic_user_placeholder.png',height: 120,width: 120,)
+                                                : Image.network(userGetSet.profilePic.toString(),height: 120,width: 120,fit: BoxFit.cover,)
                                         ),
                                       ),
-                                      Positioned(
-                                          right: 0,
-                                          bottom: 12,
-                                          child: Container(
-                                            decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)),
-                                              color: grayLight,
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(6.0),
-                                              child: Image.asset('assets/images/ic_edit.png', height: 18, width: 18,),
-                                            )
-                                          )
-                                      )
-                                    ],
+                                    ),
                                   ),
+                                  Positioned(
+                                      right: 0,
+                                      bottom: 12,
+                                      child: Container(
+                                        decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)),
+                                          color: grayLight,
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(6.0),
+                                          child: Image.asset('assets/images/ic_edit.png', height: 18, width: 18,),
+                                        )
+                                      )
+                                  )
                                 ],
                               ),
                             ),
@@ -531,6 +527,20 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                             decoration: const InputDecoration(
                               alignLabelWithHint: true,
                               labelText: 'Address*',
+                            ),
+                          ),
+                          Container(height: 18,),
+                          TextField(
+                            cursorColor: black,
+                            textCapitalization: TextCapitalization.words,
+                            controller: _pincodeController,
+                            keyboardType: TextInputType.text,
+                            readOnly: false,
+                            maxLines: 3,
+                            style: getTextFiledStyle(),
+                            decoration: const InputDecoration(
+                              alignLabelWithHint: true,
+                              labelText: 'Pincode*',
                             ),
                           ),
                           Container(height: 18,),
@@ -931,7 +941,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                                 _courseNameController.text = courseList[index].name ?? '';
                               });
                               
-                              print("SELECTED COURSE === ${_courseId}");
+                              print("SELECTED COURSE === $_courseId");
                               
                               Navigator.pop(context);
                             },
@@ -1830,7 +1840,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       if (pickedfiles != null) {
         final filePath = pickedfiles.path;
         File tempFile = File(filePath);
-        print("tempFile === ${tempFile}");
+        print("tempFile === $tempFile");
         _cropImage(filePath);
 
       } else {
@@ -1871,6 +1881,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
       'city': _cityId,
       'country': _countryId,
       'state': _stateId,
+      'pincode': _pincodeController.value.text,
       'document_submitted': jsonEncode(userGetSet.documentSubmitted),
       'payment_details': (userGetSet.paymentDetails ?? ""),
       'payment_mode': (userGetSet.paymentMode ?? ""),
@@ -1903,7 +1914,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     http.StreamedResponse response = await request.send();
     var responseBytes = await response.stream.toBytes();
     var responseString = utf8.decode(responseBytes);
-    print("responseString == ${responseString}");
+    print("responseString == $responseString");
     final statusCode = response.statusCode;
     print(statusCode);
     Map<String, dynamic> user = jsonDecode(responseString);

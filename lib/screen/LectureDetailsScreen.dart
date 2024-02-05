@@ -13,6 +13,7 @@ import 'package:shivalik_institute/constant/api_end_point.dart';
 import 'package:shivalik_institute/constant/colors.dart';
 import 'package:shivalik_institute/screen/DashboardScreen.dart';
 import 'package:shivalik_institute/screen/FacultyProfileScreen.dart';
+import 'package:shivalik_institute/screen/WebViewContainer.dart';
 import 'package:shivalik_institute/utils/pdf_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -112,7 +113,6 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                           visible: lectureGetSet.isCancelled == "1",
                           child: Column(
                             children: [
-                              const Gap(12),
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,30 +124,32 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                                   ),
                                   const Gap(12),
                                   Text(lectureGetSet.cancelReason ?? '', style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-
                                 ],
                               ),
+                              const Gap(12),
                             ],
                           ),
                         ),
-                        const Gap(12),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                const Text("Class No. - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                Text("${lectureGetSet.classNo}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-                              ],
+                            Text.rich(
+                              TextSpan(
+                                style: const TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16),
+                                children: <TextSpan>[
+                                  const TextSpan(text: "Lecture of ", style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16)),
+                                  TextSpan(text: lectureGetSet.moduleDetails?.name ?? '', style: const TextStyle(fontWeight: FontWeight.w500, color: brandColor, fontSize: 16)),
+                                  const TextSpan(text: ' Class number ', style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16)),
+                                  TextSpan(text: lectureGetSet.classNo ?? '', style: const TextStyle(fontWeight: FontWeight.w500, color: brandColor, fontSize: 16)),
+                                  const TextSpan(text: ' is schedule on ', style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16)),
+                                  TextSpan(text: universalDateConverter("yyy-MM-dd", "dd MMM, yyyy", lectureGetSet.date ?? ''), style: const TextStyle(fontWeight: FontWeight.w500, color: brandColor, fontSize: 16)),
+                                  const TextSpan(text: ' from ', style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16)),
+                                  TextSpan(text: "${lectureGetSet.startTime} to ${lectureGetSet.endTime}", style: const TextStyle(fontWeight: FontWeight.w500, color: brandColor, fontSize: 16)),
+                                ],
+                              ),
+                              textAlign: TextAlign.start,
                             ),
-                            Row(
-                              children: [
-                                const Text("Dated on - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                Text(universalDateConverter("yyy-MM-dd", "dd MMM, yyyy", lectureGetSet.date ?? ''), style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-                              ],
-                            ),
-
                           ],
                         ),
                         const Gap(12),
@@ -156,6 +158,7 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text("Session 1", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
+                            const Gap(8),
                             GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: () {
@@ -165,8 +168,8 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text("Faculty - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                  Flexible(child: Text("${lectureGetSet.session1FacultyName}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
+                                  const Expanded(flex: 1,child: Text("Faculty", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
+                                  Expanded(flex: 3,child: Text("${lectureGetSet.session1FacultyName}", style: const TextStyle(color: brandColor,fontWeight: FontWeight.w500,fontSize: 14,overflow: TextOverflow.clip),)),
                                 ],
                               ),
                             ),
@@ -174,16 +177,16 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Topic - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                Flexible(child: Text("${lectureGetSet.session1Topic}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
+                                const Expanded(flex: 1,child: Text("Topic", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
+                                Expanded(flex: 3,child: Text("${lectureGetSet.session1Topic}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
                               ],
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Type - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                Flexible(child: Text("${lectureGetSet.session1LectureType}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
+                                const Expanded(flex: 1,child: Text("Type", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
+                                Expanded(flex: 3,child: Text("${lectureGetSet.session1LectureType}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
                               ],
                             ),
                             Visibility(
@@ -192,8 +195,8 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text("Time - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                  Text(lectureGetSet.session1Endtime?.isEmpty ?? false ? lectureGetSet.session1Starttime ?? '' : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                  const Expanded(flex: 1,child: Text("Time", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
+                                  Expanded(flex: 3,child: Text(lectureGetSet.session1Endtime?.isEmpty ?? false ? lectureGetSet.session1Starttime ?? '' : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),)),
                                 ],
                               ),
                             ),
@@ -209,6 +212,7 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text("Session 2", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
+                                  const Gap(8),
                                   GestureDetector(
                                     behavior: HitTestBehavior.opaque,
                                     onTap: () {
@@ -216,21 +220,21 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                                     },
                                     child: Row(
                                       children: [
-                                        const Text("Faculty - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                        Text("${lectureGetSet.session2FacultyName}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                        const Expanded(flex: 1,child: Text("Faculty - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
+                                        Expanded(flex: 3,child: Text("${lectureGetSet.session2FacultyName}", style: const TextStyle(color: brandColor,fontWeight: FontWeight.w500,fontSize: 14),)),
                                       ],
                                     ),
                                   ),
                                   Row(
                                     children: [
-                                      const Text("Topic - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                      Text("${lectureGetSet.session2Topic}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                      const Expanded(flex: 1,child: Text("Topic - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
+                                      Expanded(flex: 3,child: Text("${lectureGetSet.session2Topic}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),)),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      const Text("Type - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                      Text("${lectureGetSet.session2LectureType}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                      const Expanded(flex: 1,child: Text("Type - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
+                                      Expanded(flex: 3,child: Text("${lectureGetSet.session2LectureType}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),)),
                                     ],
                                   ),
                                   Visibility(
@@ -239,8 +243,8 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        const Text("Time - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                        Text(lectureGetSet.session1Endtime?.isEmpty ?? false ? lectureGetSet.session1Starttime ?? '' : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                        const Expanded(flex: 1,child: Text("Time - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
+                                        Expanded(flex: 3,child: Text(lectureGetSet.session1Endtime?.isEmpty ?? false ? lectureGetSet.session1Starttime ?? '' : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),)),
                                       ],
                                     ),
                                   ),
@@ -256,14 +260,15 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text("Module", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
+                            const Gap(8),
                             Row(
                               children: [
-                                const Text("Name - ", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),),
-                                Text("${lectureGetSet.moduleDetails?.name}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                const Expanded(flex: 1,child: Text("Name", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
+                                Expanded(flex: 3,child: Text("${lectureGetSet.moduleDetails?.name}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),)),
                               ],
                             ),
-                            Text("${lectureGetSet.moduleDetails?.description}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-
+                            const Gap(6),
+                            Text("${lectureGetSet.moduleDetails?.description}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 15),),
                           ],
                         ),
                         Visibility(
@@ -294,14 +299,15 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
 
                                               if (getSet.fileType == "pdf")
                                                 {
-                                                  startActivity(context, PdfViewer(getSet.fullPath ?? '', '0'));
+                                                  startActivity(context, PdfViewer(getSet.fullPath ?? '', getSet.isPrivate ?? '0'));
+                                                }
+                                              else if (getSet.fileType == "pptx")
+                                                {
+                                                  startActivity(context, WebViewContainer(getSet.fullPath ?? '', "" ,getSet.isPrivate ?? '0'));
                                                 }
                                               else
                                                 {
-                                                  if (await canLaunchUrl(Uri.parse(getSet.fullPath ?? '')))
-                                                    {
-                                                      launchUrl(Uri.parse(getSet.fullPath ?? ''),mode: LaunchMode.externalApplication);
-                                                    }
+                                                  startActivity(context, WebViewContainer(getSet.fullPath ?? '', "" ,getSet.isPrivate ?? '0'));
                                                 }
                                             },
                                             child: Column(

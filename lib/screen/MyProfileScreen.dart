@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
+import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/placeholder.dart';
@@ -11,7 +14,9 @@ import 'package:shivalik_institute/utils/pdf_viewer.dart';
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
 import '../common_widget/loading_more.dart';
+import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
+import '../model/UpdateDeviceTokenModel.dart';
 import '../model/UserProfileResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
@@ -157,12 +162,13 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-
                                 Visibility(
                                   visible: getSet.firstName?.isNotEmpty ?? false,
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Image.asset('assets/images/ic_profile.png', width: 26,height: 26,),
+                                      Image.asset('assets/images/ic_profile.png', width: 22,height: 22,),
                                       Container(width: 12,),
                                       Expanded(
                                         child: Column(
@@ -170,7 +176,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children:  [
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
                                               child: Text("${getSet.firstName} ${getSet.lastName}" ,
                                                   style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
                                               ),
@@ -190,8 +196,10 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 Visibility(
                                   visible: getSet.email?.isNotEmpty ?? false,
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Image.asset('assets/images/ic_Mail.png', width: 26,height: 26,),
+                                      Image.asset('assets/images/ic_Mail.png', width: 22,height: 22,),
                                       Container(width: 12,),
                                       Expanded(
                                         child: Column(
@@ -199,7 +207,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children:  [
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
                                               child: Text((getSet.email.toString()),
                                                   style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
                                               ),
@@ -220,8 +228,10 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 Visibility(
                                   visible: getSet.contactNo?.isNotEmpty ?? false,
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Image.asset('assets/images/ic_Phone.png', width: 26,height: 26,),
+                                      Image.asset('assets/images/ic_Phone.png', width: 22,height: 22,),
                                       Container(width: 12,),
                                       Expanded(
                                         child: Column(
@@ -229,7 +239,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children:  [
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
                                               child: Text((getSet.contactNo.toString()),
                                                   style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
                                               ),
@@ -250,8 +260,10 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 Visibility(
                                   visible: getSet.dateOfBirth?.isNotEmpty ?? false,
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Image.asset('assets/images/ic_birthdate.png', width: 26,height: 26,),
+                                      Image.asset('assets/images/ic_birthdate.png', width: 22,height: 22,),
                                       Container(width: 12,),
                                       Expanded(
                                         child: Column(
@@ -259,7 +271,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children:  [
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
                                               child: Text(universalDateConverter("yyyy-MM-dd", "dd MMM, yyyy", getSet.dateOfBirth ?? ""),
                                                   style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
                                               ),
@@ -279,8 +291,10 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 Visibility(
                                   visible: getSet.courseName?.isNotEmpty ?? false,
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Image.asset('assets/images/ic_course.png', width: 26,height: 26,),
+                                      Image.asset('assets/images/ic_course.png', width: 22,height: 22,),
                                       Container(width: 12,),
                                       Expanded(
                                         child: Column(
@@ -288,7 +302,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children:  [
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
                                               child: Text(getSet.courseName.toString(),
                                                   style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
                                               ),
@@ -309,8 +323,10 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 Visibility(
                                   visible: getSet.batchName?.isNotEmpty ?? false,
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Image.asset('assets/images/ic_batch.png', width: 26,height: 26,),
+                                      Image.asset('assets/images/ic_batch.png', width: 22,height: 22,),
                                       Container(width: 12,),
                                       Expanded(
                                         child: Column(
@@ -318,7 +334,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children:  [
                                             Padding(
-                                              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
                                               child: Text(getSet.batchName.toString(),
                                                   style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
                                               ),
@@ -336,7 +352,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                     ],
                                   ),
                                 ),
-                                const Gap(22),
+                                const Gap(12),
 
 
                               ],
@@ -369,7 +385,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Image.asset('assets/images/ic_download.png', width: 26,height: 26,),
+                                    Image.asset('assets/images/ic_download.png', width: 22,height: 22,),
                                     Container(width: 20),
                                     const Expanded(
                                       child: Column(
@@ -651,8 +667,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 left: 12, right: 12, bottom: 30, top: 12),
                             child: TextButton(
                               onPressed: () async {
-                                SessionManagerMethods.clear();
-                                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LoginWithOTPScreen()), (Route<dynamic> route) => false);
+                                forceLogout();
+                                Navigator.pop(context);
                               },
                               style: ButtonStyle(
                                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -701,6 +717,39 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
   @override
   void castStatefulWidget() {
     widget is MyProfileScreen;
+  }
+
+  forceLogout() async {
+    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+
+    final url = Uri.parse(removeDeviceToken);
+
+
+    Map<String, String> jsonBody = {};
+    jsonBody = {
+      'device_token': sessionManager.getDeviceToken().toString(),
+    };
+
+    final response = await http.post(url, body: jsonBody);
+
+    SessionManagerMethods.clear();
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LoginWithOTPScreen()), (Route<dynamic> route) => false);
+    showSnackBar("Please login again to continue", context);
+
+    final statusCode = response.statusCode;
+    final body = response.body;
+    Map<String, dynamic> apiResponse = jsonDecode(body);
+    var dataResponse = UpdateDeviceTokenModel.fromJson(apiResponse);
+
+    if (statusCode == 200 && dataResponse.success == 1)
+    {
+    }
+    else
+    {
+
+    }
   }
 
   Future<void> getUserData() async {

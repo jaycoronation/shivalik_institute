@@ -5,7 +5,6 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/constant/api_end_point.dart';
 import 'package:shivalik_institute/constant/colors.dart';

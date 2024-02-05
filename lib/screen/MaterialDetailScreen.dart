@@ -31,6 +31,7 @@ import '../utils/pdf_viewer.dart';
 import '../viewmodels/CommonViewModel.dart';
 import 'package:http/http.dart' as http;
 import '../viewmodels/MultipartApiViewModel.dart';
+import 'WebViewContainer.dart';
 
 class MaterialDetailScreen extends StatefulWidget {
   final ModuleList getSet;
@@ -295,11 +296,11 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                                   }
                                 else if (listDocument[index].fileType == "pptx")
                                   {
-                                    startActivity(context, FileReaderPage(filePath: listDocument[index].fullPath ?? "",isPrivate: listDocument[index].isPrivate ?? "",));
+                                    startActivity(context, WebViewContainer(listDocument[index]. fullPath?? "",'',listDocument[index].isPrivate ?? ''));
                                   }
                                 else
                                   {
-                                    await launchUrl(Uri.parse(listDocument[index].fullPath ?? ""),mode: LaunchMode.externalApplication);
+                                    startActivity(context, WebViewContainer(listDocument[index].fullPath ?? "",'',listDocument[index].isPrivate ?? ''));
                                   }
                               },
                               child: Container(

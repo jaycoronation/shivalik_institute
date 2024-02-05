@@ -51,6 +51,7 @@ import 'model/EventResponseModel.dart';
 import 'model/LecturesResponseModel.dart';
 import 'model/ModuleResponseModel.dart';
 import 'push_notification/PushNotificationService.dart';
+import 'screen/FacultyProfileScreen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -74,11 +75,10 @@ Future<void> main() async {
       NavigationService.notif_type = initialMessage.data['operation'];
       NavigationService.notif_id = initialMessage.data['content_id'];
 
-      if (NavigationService.notif_type == "session_feedback")
-      {
-        //NavigationService.class_id = initialMessage.data['content_id'];
-        SessionManager().setClassId(initialMessage.data['content_id']);
-      }
+      if (NavigationService.notif_type == "lecture_complete")
+        {
+          SessionManager().setClassId(initialMessage.data['content_id']);
+        }
     }
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((value) => runApp(
@@ -120,13 +120,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   NavigationService.notif_type = message.data['operation'];
   NavigationService.notif_id = message.data['content_id'];
 
-  if (NavigationService.notif_type == "session_feedback")
+  if (NavigationService.notif_type == "lecture_complete")
     {
-      //NavigationService.class_id = message.data['content_id'];
-
       print("NavigationService.class_id ===== ${NavigationService.class_id}");
       SessionManager().setClassId(message.data['content_id']);
-
     }
 
 }
@@ -136,10 +133,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
     SystemChrome.setSystemUIOverlayStyle( const SystemUiOverlayStyle(
       statusBarColor: white,
       statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
@@ -236,7 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
         var contentId = NavigationService.notif_type;
 
 
-        print("CONTENT ID ==== ${contentId}");
+        print("CONTENT ID ==== $contentId");
 
         if (contentId == "event_scheduled")
         {
@@ -248,21 +247,21 @@ class _MyHomePageState extends State<MyHomePage> {
         else if (contentId == "lecture_complete")
         {
           Timer(const Duration(seconds: 3),(){
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  LectureDetailsScreen(NavigationService.notif_id ?? '')),(route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  DashboardScreen()),(route) => false);
           });
 
         }
         else if (contentId == "lecture_reminder")
         {
           Timer(const Duration(seconds: 3),(){
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  LectureDetailsScreen(NavigationService.notif_id ?? '')),(route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  LectureDetailsScreen(NavigationService.notif_id)),(route) => false);
           });
 
         }
         else if (contentId == "lecture_scheduled")
         {
           Timer(const Duration(seconds: 3),(){
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  LectureDetailsScreen(NavigationService.notif_id ?? '')),(route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  LectureDetailsScreen(NavigationService.notif_id)),(route) => false);
           });
 
         }
@@ -281,23 +280,29 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         }
         else if (contentId == "submission_reminder")
-        {
-          Timer(const Duration(seconds: 3),(){
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  const DashboardScreen()),(route) => false);
-          });
-        }
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  const DashboardScreen()),(route) => false);
+            });
+          }
         else if (contentId == "lecture_cancelled")
-        {
-          Timer(const Duration(seconds: 3),(){
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LectureDetailsScreen(NavigationService.notif_id ?? '')),(route) => false);
-          });
-        }
-        else if (contentId == "session_feedback")
-        {
-          Timer(const Duration(seconds: 3),(){
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  const DashboardScreen()),(route) => false);
-          });
-        }
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LectureDetailsScreen(NavigationService.notif_id)),(route) => false);
+            });
+          }
+        else if (contentId == "lecture_complete")
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  const DashboardScreen()),(route) => false);
+            });
+          }
+        else if (contentId == "faculty_profile")
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FacultyProfileScreen(NavigationService.notif_id)),(route) => false);
+            });
+          }
         else
         {
           Timer(const Duration(seconds: 3),(){
@@ -346,8 +351,6 @@ class _MyHomePageState extends State<MyHomePage> {
     {
       var verApp = int.parse(_packageInfo.version.toString().replaceAll(".", ''));
       var verLive = int.parse(dataResponse.version.toString().replaceAll(".", ''));
-      print("verApp === $verApp");
-      print("verLive ==== $verLive");
 
       isForceUpdate = dataResponse.forceUpdate == "0" ? 0 : 1;
 

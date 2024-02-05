@@ -40,3 +40,4 @@ const registerUrl = "${MAIN_URL_REECOSYS}joint_ventures/save_inquiry";
 const appVersion = "${MAIN_URL}get_app_version";
 const feedbackFormUrl = "${MAIN_URL}manage_form/details";
 const saveFeedbackUrl = "${MAIN_URL}form_submission";
+const removeDeviceToken = "${MAIN_URL}remove_device_token";

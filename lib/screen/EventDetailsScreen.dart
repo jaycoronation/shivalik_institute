@@ -255,11 +255,11 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
         for (var i=0; i < (_tempList?.length ?? 0); i++)
         {
           if (_tempList?[i].id == NavigationService.notif_id)
-          {
-            isNoDataFound = false;
-            getSet = _tempList?[i] ?? EventList();
-            break;
-          }
+            {
+              isNoDataFound = false;
+              getSet = _tempList?[i] ?? EventList();
+              break;
+            }
           else
             {
               isNoDataFound = true;

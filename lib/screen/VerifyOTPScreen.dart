@@ -1,14 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/constant/api_end_point.dart';
 import 'package:shivalik_institute/model/VerifyOtpResponseModel.dart';
 import '../common_widget/common_widget.dart';
 import '../constant/colors.dart';
+import '../model/CommonResponseModel.dart';
+import '../model/GenerateOTPResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
+import '../viewmodels/CommonViewModel.dart';
 import '../viewmodels/VerifyOtpViewModel.dart';
 import 'DashboardScreen.dart';
 
@@ -68,6 +73,8 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
   @override
   Widget build(BuildContext context) {
     final verifyOtpViewModel = Provider.of<VerifyOtpViewModel>(context);
+
+    final loginViewModel = Provider.of<CommonViewModel>(context);
 
     return WillPopScope(
         child: Scaffold(
@@ -265,7 +272,7 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                   )
                                   : GestureDetector(
                                       behavior: HitTestBehavior.opaque,
-                                      onTap: () {
+                                      onTap: () async {
                                         FocusScope.of(context).requestFocus(FocusNode());
                                         setState(() {
                                           visibilityResend = false;
@@ -275,7 +282,7 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                         startTimer();
                                         if (isOnline)
                                         {
-                                          // _makeLogInRequest();
+
                                         }
                                         else
                                         {
@@ -378,8 +385,55 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
     );
   }
 
+  sendOTP() async {
+    setState(() {
+      _isLoading = true;
+    });
+    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+
+    final url = Uri.parse(generateOTPUrl);
+    String contact = (widget as VerifyOTPScreen).mobileNumber ??'';
+    Map<String, String> jsonBody = {
+      'contact_no': contact,
+      'country_code': "+91",
+      'email': "",
+      'mobile_no' : contact,
+      'password' : "",
+      "from_app" : FROM_APP
+    };
+
+    final response = await http.post(url, body: jsonBody);
+
+    final statusCode = response.statusCode;
+    final body = response.body;
+    Map<String, dynamic> apiResponse = jsonDecode(body);
+    var dataResponse = GenerateOtpResponseModel.fromJson(apiResponse);
+    if (statusCode == 200 && dataResponse.success == "1")
+    {
+      showToast(dataResponse.message, context);
+      setState(() {
+        _isLoading = false;
+      });
+    }
+    else if (dataResponse.success == "2")
+      {
+        showDeviceListBottomSheet();
+      }
+    else
+    {
+      setState(() {
+        _isLoading = false;
+      });
+      showToast(dataResponse.message, context);
+    }
+  }
+
   @override
   void castStatefulWidget() {
     widget is VerifyOTPScreen;
   }
+
+  void showDeviceListBottomSheet() {}
 }

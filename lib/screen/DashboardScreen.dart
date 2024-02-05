@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:countup/countup.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -76,15 +77,13 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends BaseState<DashboardScreen> {
   int _pageIndex = 1;
   final int _pageResult = 10;
-  bool _isLastPage = false;
-  bool isSubmision = false;
-  bool _isLoadingMore = false;
   String fromDateApi = "";
   String toDateApi = "";
   String selectedDateFilter = "Today";
   String selectedDateFaculty = "";
   String selectedFacultyId1 = "";
   String selectedFacultyId2 = "";
+  String deviceName = '';
   ModuleList moduleGetSet = ModuleList();
   List<ModuleList> listModule = [];
   List<ModuleList> listSubmission = [];
@@ -108,13 +107,15 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
   List<BlogList> listBlog = [];
 
+  final ScrollController scrollController = ScrollController();
+
   @override
- void initState() {
+  void initState() {
+    _deviceDetails();
     getDashboardData();
     getUserData();
     getModuleData();
     getCaseStudyList(true);
-    getDashboardData();
     getDeviceToken();
     getBlogList();
 
@@ -156,7 +157,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
       NavigationService.notif_id = id;
 
-      if (contentType == "session_feedback")
+      if (contentType == "lecture_complete")
       {
         //NavigationService.class_id = id;
         sessionManager.setClassId(id);
@@ -169,6 +170,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     PageController? controller = PageController(initialPage: 0);
 
     return WillPopScope(
@@ -222,7 +224,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
             actions: [
               InkWell(
                 onTap: (){
-                  startActivity(context, const NotificationListScreen());
+                  //startActivity(context, const NotificationListScreen());
+                  openFeedbackForm();
                 },
                 customBorder: const CircleBorder(),
                 child: Container(
@@ -281,9 +284,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         children: [
                           Container(
                             height: 50,
-                            margin: const EdgeInsets.only(left: 12,top: 22),
+                            margin: const EdgeInsets.only(top: 22),
                             child: ListView.builder(
                               shrinkWrap: true,
+                                controller: scrollController,
                                 physics: const BouncingScrollPhysics(),
                                 scrollDirection: Axis.horizontal,
                                 itemCount: listCalenderData.length,
@@ -291,7 +295,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                   return GestureDetector(
                                     behavior: HitTestBehavior.opaque,
                                     onTap: () {
-
                                       print(listCalenderData[index].name ?? '');
 
                                       setState(() {
@@ -304,7 +307,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                     child: LimitedBox(
                                       maxWidth: 220,
                                       child: Container(
-                                        margin: const EdgeInsets.only(right: 12),
+                                        margin: const EdgeInsets.only(left: 12),
                                         decoration: BoxDecoration(
                                           color: white,
                                           borderRadius: BorderRadius.circular(4)
@@ -419,7 +422,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               ),
                             ),
                           ),
-
                           Container(
                             margin: const EdgeInsets.only(top: 22),
                             decoration: BoxDecoration(
@@ -1235,7 +1237,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           padding: const EdgeInsets.only(left: 0,right: 0),
           child: AlertDialog(
             shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(18.0),
+              borderRadius: BorderRadius.all(
+                Radius.circular(18.0),
               ),
             ),
             actionsPadding: const EdgeInsets.all(18),
@@ -1407,9 +1410,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   Future<void> getCaseStudyList(bool isFirstTime) async {
     if (isFirstTime) {
       setState(() {
-        _isLoadingMore = false;
         _pageIndex = 1;
-        _isLastPage = false;
       });
     }
 
@@ -1431,18 +1432,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       listCaseStudy.addAll(_tempList!);
 
       print(listCaseStudy.length);
-
-
-      if (_tempList.isNotEmpty) {
-        _pageIndex += 1;
-        if (_tempList.isEmpty || _tempList.length % _pageResult != 0 ) {
-          _isLastPage = true;
-        }
-      }
     }
-    setState(() {
-      _isLoadingMore = false;
-    });
   }
 
   Future<void> getUserData() async {
@@ -1467,6 +1457,17 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           launchUrl(Uri.parse(getSet.paymentLink ?? ''),mode: LaunchMode.externalApplication);
         }
       }
+
+      if (sessionManager.getClassId() != "")
+      {
+        if (sessionManager.getClassId() != getSet.lastFeedbackClassId)
+          {
+            Future.delayed(Duration.zero, () {
+              openFeedbackForm();
+            });
+          }
+      }
+
     }
     else
     {
@@ -1477,9 +1478,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   Future<void> getTestimonialsList(bool isFirstTime) async {
     if (isFirstTime) {
       setState(() {
-        _isLoadingMore = false;
         _pageIndex = 1;
-        _isLastPage = false;
       });
     }
 
@@ -1503,17 +1502,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
       listTestimonials.addAll((_tempList ?? []).where((element) => element.isActive == "1"));
 
-      if (_tempList?.isNotEmpty ?? false) {
-        _pageIndex += 1;
-        if (_tempList?.isEmpty ?? false || (_tempList?.length ?? 0) % _pageResult != 0 ) {
-          _isLastPage = true;
-        }
-      }
-
     }
-    setState(() {
-      _isLoadingMore = false;
-    });
   }
 
   Future<void> getDashboardData() async {
@@ -1580,21 +1569,34 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           //listCalenderData = listCalenderDataTemp.where((date) => !DateFormat("dd-MM-yyyy").parse(date.date.toString()).isBefore(DateTime.now())).toList();
           listCalenderData = listCalenderDataTemp;
 
-        });
-        print("NavigationService.class_id ===== ${NavigationService.class_id}");
-        if (sessionManager.getClassId() != "")
-        {
-          Future.delayed(Duration.zero, () {
-            openFeedbackForm();
+          int selectedIndex = 0;
+          for (var i=0; i < listCalenderData.length; i++)
+            {
+              if (DateFormat("dd-MM-yyyy").parse(listCalenderData[i].date ?? '').isAfter(DateTime.now()))
+                {
+                  selectedIndex = i + 1;
+                  break;
+                }
+            }
+
+          Timer(const Duration(milliseconds: 500), () {
+            _animateToIndex(selectedIndex);
           });
 
-        }
-
+        });
+        print("NavigationService.class_id ===== ${NavigationService.class_id}");
       }
     else  if (userViewModel.response.success == '0')
       {
-
       }
+  }
+
+  void _animateToIndex(int index) {
+    scrollController.animateTo(
+      index * 220,
+      duration: const Duration(seconds: 2),
+      curve: Curves.fastOutSlowIn,
+    );
   }
 
   Future<void> getDeviceToken() async {
@@ -1605,6 +1607,27 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       {
         updateDeviceTokenData();
       }
+  }
+
+  Future<void>_deviceDetails() async {
+    final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    try {
+      if (Platform.isAndroid) {
+        var build = await deviceInfoPlugin.androidInfo;
+        setState(() {
+          deviceName = "${build.model} (${build.version.release})";
+        });
+        print(deviceName);
+        //UUID for Android
+      } else if (Platform.isIOS) {
+        var data = await deviceInfoPlugin.iosInfo;
+        setState(() {
+          deviceName = "${data.name} (${data.systemVersion})";
+        }); //UUID for iOS
+      }
+    } on PlatformException {
+      print('Failed to get platform version');
+    }
   }
 
   updateDeviceTokenData() async {
@@ -1625,10 +1648,12 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       }
 
     Map<String, String> jsonBody = {};
+
     jsonBody = {
       'user_id': sessionManager.getUserId() ?? '',
       'device_token': sessionManager.getDeviceToken().toString(),
       'device_type': deviceType,
+      'device_name' : deviceName,
     };
 
     final response = await http.post(url, body: jsonBody);
@@ -1654,7 +1679,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
 
-    final url = Uri.parse(updateDeviceToken);
+    final url = Uri.parse(removeDeviceToken);
 
     var deviceType = "";
     if (Platform.isIOS)
@@ -1684,9 +1709,12 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     final body = response.body;
     Map<String, dynamic> apiResponse = jsonDecode(body);
     var dataResponse = UpdateDeviceTokenModel.fromJson(apiResponse);
+
     if (statusCode == 200 && dataResponse.success == 1)
     {
-    } else {
+    }
+    else
+    {
 
     }
   }
