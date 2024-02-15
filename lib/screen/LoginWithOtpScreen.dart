@@ -168,9 +168,8 @@ class _LoginWithOTPScreenState extends BaseState<LoginWithOTPScreen> {
                                 TextSpan(
                                   text: "Privacy Policy",
                                   style: const TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w500),
-                                  // recognizer: TapGestureRecognizer()..onTap = () => launchCustomTab(context, privacyPolicy),
                                     recognizer: TapGestureRecognizer()..onTap = () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const WebViewContainer('https://www.shivalik.institute/privacy_policy/', 'Privacy Policy', ' 0')));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const WebViewContainer('https://www.shivalik.institute/privacy_policy/', 'Privacy Policy', '0')));
                                     }
                                 ),
                                 const TextSpan(

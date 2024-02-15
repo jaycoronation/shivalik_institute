@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:screen_protector/screen_protector.dart';
 import 'package:shivalik_institute/common_widget/common_widget.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
@@ -23,6 +24,8 @@ class _WebViewContainerState extends State<WebViewContainer> {
   @override
   void initState(){
     super.initState();
+
+
 
     if (isPrivate == "1")
     {
@@ -86,6 +89,25 @@ class _WebViewContainerState extends State<WebViewContainer> {
         centerTitle: true,
         titleSpacing: 0,
         backgroundColor: white,
+        actions: [
+          Visibility(
+            visible: !widget.url.contains("https://www.shivalik.institute/privacy_policy/"),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                if(MediaQuery.of(context).orientation == Orientation.portrait)
+                {
+                  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+                }
+                else
+                {
+                  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+                }
+              },
+              child: Image.asset('assets/images/ic_rotate.png',width: 24,height: 24),
+            ),
+          ),
+        ],
       ),
       body: Stack(
         children: [

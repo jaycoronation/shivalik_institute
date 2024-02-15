@@ -18,7 +18,8 @@ class LoadingWidget extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
             child: Lottie.asset('assets/images/loader.json',width: 100,height: 100),
-          )),
+          )
+      ),
     );
   }
 }

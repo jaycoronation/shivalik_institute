@@ -37,8 +37,6 @@
 	<string>Shivalik Institute is Asking your photo permission for uploading the profile picture</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-    <key>io.flutter.embedded_views_preview</key>
-    <true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -50,6 +48,8 @@
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
@@ -61,5 +61,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>

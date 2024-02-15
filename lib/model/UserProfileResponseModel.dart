@@ -124,6 +124,7 @@ class Details {
       String? about,
       String? id,
       String? courseId,
+      String? isAlumini,
       String? pincode,
       String? lastFeedbackClassId,
       String? prefixName,
@@ -198,6 +199,7 @@ class Details {
     _pincode = pincode;
     _lastFeedbackClassId = lastFeedbackClassId;
     _courseId = courseId;
+    _isAlumini = isAlumini;
     _prefixName = prefixName;
     _batchName = batchName;
     _courseName = courseName;
@@ -273,6 +275,7 @@ class Details {
     _pincode = json['pincode'];
     _lastFeedbackClassId = json['last_feedback_class_id'];
     _courseId = json['course_id'];
+    _isAlumini = json['is_alumini'];
     _prefixName = json['prefix_name'];
     _batchName = json['batch_name'];
     _courseName = json['course_name'];
@@ -344,6 +347,7 @@ class Details {
   String? _about;
   String? _id;
   String? _courseId;
+  String? _isAlumini;
   String? _pincode;
   String? _lastFeedbackClassId;
   String? _prefixName;
@@ -416,6 +420,7 @@ class Details {
 Details copyWith({  String? id,
   String? about,
   String? courseId,
+  String? isAlumini,
   String? pincode,
   String? lastFeedbackClassId,
   String? prefixName,
@@ -488,6 +493,7 @@ Details copyWith({  String? id,
 }) => Details(  id: id ?? _id,
   about: about ?? _about,
   courseId: courseId ?? _courseId,
+  isAlumini: isAlumini ?? _isAlumini,
   pincode: pincode ?? _pincode,
   lastFeedbackClassId: lastFeedbackClassId ?? _lastFeedbackClassId,
   prefixName: prefixName ?? _prefixName,
@@ -563,6 +569,7 @@ Details copyWith({  String? id,
   String? get pincode => _pincode;
   String? get lastFeedbackClassId => _lastFeedbackClassId;
   String? get courseId => _courseId;
+  String? get isAlumini => _isAlumini;
   String? get prefixName => _prefixName;
   String? get batchName => _batchName;
   String? get courseName => _courseName;
@@ -638,6 +645,7 @@ Details copyWith({  String? id,
     map['pincode'] = _pincode;
     map['last_feedback_class_id'] = _lastFeedbackClassId;
     map['course_id'] = _courseId;
+    map['is_alumini'] = _isAlumini;
     map['prefix_name'] = _prefixName;
     map['batch_name'] = _batchName;
     map['course_name'] = _courseName;

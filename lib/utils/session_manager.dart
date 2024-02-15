@@ -21,10 +21,11 @@ class SessionManager {
   final String deviceToken = "deviceToken";
   final String feedbackClassId = "feedbackClassId";
   final String profilePic = "profilePic";
+  final String isAlumini = "isAlumini";
 
 
   //set data into shared preferences...
-  Future createLoginSession(String apiUserId,String apiFirstName ,String apiLastName, String apiuserType,  String apiaccessToken,String apiProfilePic)
+  Future createLoginSession(String apiUserId,String apiFirstName ,String apiLastName, String apiuserType,  String apiaccessToken,String apiProfilePic,String apiIsAlumini)
       async {
     await SessionManagerMethods.setBool(isLoggedIn, true);
     await SessionManagerMethods.setString(userId,apiUserId);
@@ -33,10 +34,20 @@ class SessionManager {
     await SessionManagerMethods.setString(userType,apiuserType);
     await SessionManagerMethods.setString(accessToken,apiaccessToken);
     await SessionManagerMethods.setString(profilePic,apiProfilePic);
+    await SessionManagerMethods.setString(isAlumini,apiIsAlumini);
   }
 
   bool? checkIsLoggedIn() {
     return SessionManagerMethods.getBool(isLoggedIn);
+  }
+
+  String? getIsAlumni() {
+    return SessionManagerMethods.getString(isAlumini);
+  }
+
+  Future<void> setIsAlumni(String apiIsAlumni)
+  async {
+    await SessionManagerMethods.setString(isAlumini, apiIsAlumni);
   }
 
   String? getUserId() {

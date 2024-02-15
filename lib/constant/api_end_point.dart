@@ -41,3 +41,5 @@ const appVersion = "${MAIN_URL}get_app_version";
 const feedbackFormUrl = "${MAIN_URL}manage_form/details";
 const saveFeedbackUrl = "${MAIN_URL}form_submission";
 const removeDeviceToken = "${MAIN_URL}remove_device_token";
+const lectureAttendance = "${MAIN_URL}attendance_report/user_lecture_attendance";
+const pendingFeedback = "${MAIN_URL}pending_feedbacks";

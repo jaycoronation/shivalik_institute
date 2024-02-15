@@ -210,7 +210,7 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
                         children: [
                           HtmlWidget(
                             checkValidString(getSet.description),
-                            textStyle:const TextStyle(fontSize: 16, color: grayDark, fontWeight: FontWeight.w400),
+                            textStyle: const TextStyle(fontSize: 16, color: grayDark, fontWeight: FontWeight.w400),
                           ),
                         ],
                       ),

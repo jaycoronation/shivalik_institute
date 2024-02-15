@@ -147,6 +147,7 @@ class Questions {
       String? inputName, 
       String? noLines, 
       String? status, 
+      bool isOpen = false,
       List<Options>? options,}){
     _questionId = questionId;
     _formId = formId;
@@ -155,6 +156,7 @@ class Questions {
     _inputName = inputName;
     _noLines = noLines;
     _status = status;
+    _isOpen = isOpen;
     _options = options;
 }
 
@@ -180,6 +182,7 @@ class Questions {
   String? _inputName;
   String? _noLines;
   String? _status;
+  bool _isOpen = false;
   List<Options>? _options;
 Questions copyWith({  String? questionId,
   String? formId,
@@ -188,6 +191,7 @@ Questions copyWith({  String? questionId,
   String? inputName,
   String? noLines,
   String? status,
+  bool isOpen = false,
   List<Options>? options,
 }) => Questions(  questionId: questionId ?? _questionId,
   formId: formId ?? _formId,
@@ -196,6 +200,7 @@ Questions copyWith({  String? questionId,
   inputName: inputName ?? _inputName,
   noLines: noLines ?? _noLines,
   status: status ?? _status,
+  isOpen: isOpen ?? _isOpen,
   options: options ?? _options,
 );
   String? get questionId => _questionId;
@@ -205,6 +210,13 @@ Questions copyWith({  String? questionId,
   String? get inputName => _inputName;
   String? get noLines => _noLines;
   String? get status => _status;
+  bool get isOpen => _isOpen;
+  late AnimationController animationController;
+
+  set isOpen(bool value) {
+    _isOpen = value;
+  }
+
   List<Options>? get options => _options;
   TextEditingController controller = TextEditingController();
 

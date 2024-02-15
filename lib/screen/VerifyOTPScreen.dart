@@ -205,6 +205,7 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                               value.user?.userType ?? "",
                                               value.user?.accessToken ?? "",
                                               value.user?.profilePic ?? "",
+                                              value.user?.isAlumini ?? ''
                                             );
                                             startActivity(context, const DashboardScreen());
                                           }
@@ -329,7 +330,7 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                             'from_app' : FROM_APP
                                           };
                                           await verifyOtpViewModel.verifyOTP(jsonBody);
-                                          VerifyOtpResponseModel value = await verifyOtpViewModel.response;
+                                          VerifyOtpResponseModel value = verifyOtpViewModel.response;
                                           if (value.success == "1")
                                           {
                                             await sessionManager.createLoginSession(
@@ -339,6 +340,7 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                               value.user?.userType ?? "",
                                               value.user?.accessToken ?? "",
                                               value.user?.profilePic ?? "",
+                                              value.user?.isAlumini ?? ''
                                             );
                                             startActivity(context, DashboardScreen());
                                             showToast(value.message, context);

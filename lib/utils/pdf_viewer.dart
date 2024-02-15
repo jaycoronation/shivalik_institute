@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:screen_protector/screen_protector.dart';
@@ -33,6 +34,7 @@ class _PdfViewer extends BaseState<PdfViewer> {
 
   @override
   void initState() {
+
     pdfUrl = (widget as PdfViewer).pdfUrl;
     isPrivate = (widget as PdfViewer).isPrivate;
 
@@ -106,6 +108,23 @@ class _PdfViewer extends BaseState<PdfViewer> {
                 },
               ),
             ),
+            Visibility(
+              visible: !_isNoData,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  if(MediaQuery.of(context).orientation == Orientation.portrait)
+                  {
+                    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+                  }
+                  else
+                  {
+                    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+                  }
+                },
+                child: Image.asset('assets/images/ic_rotate.png',width: 24,height: 24),
+              ),
+            ),
             const Gap(12)
           ],
         ),
@@ -114,25 +133,40 @@ class _PdfViewer extends BaseState<PdfViewer> {
             : _isNoData
             ? const MyNoDataNewWidget(msg: 'PDF not found please try again later.', img: '',)
             : SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: SfPdfViewer.network(
-              pdfUrl,
-              controller: _pdfViewerController,
-              canShowPaginationDialog: true,
-              canShowScrollStatus: true,
-              enableDoubleTapZooming: true,
-              onHyperlinkClicked: (details) {
-                launchCustomTab(context, details.uri.toString());
-              },
-              enableTextSelection: true,
-              enableHyperlinkNavigation: true,
-              interactionMode: PdfInteractionMode.selection,
-              pageLayoutMode: PdfPageLayoutMode.single,
-            )
-        ),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: SfPdfViewer.network(
+                  pdfUrl,
+                  controller: _pdfViewerController,
+                  canShowPaginationDialog: true,
+                  canShowScrollStatus: true,
+                  enableDoubleTapZooming: true,
+                  onHyperlinkClicked: (details) {
+                    launchCustomTab(context, details.uri.toString());
+                  },
+                  enableTextSelection: true,
+                  enableHyperlinkNavigation: true,
+                  interactionMode: PdfInteractionMode.selection,
+                  pageLayoutMode: PdfPageLayoutMode.single,
+                )
+            ),
       )
     );
+  }
+
+  void _enableRotation() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+
+  /// blocks rotation; sets orientation to: portrait
+  void _portraitModeOnly() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   @override
@@ -143,6 +177,7 @@ class _PdfViewer extends BaseState<PdfViewer> {
   @override
   void dispose() async {
     super.dispose();
+    _portraitModeOnly();
     await ScreenProtector.preventScreenshotOff();
     await ScreenProtector.protectDataLeakageOff();
   }

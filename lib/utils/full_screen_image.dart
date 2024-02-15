@@ -92,11 +92,12 @@ class FullScreenImage extends StatelessWidget {
                             child: SmoothPageIndicator(
                               controller: controller,
                               count: images!.length,
-                              effect:  const ExpandingDotsEffect(
-                                dotHeight: 7,
-                                dotWidth: 7,
-                                activeDotColor: black,
-                                dotColor: grayLight,
+                              effect: const ScrollingDotsEffect(
+                                dotHeight: 6,
+                                dotWidth: 6,
+                                fixedCenter: false,
+                                activeDotColor: brandColor,
+                                dotColor: Colors.grey,
                                 // strokeWidth: 5,
                               ),
                             ),

@@ -89,7 +89,6 @@ class PushNotificationService {
           messageData = value;
         }
       });
-
       print('<><> onMessageOpenedApp id--->$id');
       print('<><> onMessageOpenedApp contentType--->$contentType');
 

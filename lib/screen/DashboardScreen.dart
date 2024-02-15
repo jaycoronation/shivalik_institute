@@ -24,6 +24,7 @@ import 'package:shivalik_institute/screen/CaseStudyScreen.dart';
 import 'package:shivalik_institute/screen/EventsScreen.dart';
 import 'package:shivalik_institute/screen/FacultyProfileScreen.dart';
 import 'package:shivalik_institute/screen/FeedbackFormScreen.dart';
+import 'package:shivalik_institute/screen/FeedbackFormScreenNew.dart';
 import 'package:shivalik_institute/screen/HolidayScreen.dart';
 import 'package:shivalik_institute/screen/LectureDetailsScreen.dart';
 import 'package:shivalik_institute/screen/LectureScreen.dart';
@@ -48,6 +49,8 @@ import '../model/DashboardResponseModel.dart';
 import '../model/EventResponseModel.dart';
 import '../model/LecturesResponseModel.dart';
 import '../model/ModuleResponseModel.dart';
+import '../model/NotificationListResponseModel.dart';
+import '../model/PendingFeedbackResponseModel.dart';
 import '../model/TestimonialResponseModel.dart';
 import '../model/UpdateDeviceTokenModel.dart';
 import '../utils/base_class.dart';
@@ -109,6 +112,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
   final ScrollController scrollController = ScrollController();
 
+  bool hasAttendLecture = false;
+
   @override
   void initState() {
     _deviceDetails();
@@ -118,6 +123,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     getCaseStudyList(true);
     getDeviceToken();
     getBlogList();
+    getPendingFeedbacks();
 
     FirebaseMessaging.onMessage.listen((message) {
 
@@ -149,11 +155,11 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         }
       });
 
-      print('<><> onMessage id--->$id');
-      print('<><> onMessage contentType--->$contentType');
-      print('<><> onMessage title--->$title');
-      print('<><> onMessage messageData--->$messageData');
-      print("<><> onMessage Image URL : $image <><>");
+      print('<><>Dashboard onMessage id--->$id');
+      print('<><>Dashboard onMessage contentType--->$contentType');
+      print('<><>Dashboard onMessage title--->$title');
+      print('<><>Dashboard onMessage messageData--->$messageData');
+      print("<><>Dashboard onMessage Image URL : $image <><>");
 
       NavigationService.notif_id = id;
 
@@ -161,7 +167,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       {
         //NavigationService.class_id = id;
         sessionManager.setClassId(id);
-        openFeedbackForm();
+        getStudentAttendance();
       }
     });
 
@@ -224,8 +230,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
             actions: [
               InkWell(
                 onTap: (){
-                  //startActivity(context, const NotificationListScreen());
-                  openFeedbackForm();
+                  startActivity(context, const NotificationListScreen());
                 },
                 customBorder: const CircleBorder(),
                 child: Container(
@@ -300,8 +305,12 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                       setState(() {
                                         selectedDateFaculty = listCalenderData[index].name ?? '';
                                         selectedFacultyId1 = listCalenderData[index].facultyId1 ?? '';
-                                        selectedFacultyId1 = listCalenderData[index].facultyId2 ?? '';
+                                        selectedFacultyId2 = listCalenderData[index].facultyId2 ?? '';
                                       });
+
+                                      print("selectedFacultyId1 ==== $selectedFacultyId1");
+                                      print("selectedFacultyId2 ==== $selectedFacultyId2");
+
                                       _eventDialog(listCalenderData[index].date ?? '', listCalenderData[index].title ?? '', listCalenderData[index].eventType ?? '');
                                     },
                                     child: LimitedBox(
@@ -1463,7 +1472,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         if (sessionManager.getClassId() != getSet.lastFeedbackClassId)
           {
             Future.delayed(Duration.zero, () {
-              openFeedbackForm();
+              getStudentAttendance();
             });
           }
       }
@@ -1758,8 +1767,46 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     }
   }
 
+  getStudentAttendance() async {
+
+    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+
+    final url = Uri.parse(lectureAttendance);
+
+    Map<String, String> jsonBody = {
+      'class_id': sessionManager.getClassId() ?? '',
+      'user_id':sessionManager.getUserId() ?? '',
+      'from_app':FROM_APP,
+    };
+
+    final response = await http.post(url, body: jsonBody, headers: {
+      "Authorization": AuthHeader,
+    });
+
+    final statusCode = response.statusCode;
+    final body = response.body;
+    Map<String, dynamic> user = jsonDecode(body);
+    var dataResponse = CommonResponseModel.fromJson(user);
+
+    if (statusCode == 200 && dataResponse.success == "1")
+    {
+      setState(() {
+        hasAttendLecture = true;
+      });
+      openFeedbackForm();
+    }
+    else if (dataResponse.success == "0")
+    {
+      setState(() {
+        hasAttendLecture = false;
+      });
+    }
+  }
+
   void openFeedbackForm() {
-    showModalBottomSheet<bool>(
+    /*showModalBottomSheet<bool>(
       isScrollControlled: true,
       isDismissible: false,
       enableDrag: false,
@@ -1776,7 +1823,38 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           ),
         );
       },
-    );
+    );*/
+
+    //startActivity(context, FeedbackFormScreenNew());
+
+  }
+
+  getPendingFeedbacks() async {
+    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+
+    final url = Uri.parse(pendingFeedback);
+
+    Map<String, String> jsonBody = {
+      'student_id': sessionManager.getUserId() ?? '',
+    };
+
+    final response = await http.post(url, body: jsonBody);
+
+    final statusCode = response.statusCode;
+    final body = response.body;
+    Map<String, dynamic> apiResponse = jsonDecode(body);
+    var dataResponse = PendingFeedbackResponseModel.fromJson(apiResponse);
+    if (statusCode == 200 && dataResponse.success == '1')
+      {
+        if (dataResponse.records?.isNotEmpty ?? false)
+          {
+            startActivity(context, FeedbackFormScreenNew(dataResponse.records ?? []));
+          }
+      }
+    else
+      {}
   }
 
 }

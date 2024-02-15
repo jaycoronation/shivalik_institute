@@ -69,27 +69,6 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
             titleSpacing: 0,
             centerTitle: false,
             title: getTitle("Holiday List",),
-            actions: [
-              /*InkWell(
-                onTap: () {
-                  setState(() {
-                    _isSearchHideShow = !_isSearchHideShow;
-                    searchController.text = "";
-                    searchParam = "";
-                  });
-                },
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  alignment: Alignment.center,
-                  child: Image.asset("assets/images/ic_search.png",
-                    width: 22, height: 22,
-                    color: black,
-                  ),
-                ),
-              ),
-              const Gap(12),*/
-            ],
           ),
           body: Consumer<HolidayViewModel>(
             builder: (context, value, child) {
