@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -154,7 +155,7 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                   if (value.response.success == "1")
                     {
                       return Padding(
-                        padding: const EdgeInsets.fromLTRB(18, 12, 18, 12),
+                        padding: const EdgeInsets.fromLTRB(18, 0, 18, 12),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,81 +276,89 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                                       startActivity(context, EventsDetailsScreen(listEvent[index]));
                                     },
                                     child: Container(
-                                      margin: const EdgeInsets.only(bottom: 20),
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(2),
-                                          border:Border.all(color: grayLight, width: 0.6,)
+                                      height: 300,
+                                      margin: EdgeInsets.only(top: 12),
+                                      width : MediaQuery.of(context).size.width,
+                                      decoration:  BoxDecoration(
+                                        border: Border.all(color: white, width: 0.5),
+                                        borderRadius:const BorderRadius.all(Radius.circular(8),) ,
+                                        color: grayNew,
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              height: 210,
-                                              width: MediaQuery.of(context).size.width,
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.circular(2),
-                                                child: Stack(
-                                                  alignment: Alignment.topRight,
-                                                  children: [
-                                                    listEvent[index].bannerImage.toString().isNotEmpty
-                                                        ? FadeInImage.assetNetwork(
-                                                          image: "${listEvent[index].bannerImage}&h=500&zc=2",
-                                                          fit: BoxFit.cover,
-                                                          width: MediaQuery.of(context).size.width,
-                                                          height: 210,
-                                                          placeholder: 'assets/images/bg_gray.jpeg',
-                                                        )
-                                                        : Image.asset(
-                                                        'assets/images/bg_gray.jpeg',
-                                                        width: 50, height: 50
-                                                    ),
-                                                  ],
+                                      child: Stack(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: CachedNetworkImage(
+                                                imageUrl: "${listEvent[index].bannerImage}&h=500&zc=2",
+                                                fit: BoxFit.cover,
+                                                width : MediaQuery.of(context).size.width,
+                                                height: 300,
+                                                errorWidget: (context, url, error) => Container(
+                                                  color: grayNew,
+                                                  width : MediaQuery.of(context).size.width,
+                                                  height: 300,
                                                 ),
-                                              ),
+                                                placeholder: (context, url) => Container(
+                                                  color: grayNew,
+                                                  width : MediaQuery.of(context).size.width,
+                                                  height: 300,
+                                                )
                                             ),
-                                            const Gap(12),
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              children: [
-                                                Text(checkValidString(listEvent[index].title.toString()),
-                                                  textAlign: TextAlign.start,
-                                                  maxLines: 2,
-                                                  style: const TextStyle(fontSize: 20, color: black, fontWeight: FontWeight.w500),
-                                                ),
-                                                Visibility(
-                                                  visible: listEvent[index].shortDescription?.isNotEmpty ?? false,
-                                                  child: Column(
-                                                    children: [
-                                                      const Gap(10),
-                                                      Text(
-                                                        checkValidString(listEvent[index].shortDescription.toString().replaceAll(htmlExp, "").replaceAll("&amp;", "&").replaceAll("&nbsp;", "").replaceAll("&quot;", "").replaceAll("&#39;", "'").replaceAll("<br />", "").trim()).toString(),
-                                                        textAlign: TextAlign.start,
-                                                        maxLines: 5,
-                                                        style: const TextStyle(fontSize: 16, color: grayDark, fontWeight: FontWeight.w400),
-                                                      ),
+                                          ),
+                                          Container(
+                                            height: 300,
+                                            decoration: BoxDecoration(
+                                                color: Colors.black,
+                                                gradient: LinearGradient(
+                                                    begin: FractionalOffset.topCenter,
+                                                    end: FractionalOffset.bottomCenter,
+                                                    colors: [
+                                                      blackConst.withOpacity(0.0),
+                                                      blackConst.withOpacity(1),
                                                     ],
-                                                  ),
-                                                ),
-                                                const Gap(8),
-                                                Text(universalDateConverter("yyyy-MM-dd", "dd MMM,yyyy", listEvent[index].date ?? ''),
-                                                  textAlign: TextAlign.start,
-                                                  style: const TextStyle(fontSize: 14, color: graySemiDark, fontWeight: FontWeight.w400),
-                                                ),
-                                                const Gap(10),
+                                                    stops: const [
+                                                      0.7,
+                                                      1.0
+                                                    ]),
+                                                borderRadius: BorderRadius.circular(8)
+                                            ),
+                                          ),
+                                          Positioned(
+                                            top: 12,
+                                            right: 12,
+                                            child: Container(
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(4),
+                                                  color: brandColor
+                                              ),
+                                              padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+                                              child: Text(listEvent[index].eventType ?? '',style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Container(height: 6,),
+                                                Text(listEvent[index].title ?? "",
+                                                  style: const TextStyle(fontSize: 16, color: white,fontWeight: FontWeight.w500),),
+                                                Container(height: 6,),
+                                                Text(universalDateConverter("dd-MM-yyyy hh:mm a", "dd MMM, yyyy hh:mm a", listEvent[index].date ?? ""),
+                                                  style: const TextStyle(fontSize: 14, color: white,fontWeight: FontWeight.w400),),
                                               ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   );
                                 },
                               ),
                             ),
+                            Gap(22),
                             Visibility(
                                 visible: _isLoadingMore,
                                 child: const LoadingMoreWidget()

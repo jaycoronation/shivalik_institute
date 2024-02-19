@@ -119,7 +119,11 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                             children: [
                               Container(
                                 margin: const EdgeInsets.only(top: 12),
-                                decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(150)), color: grayLight),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(150),),
+                                    color: grayLight,
+                                  border: Border.all(color: grayLight,width: 0.5)
+                                ),
                                 width: 100,
                                 height: 100,
                                 child:  ClipOval(
@@ -128,239 +132,306 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                         : Image.network(getSet.profilePic.toString(), fit: BoxFit.cover)
                                 ),
                               ),
-                              Positioned(
-                                  right: 0,
-                                  bottom: 12,
-                                  child: Container(
-                                      decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)),
-                                        color: grayLight,
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(6.0),
-                                        child: Image.asset('assets/images/ic_edit.png', height: 18, width: 18,),
-                                      )
-                                  )
+                              Visibility(
+                                visible: false,
+                                child: Positioned(
+                                    right: 0,
+                                    bottom: 12,
+                                    child: Container(
+                                        decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)),
+                                          color: grayLight,
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(6.0),
+                                          child: Image.asset('assets/images/ic_edit.png', height: 18, width: 18,),
+                                        )
+                                    )
+                                ),
                               )
                             ],
                           )
                       ),
                     ),
-                    Container(height: 32,),
-                    Container(
-                      margin: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: white,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 18.0, right: 18,top: 12,bottom: 12),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Visibility(
-                                  visible: getSet.firstName?.isNotEmpty ?? false,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Image.asset('assets/images/ic_profile.png', width: 22,height: 22,),
-                                      Container(width: 12,),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children:  [
-                                            Padding(
-                                              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                              child: Text("${getSet.firstName} ${getSet.lastName}" ,
-                                                  style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
-                                              ),
-                                            ),
-                                            const Divider(
-                                              thickness: 0.5,
-                                              endIndent: 0,
-                                              indent: 0,
-                                              color: grayLight,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: getSet.email?.isNotEmpty ?? false,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Image.asset('assets/images/ic_Mail.png', width: 22,height: 22,),
-                                      Container(width: 12,),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children:  [
-                                            Padding(
-                                              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                              child: Text((getSet.email.toString()),
-                                                  style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
-                                              ),
-                                            ),
-                                            const Divider(
-                                              thickness: 0.5,
-                                              endIndent: 0,
-                                              indent: 0,
-                                              color: grayLight,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: getSet.contactNo?.isNotEmpty ?? false,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Image.asset('assets/images/ic_Phone.png', width: 22,height: 22,),
-                                      Container(width: 12,),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children:  [
-                                            Padding(
-                                              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                              child: Text((getSet.contactNo.toString()),
-                                                  style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
-                                              ),
-                                            ),
-                                            const Divider(
-                                              thickness: 0.5,
-                                              endIndent: 0,
-                                              indent: 0,
-                                              color: grayLight,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: getSet.dateOfBirth?.isNotEmpty ?? false,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Image.asset('assets/images/ic_birthdate.png', width: 22,height: 22,),
-                                      Container(width: 12,),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children:  [
-                                            Padding(
-                                              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                              child: Text(universalDateConverter("yyyy-MM-dd", "dd MMM, yyyy", getSet.dateOfBirth ?? ""),
-                                                  style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
-                                              ),
-                                            ),
-                                            const Divider(
-                                              thickness: 0.5,
-                                              endIndent: 0,
-                                              indent: 0,
-                                              color: grayLight,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: getSet.courseName?.isNotEmpty ?? false,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Image.asset('assets/images/ic_course.png', width: 22,height: 22,),
-                                      Container(width: 12,),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children:  [
-                                            Padding(
-                                              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                              child: Text(getSet.courseName.toString(),
-                                                  style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
-                                              ),
-                                            ),
-                                            const Divider(
-                                              thickness: 0.5,
-                                              endIndent: 0,
-                                              indent: 0,
-                                              color: grayLight,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: getSet.batchName?.isNotEmpty ?? false,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Image.asset('assets/images/ic_batch.png', width: 22,height: 22,),
-                                      Container(width: 12,),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children:  [
-                                            Padding(
-                                              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                              child: Text(getSet.batchName.toString(),
-                                                  style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
-                                              ),
-                                            ),
-                                            const Divider(
-                                              thickness: 0.5,
-                                              endIndent: 0,
-                                              indent: 0,
-                                              color: grayLight,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                                const Gap(12),
-
-
-                              ],
+                    Container(height: 22,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Spacer(),
+                            const Gap(34),
+                            Text(
+                              toDisplayCase("${getSet.firstName} ${getSet.lastName}" ),
+                              textAlign: TextAlign.start,
+                              style: const TextStyle(fontWeight: FontWeight.w500, color: black, fontSize: 22, fontFamily: 'Colfax'),
                             ),
+                            const Gap(12),
+                            InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: () async {
+                                var value = await Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+                                getUserData();
+                              },
+                              child: Container(
+                                width: 34,
+                                height: 34,
+                                decoration: const BoxDecoration(color: grayButton, shape: BoxShape.circle),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Image.asset('assets/images/ic_edit_pencil.png', width: 28, height: 28, color: black),
+                                ),
+                              ),
+                            ),
+                            const Spacer(),
+                          ],
+                        ),
+                        const Gap(6),
+                        Container(
+                          decoration: BoxDecoration(color: grayNew, borderRadius: BorderRadius.circular(8)),
+                          padding: const EdgeInsets.fromLTRB(9, 6, 9, 6),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                checkValidString(getSet.batchName),
+                                textAlign: TextAlign.start,
+                                style: const TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 14, fontFamily: 'Colfax'),
+                              ),
+                              const Gap(6),
+                              Image.asset(
+                                'assets/images/ic_arrow_right.png',
+                                width: 8,
+                                height: 8,
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
+                      ],
+                    ),
+                    Visibility(
+                      visible: false,
+                      child: Container(
+                        margin: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: white,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 18.0, right: 18,top: 12,bottom: 12),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Visibility(
+                                    visible: getSet.firstName?.isNotEmpty ?? false,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Image.asset('assets/images/ic_profile.png', width: 22,height: 22,),
+                                        Container(width: 12,),
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children:  [
+                                              Padding(
+                                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                                child: Text("${getSet.firstName} ${getSet.lastName}",
+                                                    style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
+                                                ),
+                                              ),
+                                              const Divider(
+                                                thickness: 0.5,
+                                                endIndent: 0,
+                                                indent: 0,
+                                                color: grayLight,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: getSet.email?.isNotEmpty ?? false,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Image.asset('assets/images/ic_Mail.png', width: 22,height: 22,),
+                                        Container(width: 12,),
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children:  [
+                                              Padding(
+                                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                                child: Text((getSet.email.toString()),
+                                                    style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
+                                                ),
+                                              ),
+                                              const Divider(
+                                                thickness: 0.5,
+                                                endIndent: 0,
+                                                indent: 0,
+                                                color: grayLight,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: getSet.contactNo?.isNotEmpty ?? false,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Image.asset('assets/images/ic_Phone.png', width: 22,height: 22,),
+                                        Container(width: 12,),
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children:  [
+                                              Padding(
+                                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                                child: Text((getSet.contactNo.toString()),
+                                                    style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
+                                                ),
+                                              ),
+                                              const Divider(
+                                                thickness: 0.5,
+                                                endIndent: 0,
+                                                indent: 0,
+                                                color: grayLight,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: getSet.dateOfBirth?.isNotEmpty ?? false,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Image.asset('assets/images/ic_birthdate.png', width: 22,height: 22,),
+                                        Container(width: 12,),
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children:  [
+                                              Padding(
+                                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                                child: Text(universalDateConverter("yyyy-MM-dd", "dd MMM, yyyy", getSet.dateOfBirth ?? ""),
+                                                    style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
+                                                ),
+                                              ),
+                                              const Divider(
+                                                thickness: 0.5,
+                                                endIndent: 0,
+                                                indent: 0,
+                                                color: grayLight,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: getSet.courseName?.isNotEmpty ?? false,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Image.asset('assets/images/ic_course.png', width: 22,height: 22,),
+                                        Container(width: 12,),
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children:  [
+                                              Padding(
+                                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                                child: Text(getSet.courseName.toString(),
+                                                    style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
+                                                ),
+                                              ),
+                                              const Divider(
+                                                thickness: 0.5,
+                                                endIndent: 0,
+                                                indent: 0,
+                                                color: grayLight,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: getSet.batchName?.isNotEmpty ?? false,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Image.asset('assets/images/ic_batch.png', width: 22,height: 22,),
+                                        Container(width: 12,),
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children:  [
+                                              Padding(
+                                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                                child: Text(getSet.batchName.toString(),
+                                                    style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
+                                                ),
+                                              ),
+                                              const Divider(
+                                                thickness: 0.5,
+                                                endIndent: 0,
+                                                indent: 0,
+                                                color: grayLight,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                  const Gap(12),
+
+
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                    Container(height: 22,),
                     Container(
                       margin: const EdgeInsets.all(12),
                       padding: const EdgeInsets.only(left: 18.0, right: 18,top: 12,bottom: 12),
@@ -386,7 +457,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Image.asset('assets/images/ic_download.png', width: 22,height: 22,),
-                                    Container(width: 20),
+                                    Container(width: 12),
                                     const Expanded(
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.start,
@@ -424,8 +495,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Image.asset('assets/images/ic_payment.png', width: 26,height: 26,),
-                                  Container(width: 20),
+                                  Image.asset('assets/images/ic_payment.png', width: 22,height: 22,),
+                                  Container(width: 12),
                                   const Expanded(
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.start,
@@ -461,8 +532,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Image.asset('assets/images/ic_calendar.png', width: 26,height: 26,),
-                                  Container(width: 20),
+                                  Image.asset('assets/images/ic_calendar.png', width: 22,height: 22,),
+                                  Container(width: 12),
                                   const Expanded(
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.start,
@@ -498,8 +569,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Image.asset('assets/images/ic_notification.png', width: 26,height: 26,),
-                                  Container(width: 20),
+                                  Image.asset('assets/images/ic_notification.png', width: 22,height: 22,),
+                                  Container(width: 12),
                                   const Expanded(
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.start,
@@ -535,8 +606,8 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Image.asset('assets/images/ic_logout.png', height: 26, width: 26,),
-                                  Container(width: 18),
+                                  Image.asset('assets/images/ic_logout.png', width: 22,height: 22,),
+                                  Container(width: 12),
                                   const Expanded(
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.start,
@@ -563,7 +634,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                         ],
                       ),
                     ),
-                    Gap(22)
+                    const Gap(22)
                   ],
                 ),
               );

@@ -94,7 +94,7 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
             centerTitle: false,
             title: getTitle("Case Study",),
             actions: [
-              InkWell(
+              /*InkWell(
                 onTap: () {
                   setState(() {
                     _isSearchHideShow = !_isSearchHideShow;
@@ -111,7 +111,7 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
                     color: black,
                   ),
                 ),
-              ),
+              ),*/
               const Gap(12),
             ],
           ),
@@ -276,73 +276,73 @@ class _CaseStudyScreenState extends BaseState<CaseStudyScreen> {
                       ),
                       listCaseStudy.isNotEmpty
                           ? Expanded(
-                        child: ListView.builder(
-                          controller: _scrollViewController,
-                          physics: const BouncingScrollPhysics(),
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: listCaseStudy.length,
-                          itemBuilder: (context, index) {
-                            var getSet = listCaseStudy[index];
-                            return GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () {
-                                startActivity(context, CaseStudyDetailScreen(listCaseStudy[index]));
-                              },
-                              child: Container(
-                                decoration:  BoxDecoration(
-                                  border: Border.all(color: white, width: 0.5),
-                                  borderRadius:const BorderRadius.all(Radius.circular(8),) ,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(0.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: CachedNetworkImage(
-                                            imageUrl: "${getSet.coverImage}&h=500&zc=2",
-                                            fit: BoxFit.cover,
-                                            width : MediaQuery.of(context).size.width,
-                                            height: 200,
-                                            errorWidget: (context, url, error) => Container(
-                                              color: grayNew,
-                                              width : MediaQuery.of(context).size.width,
-                                              height: 200,
+                            child: ListView.builder(
+                              controller: _scrollViewController,
+                              physics: const BouncingScrollPhysics(),
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: listCaseStudy.length,
+                              itemBuilder: (context, index) {
+                                var getSet = listCaseStudy[index];
+                                return GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () {
+                                    startActivity(context, CaseStudyDetailScreen(listCaseStudy[index]));
+                                  },
+                                  child: Container(
+                                    decoration:  BoxDecoration(
+                                      border: Border.all(color: white, width: 0.5),
+                                      borderRadius:const BorderRadius.all(Radius.circular(8),) ,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(0.0),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: CachedNetworkImage(
+                                                imageUrl: "${getSet.coverImage}&h=500&zc=2",
+                                                fit: BoxFit.cover,
+                                                width : MediaQuery.of(context).size.width,
+                                                height: 240,
+                                                errorWidget: (context, url, error) => Container(
+                                                  color: grayNew,
+                                                  width : MediaQuery.of(context).size.width,
+                                                  height: 240,
+                                                ),
+                                                placeholder: (context, url) => Container(
+                                                  color: grayNew,
+                                                  width : MediaQuery.of(context).size.width,
+                                                  height: 240,
+                                                )
                                             ),
-                                            placeholder: (context, url) => Container(
-                                              color: grayNew,
-                                              width : MediaQuery.of(context).size.width,
-                                              height: 200,
-                                            )
-                                        ),
+                                          ),
+                                          Container(height: 12,),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 10.0),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(getSet.title ?? "",
+                                                  style: const TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w500),),
+                                                Container(height: 8,),
+                                                Text(getSet.tagLine ?? "",
+                                                  style: const TextStyle(fontSize: 14, color: black,fontWeight: FontWeight.w400),),
+                                                Container(height: 12,),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Container(height: 12,),
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 10.0),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(getSet.title ?? "",
-                                              style: const TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w500),),
-                                            Container(height: 8,),
-                                            Text(getSet.tagLine ?? "",
-                                              style: const TextStyle(fontSize: 14, color: black,fontWeight: FontWeight.w400),),
-                                            Container(height: 12,),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      )
+                                );
+                              },
+                            ),
+                          )
                           : const MyNoDataNewWidget(msg: "No Case Study Founds", img: ""),
                       Visibility(
                           visible: _isLoadingMore,

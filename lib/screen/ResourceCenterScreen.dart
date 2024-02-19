@@ -31,7 +31,7 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
   bool searchVisibility = false;
   int _pageIndex = 1;
   bool _isSearchHideShow = false;
-  final int _pageResult = 10;
+  final int _pageResult = 50;
   List<ModuleList> listModule = [];
   late ScrollController _scrollViewController;
   bool isScrollingDown = false;
@@ -77,7 +77,6 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -355,6 +354,8 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
     {
        setState(() {
          var listModuleTemp = moduleViewModel.response.list ?? [];
+
+         listModule = [];
 
          if (isForSubmission)
            {

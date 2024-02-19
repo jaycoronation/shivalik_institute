@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gap/gap.dart';
 import 'package:screen_protector/screen_protector.dart';
 import 'package:shivalik_institute/common_widget/common_widget.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
@@ -25,7 +26,9 @@ class _WebViewContainerState extends State<WebViewContainer> {
   void initState(){
     super.initState();
 
+    isPrivate = widget.isPrivate;
 
+    print("isPrivate === ${isPrivate}");
 
     if (isPrivate == "1")
     {
@@ -107,6 +110,7 @@ class _WebViewContainerState extends State<WebViewContainer> {
               child: Image.asset('assets/images/ic_rotate.png',width: 24,height: 24),
             ),
           ),
+          Gap(12)
         ],
       ),
       body: Stack(
@@ -128,9 +132,18 @@ class _WebViewContainerState extends State<WebViewContainer> {
     await ScreenProtector.protectDataLeakageWithBlur();
   }
 
+  /// blocks rotation; sets orientation to: portrait
+  void _portraitModeOnly() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
   @override
   void dispose() async {
     super.dispose();
+    _portraitModeOnly();
     await ScreenProtector.preventScreenshotOff();
     await ScreenProtector.protectDataLeakageOff();
   }

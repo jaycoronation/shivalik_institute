@@ -86,7 +86,8 @@ class BatchList {
   BatchList({
       String? id, 
       String? name, 
-      String? batchSize, 
+      String? timezone,
+      String? batchSize,
       String? startDate, 
       String? endDate, 
       String? startTime, 
@@ -105,6 +106,7 @@ class BatchList {
       num? modulePending,}){
     _id = id;
     _name = name;
+    _timezone = timezone;
     _batchSize = batchSize;
     _startDate = startDate;
     _endDate = endDate;
@@ -127,6 +129,7 @@ class BatchList {
   BatchList.fromJson(dynamic json) {
     _id = json['id'];
     _name = json['name'];
+    _timezone = json['timezone'];
     _batchSize = json['batch_size'];
     _startDate = json['start_date'];
     _endDate = json['end_date'];
@@ -147,6 +150,7 @@ class BatchList {
   }
   String? _id;
   String? _name;
+  String? _timezone;
   String? _batchSize;
   String? _startDate;
   String? _endDate;
@@ -166,6 +170,7 @@ class BatchList {
   num? _modulePending;
 BatchList copyWith({  String? id,
   String? name,
+  String? timezone,
   String? batchSize,
   String? startDate,
   String? endDate,
@@ -185,6 +190,7 @@ BatchList copyWith({  String? id,
   num? modulePending,
 }) => BatchList(  id: id ?? _id,
   name: name ?? _name,
+  timezone: timezone ?? _timezone,
   batchSize: batchSize ?? _batchSize,
   startDate: startDate ?? _startDate,
   endDate: endDate ?? _endDate,
@@ -205,6 +211,7 @@ BatchList copyWith({  String? id,
 );
   String? get id => _id;
   String? get name => _name;
+  String? get timezone => _timezone;
   String? get batchSize => _batchSize;
   String? get startDate => _startDate;
   String? get endDate => _endDate;
@@ -227,6 +234,7 @@ BatchList copyWith({  String? id,
     final map = <String, dynamic>{};
     map['id'] = _id;
     map['name'] = _name;
+    map['timezone'] = _timezone;
     map['batch_size'] = _batchSize;
     map['start_date'] = _startDate;
     map['end_date'] = _endDate;

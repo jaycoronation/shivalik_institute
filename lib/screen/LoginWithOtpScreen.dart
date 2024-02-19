@@ -156,10 +156,12 @@ class _LoginWithOTPScreenState extends BaseState<LoginWithOTPScreen> {
                                   text: 'By clicking above you agree to\n',
                                   style: TextStyle(fontSize: 14, color: grayDark, fontWeight: FontWeight.w400),
                                 ),
-                                const TextSpan(
+                                TextSpan(
                                   text: "Terms & Conditions",
                                   style: TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w500),
-                                  // recognizer: TapGestureRecognizer()..onTap = () => launchCustomTab(context, TermsPolicy),
+                                    recognizer: TapGestureRecognizer()..onTap = () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const WebViewContainer('https://www.shivalik.institute/terms-conditions/', 'Terms & Conditions', '0')));
+                                    }
                                 ),
                                 const TextSpan(
                                   text: ' and ',
@@ -169,7 +171,7 @@ class _LoginWithOTPScreenState extends BaseState<LoginWithOTPScreen> {
                                   text: "Privacy Policy",
                                   style: const TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w500),
                                     recognizer: TapGestureRecognizer()..onTap = () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const WebViewContainer('https://www.shivalik.institute/privacy_policy/', 'Privacy Policy', '0')));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const WebViewContainer('https://www.shivalik.institute/privacy-policy/', 'Privacy Policy', '0')));
                                     }
                                 ),
                                 const TextSpan(

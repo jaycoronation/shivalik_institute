@@ -171,6 +171,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       }
     });
 
+    print("sessionManager.getProfilePic() ==== ${sessionManager.getProfilePic()}");
+
     super.initState();
   }
 
@@ -218,7 +220,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         fit: BoxFit.cover,
                       )
                       : Image.network(
-                        getSet.profilePic ?? '',
+                        sessionManager.getProfilePic() ?? '',
                         height: 42,
                         width: 42,
                         fit: BoxFit.cover,
@@ -482,15 +484,118 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                         ),
                                         Container(height: 16,),
                                         SizedBox(
-                                          height: 170,
+                                          height: 190,
                                           child: PageView.builder(
                                             itemCount: (value.response.upcomingClasses?.length ?? 0)> 10 ? 10 : value.response.upcomingClasses?.length,
                                             scrollDirection: Axis.horizontal,
                                             controller: controller,
                                             physics: const BouncingScrollPhysics(),
                                             itemBuilder: ( context, index) {
-                                              var getSet =  value.response.upcomingClasses?[index];
+                                              var getSet =  value.response.upcomingClasses?[index] ?? UpcomingClasses();
                                               return GestureDetector(
+                                                behavior: HitTestBehavior.opaque,
+                                                onTap: () {
+                                                  startActivity(context, LectureDetailsScreen(getSet.id ?? ''));
+                                                },
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(left: 12,right: 12),
+                                                  padding: const EdgeInsets.all(12),
+                                                  decoration: BoxDecoration(
+                                                    color: grayButton,
+                                                    border: Border.all(color: grayButton),
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Image.asset('assets/images/ic_class.png', width: 22, height: 22, color: black,),
+                                                          const Gap(8),
+                                                          Expanded(
+                                                            flex: 2,
+                                                            child: Text(getSet.classNoFormat ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const Gap(12),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Image.asset('assets/images/ic_class_date.png', width: 22, height: 22, color: black,),
+                                                          const Gap(8),
+                                                          Expanded(
+                                                            flex: 2,
+                                                            child: Text("${getSet.date}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const Gap(12),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Image.asset('assets/images/ic_class_time.png', width: 22, height: 22, color: black,),
+                                                          const Gap(8),
+                                                          Expanded(
+                                                            flex: 2,
+                                                            child: Text("${getSet.startTime} - ${getSet.endTime}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const Gap(12),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Image.asset('assets/images/ic_module.png', width: 22, height: 22, color: black,),
+                                                          const Gap(8),
+                                                          Expanded(
+                                                            flex: 2,
+                                                            child: Text(getSet.moduleDetails?.name ?? "",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const Gap(12),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Image.asset('assets/images/ic_faculty.png', width: 22, height: 22, color: black,),
+                                                          const Gap(8),
+                                                          Expanded(
+                                                            flex: 2,
+                                                            child: Text(getSet.session2FacultyName?.isNotEmpty ?? false ? "${getSet.session1FacultyName},${getSet.session2FacultyName}" : getSet.session1FacultyName ?? '',style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Visibility(
+                                                        visible: false,
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            const Expanded(
+                                                              flex: 1,
+                                                              child: Text("Status ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                            ),
+                                                            const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
+                                                            Expanded(
+                                                              flex: 2,
+                                                              child: Text(getSet.isActive == "1" ? "Active" : "InActive",style: TextStyle(color: getSet.isActive == "1" ? Colors.green : Colors.red,fontSize: 14,fontWeight: FontWeight.w600),),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                              /*return GestureDetector(
                                                 behavior: HitTestBehavior.opaque,
                                                 onTap: () {
                                                   startActivity(context, LectureDetailsScreen(getSet?.id ?? ''));
@@ -576,7 +681,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                     )
                                                   ],
                                                 ),
-                                              );
+                                              );*/
                                             },
                                           ),
                                         ),
@@ -839,7 +944,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                             padding: const EdgeInsets.only(left: 18, right: 18),
                                             alignment: Alignment.centerLeft,
                                             child: const Text("Upcoming Events",
-                                              style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w600),),
+                                              style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w800),),
                                           ),
                                           Container(
                                             padding: const EdgeInsets.only(left: 18, right: 18),
@@ -981,7 +1086,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       const Text("Case Study",
-                                        style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w600),),
+                                        style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w800),),
                                       GestureDetector(
                                         behavior: HitTestBehavior.opaque,
                                         onTap: (){
@@ -995,7 +1100,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                 ),
                                 Container(height: 12,),
                                 SizedBox(
-                                  height: 275,
+                                  height: 300,
                                   child: AnimationLimiter(
                                     child: PageView.builder(
                                       itemCount:  listCaseStudy.length,
@@ -1028,16 +1133,16 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                               imageUrl: "${getSet.coverImage}&h=500&zc=2",
                                                               fit: BoxFit.cover,
                                                               width : MediaQuery.of(context).size.width,
-                                                              height: 200,
+                                                              height: 240,
                                                               errorWidget: (context, url, error) => Container(
                                                                 color: grayNew,
                                                                 width : MediaQuery.of(context).size.width,
-                                                                height: 200,
+                                                                height: 240,
                                                               ),
                                                               placeholder: (context, url) => Container(
                                                                 color: grayNew,
                                                                 width : MediaQuery.of(context).size.width,
-                                                                height: 200,
+                                                                height: 240,
                                                               )
                                                           ),
                                                         ),
@@ -1081,7 +1186,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                         children: [
                                           const Text(
                                             "Articles",
-                                            style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w600),
+                                            style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w800),
                                           ),
                                           GestureDetector(
                                             behavior: HitTestBehavior.opaque,
@@ -1100,7 +1205,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: 290,
+                                      height: 300,
                                       child: setBlogs(),
                                     ),
                                   ],
@@ -1167,7 +1272,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                         )
                       ],
                     ),
-                    height: 160,
+                    height: 190,
                     child: ClipRRect(
                         borderRadius: BorderRadius.all(
                           Radius.circular(kButtonCornerRadius),
@@ -1177,7 +1282,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                           children: [
                             Container(
                               width: MediaQuery.of(context).size.width,
-                              height: 160,
+                              height: 190,
                               decoration: BoxDecoration(
                                   color: lightgrey,
                                   image: DecorationImage(
@@ -1267,7 +1372,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                       const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                       Expanded(
                         flex: 3,
-                        child: Text(date,style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                        child: Text(universalDateConverter("dd-MM-yyyy", "dd MMM yyyy", date),style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
                       ),
                     ],
                   ),
@@ -1467,6 +1572,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         }
       }
 
+      sessionManager.setProfilePic(getSet.profilePic ?? '');
+
       if (sessionManager.getClassId() != "")
       {
         if (sessionManager.getClassId() != getSet.lastFeedbackClassId)
@@ -1593,7 +1700,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           });
 
         });
-        print("NavigationService.class_id ===== ${NavigationService.class_id}");
       }
     else  if (userViewModel.response.success == '0')
       {

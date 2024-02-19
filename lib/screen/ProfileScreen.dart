@@ -1520,9 +1520,6 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
         BatchResponseModel getSet = batchViewModel.response;
         listBatches = getSet.batchList ?? [];
 
-        print(listBatches.length);
-        print(_batchId);
-
         for (var element in listBatches) {
           if (element.id == _batchId)
           {
@@ -1805,7 +1802,8 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
 
   Future<void> _cropImage(filePath) async {
     CroppedFile? croppedFile = await ImageCropper().cropImage(
-        sourcePath: filePath
+        sourcePath: filePath,
+      compressQuality: 70,
     );
     if (croppedFile != null) {
       setState(() {
@@ -1818,10 +1816,10 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
 
   Future<void> pickImageFromCamera() async {
     try {
-      var pickedfiles =
-      await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 50);
-      if (pickedfiles != null) {
-        final filePath = pickedfiles.path;
+      var pickedFiles =
+      await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 80,maxWidth: 512,maxHeight: 512);
+      if (pickedFiles != null) {
+        final filePath = pickedFiles.path;
         File tempFile = File(filePath);
         _cropImage(filePath);
 
@@ -1836,9 +1834,9 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
 
   Future<void> pickImageFromGallery() async {
     try {
-      var pickedfiles = await ImagePicker().pickImage(source: ImageSource.gallery,  imageQuality: 50);
-      if (pickedfiles != null) {
-        final filePath = pickedfiles.path;
+      var pickedFiles = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 80,maxWidth: 512,maxHeight: 512);
+      if (pickedFiles != null) {
+        final filePath = pickedFiles.path;
         File tempFile = File(filePath);
         print("tempFile === $tempFile");
         _cropImage(filePath);

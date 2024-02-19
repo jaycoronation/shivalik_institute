@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:readmore/readmore.dart';
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/constant/api_end_point.dart';
 import 'package:shivalik_institute/constant/colors.dart';
 import 'package:shivalik_institute/model/UserProfileResponseModel.dart';
+import 'package:shivalik_institute/utils/app_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common_widget/common_widget.dart';
@@ -30,6 +32,7 @@ class _FacultyProfileScreenState extends BaseState<FacultyProfileScreen> {
   String facultyId = '';
   bool isLoading = false;
   bool isNoDataFound = false;
+  bool isReadMore = false;
 
   @override
   void initState(){
@@ -63,7 +66,7 @@ class _FacultyProfileScreenState extends BaseState<FacultyProfileScreen> {
           ),
           titleSpacing: 0,
           centerTitle: false,
-          title: getTitle("Faculty Profile",),
+          title: getTitle(isLoading ? "Faculty Profile" : "${getSet.prefixName} ${getSet.firstName} ${getSet.lastName}",),
         ),
         body: isLoading
             ? const LoadingWidget()
@@ -86,14 +89,18 @@ class _FacultyProfileScreenState extends BaseState<FacultyProfileScreen> {
                     ),
                   ),*/
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Gap(12),
-                      Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 12),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                    decoration: BoxDecoration(
+                      color: grayButton,
+                      borderRadius: BorderRadius.circular(8)
+                    ),
+                    padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
                           decoration: BoxDecoration(color: grayLight,borderRadius: BorderRadius.circular(8)),
                           width: MediaQuery.of(context).size.width,
                           height: 250,
@@ -104,15 +111,12 @@ class _FacultyProfileScreenState extends BaseState<FacultyProfileScreen> {
                                 : Image.network("${getSet.profilePic}&h=500&zc=2", fit: BoxFit.cover),
                           ),
                         ),
-                      ),
-                      const Gap(12),
-                      Expanded(
-                        child: Column(
+                        const Gap(12),
+                        Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Gap(22),
-                            Text("${getSet.prefixName} ${getSet.firstName} ${getSet.lastName}",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w600,color: brandColor),),
+                            Visibility(visible: true,child: Text("${getSet.prefixName} ${getSet.firstName} ${getSet.lastName}",style: const TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: brandColor),)),
                             Visibility(
                               visible: getSet.designation?.isNotEmpty ?? false,
                               child: Container(
@@ -198,11 +202,15 @@ class _FacultyProfileScreenState extends BaseState<FacultyProfileScreen> {
                             ),
                           ],
                         ),
-                      ),
-                      const Gap(12),
-                    ],
+                      ],
+                    ),
                   ),
-                  Padding(
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(16, 0, 16, 22),
+                    decoration: BoxDecoration(
+                        color: grayButton,
+                        borderRadius: BorderRadius.circular(8)
+                    ),
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -211,7 +219,29 @@ class _FacultyProfileScreenState extends BaseState<FacultyProfileScreen> {
                         const Gap(22),
                         Container(alignment: Alignment.centerLeft,child: const Text("About",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600,color: Colors.black),)),
                         const Gap(12),
-                        HtmlWidget(getSet.about ?? '',textStyle: const TextStyle(fontWeight: FontWeight.w400,fontSize: 16,color: black)),
+                        isReadMore
+                            ? HtmlWidget(getSet.about ?? '',textStyle: const TextStyle(fontWeight: FontWeight.w400,fontSize: 16,color: black))
+                            : Text((getSet.about ?? '').replaceAll(htmlExp, ""),style: const TextStyle(fontWeight: FontWeight.w400,fontSize: 16,color: black,),maxLines: 3,overflow: TextOverflow.ellipsis),
+                        const Gap(12),
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: (){
+                            setState(() {
+                              isReadMore = !isReadMore;
+                            });
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 12,),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: brandColor,
+                            ),
+                            padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                            child: Text(isReadMore
+                                ? "Read Less"
+                                : "Read More",style: const TextStyle(color: white,fontWeight: FontWeight.w400,fontSize: 14)),
+                          ),
+                        ),
                         const Gap(22),
                       ],
                     ),

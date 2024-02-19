@@ -286,36 +286,33 @@ class _EnrollScreenState extends BaseState<EnrollScreen> {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: ( context, index, ) {
-                            return Visibility(
-                              visible: (index == 0) || (index == 1),
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () {
-                                  setState((){
-                                    batchId = list[index].id ?? '';
-                                    batchName = list[index].name ?? '';
-                                    batchController.text = "${list[index].name ?? "" } - ${list[index].formatedDateTime ?? "" }";
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 18.0, right: 18, top: 8, bottom: 8),
-                                      child: Text("${list[index].name ?? "" } - ${list[index].formatedDateTime ?? "" }",
-                                          style: const TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center),
-                                    ),
-                                    const Divider(
-                                      thickness: 0.5,
-                                      endIndent: 22,
-                                      indent: 22,
-                                      color: grayLight,
-                                    ),
+                            return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                setState((){
+                                  batchId = list[index].id ?? '';
+                                  batchName = list[index].name ?? '';
+                                  batchController.text = "${list[index].name ?? "" } - ${list[index].formatedDateTime ?? "" }";
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 18.0, right: 18, top: 8, bottom: 8),
+                                    child: Text("${list[index].name ?? "" } (${list[index].timezone}) - Registration Closes on:(${list[index].registrationCloseDate ?? "" })",
+                                        style: const TextStyle(fontSize: 14, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.start),
+                                  ),
+                                  const Divider(
+                                    thickness: 0.5,
+                                    endIndent: 22,
+                                    indent: 22,
+                                    color: grayLight,
+                                  ),
 
-                                  ],
-                                ),
+                                ],
                               ),
                             );
                           },
@@ -382,11 +379,13 @@ class _EnrollScreenState extends BaseState<EnrollScreen> {
 
   Future<void> getBatchData() async {
     Map<String, String> jsonBody = {
-      'limit' : "",
-      'page' : "",
-      'search' : "",
-      'status' : "1",
-      'from_app' : FROM_APP
+      'future_data':'1',
+      'is_active':'1',
+      'limit':'50',
+      'order_by':"asc",
+      'page':'1',
+      'status': "1",
+      'from_app': FROM_APP
     };
     BatchViewModel batchViewModel = Provider.of<BatchViewModel>(context,listen: false);
     await batchViewModel.batchData(jsonBody);

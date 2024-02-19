@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../common_widget/common_widget.dart';
 import '../constant/colors.dart';
@@ -46,6 +47,24 @@ class _CaseStudyDetailScreen extends BaseState<CaseStudyDetailScreen> {
             titleSpacing: 0,
             centerTitle: false,
             title: getTitle("Case Study",),
+            actions: [
+              InkWell(
+                customBorder: const CircleBorder(),
+                onTap: () {
+                  var shareText = "Hello,\n\nSharing our latest case study, '${getSet.title},' which is now available on our website. For the insightful read, click the link below \n\nhttps://www.shivalik.institute/case-studies/\n\nHope you find it engaging and valuable.";
+                  Share.share(shareText);
+                },
+                child: SizedBox(
+                  width: 42,
+                  height: 42,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Image.asset('assets/images/ic_share.png', width: 16, height: 16,color: black),
+                  ),
+                ),
+              ),
+              const Gap(12)
+            ],
           ),
           body: SingleChildScrollView(
             child: Column(
@@ -126,7 +145,7 @@ class _CaseStudyDetailScreen extends BaseState<CaseStudyDetailScreen> {
                     children: [
                       const Text("Published By:",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
                        const Gap(22),
-                      Image.network("${getSet.publishedBy}&w=124",),
+                      Image.network("${getSet.publishedBy}&w=500",width: 150),
                     ],
                   ),
                 ),
@@ -137,7 +156,7 @@ class _CaseStudyDetailScreen extends BaseState<CaseStudyDetailScreen> {
                     children: [
                       const Text("Affiliated With",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
                       const Gap(22),
-                      Image.network("${getSet.affiliatedWith}&w=124",),
+                      Image.network("${getSet.affiliatedWith}&w=500",width: 150),
                     ],
                   ),
                 ),

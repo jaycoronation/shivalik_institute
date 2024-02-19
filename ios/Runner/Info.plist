@@ -37,6 +37,8 @@
 	<string>Shivalik Institute is Asking your photo permission for uploading the profile picture</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+    <key>MinimumOSVersion</key>
+    <string>12.0</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

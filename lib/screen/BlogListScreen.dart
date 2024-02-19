@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -169,68 +170,85 @@ class _BlogListScreenState extends BaseState<BlogListScreen> {
                                 child: GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => BlogDetailsScreen(listBlog,index)),);
+                                    startActivityAnimation(context, BlogDetailsScreen(listBlog, index));
                                   },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(bottom: 20),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(2),
-                                        border:Border.all(color: grayLight, width: 0.6,)
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                        alignment: Alignment.center,
+                                        decoration:  BoxDecoration(
+                                          color: white,
+                                          borderRadius: BorderRadius.circular(kBorderRadius),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey.withOpacity(0.1), //color of shadow
+                                              spreadRadius: 5, //spread radius
+                                              blurRadius: 9, // blur radius
+                                              offset: const Offset(0, 2), // changes position of shadow
+                                            )
+                                          ],
+                                        ),
+                                        height: 190,
+                                        child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(kButtonCornerRadius),
+                                            ),
+                                            child: Stack(
+                                              alignment: Alignment.topRight,
+                                              children: [
+                                                Container(
+                                                  width: MediaQuery.of(context).size.width,
+                                                  height: 190,
+                                                  decoration: BoxDecoration(
+                                                      color: lightgrey,
+                                                      image: DecorationImage(
+                                                        image: CachedNetworkImageProvider("${listBlog[index].imageFull}&h=500&q=100"),
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                      shape: BoxShape.rectangle,
+                                                      borderRadius: BorderRadius.all(
+                                                        Radius.circular(kButtonCornerRadius),
+                                                      )),
+                                                ),
+                                                Container(
+                                                  margin: const EdgeInsets.only(right: 12,top: 12),
+                                                  decoration: BoxDecoration(
+                                                    color: white.withOpacity(0.6),
+                                                    borderRadius: BorderRadius.circular(kBorderRadius),
+                                                  ),
+                                                  padding: const EdgeInsets.fromLTRB(6, 3, 6, 3),
+                                                  child: Text(toDisplayCase(listBlog[index].publishedDate ?? ''),style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 12)),
+                                                )
+                                              ],
+                                            )),
+                                      ),
+                                      Text(
+                                        toDisplayCase(listBlog[index].title.toString().trim()),
+                                        overflow: TextOverflow.clip,
+                                        maxLines: 2,
+                                        style: TextStyle(color: black, fontWeight: FontWeight.w500, fontSize: textFiledSize),
+                                      ),
+                                      const Gap(6),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          SizedBox(
-                                            height: 210,
-                                            width: MediaQuery.of(context).size.width,
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(2),
-                                              child: Stack(
-                                                alignment: Alignment.topRight,
-                                                children: [
-                                                  listBlog[index].imageFull.toString().isNotEmpty
-                                                      ? FadeInImage.assetNetwork(
-                                                    image: listBlog[index].imageFull.toString() + "&h=500&zc=2",
-                                                    fit: BoxFit.cover,
-                                                    width: MediaQuery.of(context).size.width,
-                                                    height: 210,
-                                                    placeholder: 'assets/images/bg_gray.jpeg',
-                                                  ) : Image.asset('assets/images/bg_gray.jpeg',
-                                                      width: 50, height: 50),
-                                                ],
-                                              ),
+                                          Flexible(
+                                            child: Text(
+                                              checkValidString(listBlog[index].description.toString().replaceAll(htmlExp, "").replaceAll("&nbsp;", "").replaceAll("&quot;", "").replaceAll("&#39;", "'").replaceAll("<br />", "").trim()).toString(),
+                                              overflow: TextOverflow.clip,
+                                              textAlign: TextAlign.start,
+                                              maxLines: 2,
+                                              style: const TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 14),
                                             ),
-                                          ),
-                                          const Gap(12),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              Text(checkValidString(listBlog[index].title.toString()),
-                                                textAlign: TextAlign.start,
-                                                maxLines: 2,
-                                                style: const TextStyle(fontSize: 16, color: black, fontWeight: FontWeight.w500),
-                                              ),
-                                              const Gap(10),
-                                              /*Text(checkValidString(listBlog[index].description.toString().replaceAll(htmlExp, "").replaceAll("&nbsp;", "").replaceAll("&quot;", "").replaceAll("&#39;", "'").trim()).toString(),
-                                                textAlign: TextAlign.start,
-                                                maxLines: 5,
-                                                style:const TextStyle(fontSize: 16, color: grayDark, fontWeight: FontWeight.w400),
-                                              ),
-                                              const Gap(8),*/
-                                              Text(listBlog[index].publishedDate.toString(),
-                                                textAlign: TextAlign.start,
-                                                style: const TextStyle(fontSize: 14, color: graySemiDark, fontWeight: FontWeight.w400),
-                                              ),
-                                              const Gap(10),
-                                            ],
                                           ),
                                         ],
                                       ),
-                                    ),
+                                      const Gap(6),
+                                    ],
                                   ),
                                 ),
                               ),

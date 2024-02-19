@@ -122,7 +122,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   if (NavigationService.notif_type == "lecture_complete")
     {
-      print("NavigationService.class_id ===== ${NavigationService.class_id}");
       SessionManager().setClassId(message.data['content_id']);
     }
 

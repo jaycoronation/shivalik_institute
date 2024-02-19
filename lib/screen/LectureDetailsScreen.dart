@@ -94,14 +94,13 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                         )
                       ),
               )
-
               : SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Card(
-                  elevation: 1,
-                  margin: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                  elevation: 0,
+                  margin: const EdgeInsets.fromLTRB(0, 12, 0, 12),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)
+                      borderRadius: BorderRadius.circular(0)
                   ),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
@@ -134,29 +133,52 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text.rich(
-                              TextSpan(
-                                style: const TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16),
-                                children: <TextSpan>[
-                                  const TextSpan(text: "Lecture of ", style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16)),
-                                  TextSpan(text: lectureGetSet.moduleDetails?.name ?? '', style: const TextStyle(fontWeight: FontWeight.w500, color: brandColor, fontSize: 16)),
-                                  const TextSpan(text: ' Class number ', style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16)),
-                                  TextSpan(text: lectureGetSet.classNo ?? '', style: const TextStyle(fontWeight: FontWeight.w500, color: brandColor, fontSize: 16)),
-                                  const TextSpan(text: ' is schedule on ', style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16)),
-                                  TextSpan(text: universalDateConverter("yyy-MM-dd", "dd MMM, yyyy", lectureGetSet.date ?? ''), style: const TextStyle(fontWeight: FontWeight.w500, color: brandColor, fontSize: 16)),
-                                  const TextSpan(text: ' from ', style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16)),
-                                  TextSpan(text: "${lectureGetSet.startTime} to ${lectureGetSet.endTime}", style: const TextStyle(fontWeight: FontWeight.w500, color: brandColor, fontSize: 16)),
-                                ],
-                              ),
-                              textAlign: TextAlign.start,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                const Gap(12),
+                                Text(lectureGetSet.moduleDetails?.name ?? '', style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 14),),
+                              ],
                             ),
+                            const Gap(8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                const Gap(12),
+                                Text(lectureGetSet.classNo ?? '', style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 14),),
+                              ],
+                            ),
+                            const Gap(8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                const Gap(12),
+                                Text(universalDateConverter("yyy-MM-dd", "dd MMM, yyyy", lectureGetSet.date ?? ''), style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 14),),
+                              ],
+                            ),
+                            const Gap(8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                const Gap(12),
+                                Text("${lectureGetSet.startTime} to ${lectureGetSet.endTime}", style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 14),),
+                              ],
+                            )
                           ],
                         ),
                         const Gap(12),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                          children: <Widget>[
                             const Text("Session 1", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
                             const Gap(8),
                             GestureDetector(
@@ -168,35 +190,42 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Expanded(flex: 1,child: Text("Faculty", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
-                                  Expanded(flex: 3,child: Text("${lectureGetSet.session1FacultyName}", style: const TextStyle(color: brandColor,fontWeight: FontWeight.w500,fontSize: 14,overflow: TextOverflow.clip),)),
+                                  Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                  const Gap(12),
+                                  Text("${lectureGetSet.session1FacultyName}", style: const TextStyle(color: brandColor,fontWeight: FontWeight.w500,fontSize: 14,overflow: TextOverflow.clip),),
                                 ],
                               ),
                             ),
+                            const Gap(8),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Expanded(flex: 1,child: Text("Topic", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
-                                Expanded(flex: 3,child: Text("${lectureGetSet.session1Topic}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
+                                Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                const Gap(12),
+                                Text("${lectureGetSet.session1Topic}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),),
                               ],
                             ),
+                            const Gap(8),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Expanded(flex: 1,child: Text("Type", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
-                                Expanded(flex: 3,child: Text("${lectureGetSet.session1LectureType}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
+                                Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                const Gap(12),
+                                Text("${lectureGetSet.session1LectureType}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),),
                               ],
                             ),
+                            const Gap(8),
                             Visibility(
                               visible: lectureGetSet.session1Starttime?.isNotEmpty ?? false,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Expanded(flex: 1,child: Text("Time", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
-                                  Expanded(flex: 3,child: Text(lectureGetSet.session1Endtime?.isEmpty ?? false ? lectureGetSet.session1Starttime ?? '' : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),)),
+                                  Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                  const Gap(12),
+                                  Text(lectureGetSet.session1Endtime?.isEmpty ?? false ? lectureGetSet.session1Starttime ?? '' : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
                                 ],
                               ),
                             ),
@@ -682,7 +711,6 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
         });
       }
   }
-
 
   @override
   void castStatefulWidget() {

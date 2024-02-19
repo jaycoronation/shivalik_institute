@@ -37,6 +37,7 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
   String classId = '';
   String currentIndex = '1';
   int indexToPass = 0;
+  String pageTitle = '';
   PageController pageController = PageController(initialPage: 0);
 
   @override
@@ -46,6 +47,7 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
 
     formId = listPendingFeedbacks[0].feedbackFormId ?? '';
     classId = listPendingFeedbacks[0].classId ?? '';
+    pageTitle = listPendingFeedbacks[0].feedbackFormData?.formName ?? '';
 
     for (var i=0; i < listPendingFeedbacks.length; i++)
     {
@@ -55,7 +57,6 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
           {
             listPendingFeedbacks[i].feedbackFormData?.questions?[j].isOpen = true;
           }
-
           listPendingFeedbacks[i].feedbackFormData?.questions?[j].animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300), upperBound: 0.5,);
         }
     }
@@ -72,7 +73,7 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
           toolbarHeight: kToolbarHeight,
           backgroundColor: appBg,
           centerTitle: false,
-          title: getTitle("Feedback",),
+          title: getTitle(pageTitle),
           actions: [
             Padding(
               padding: const EdgeInsets.only(top: 16,bottom: 16),
@@ -96,6 +97,7 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
                       classId = listPendingFeedbacks[value].classId ?? '';
                       currentIndex = (value + 1).toString();
                       indexToPass = value;
+                      pageTitle = listPendingFeedbacks[value].feedbackFormData?.formName ?? '';
                     });
                   },
                   itemBuilder: (context, index) {
@@ -110,14 +112,10 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                margin: const EdgeInsets.only(top: 12,bottom: 12),
-                                child: Text(getSet.feedbackFormData?.formName ?? '',style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w600,color: black,fontFamily: 'Colfax')),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 12),
+                                margin: const EdgeInsets.only(top: 22,bottom: 22),
                                 child: Text(
                                     'Leave your feedback of the ${getSet.moduleName} session by ${getSet.facultyName}',
-                                    style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: black,fontFamily: 'Colfax')
+                                    style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w500,color: black,fontFamily: 'Colfax',),textAlign: TextAlign.start,
                                 ),
                               ),
                               MediaQuery.removePadding(
@@ -138,7 +136,7 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
                                           border: Border.all(color: grayLight,width: 1)
                                       ),
                                       padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-                                      margin: const EdgeInsets.only(bottom: 12),
+                                      margin: const EdgeInsets.only(bottom: 22),
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,6 +158,7 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
                                                       getSet.feedbackFormData?.questions?[i].animationController.forward(from: 0.0);
                                                     }
                                                     getSet.feedbackFormData?.questions?[i].isOpen = true;
+
                                                   }
                                                   else
                                                   {
@@ -344,7 +343,7 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width,
-                          margin: const EdgeInsets.fromLTRB(8, 12, 8, 12),
+                          margin: const EdgeInsets.fromLTRB(8, 12, 8, 42),
                           child: getCommonButton("Submit", () {
                             if (checkValidation(getSet.feedbackFormData?.questions ?? []))
                             {
