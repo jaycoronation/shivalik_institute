@@ -448,6 +448,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: (){
+                                logFirebase("invoice_profile", {});
                                 startActivity(context, PdfViewer(getSet.invoiceFile ?? '',"0"));
                               },
                               child: Padding(
@@ -487,6 +488,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                           GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: (){
+                              logFirebase("payment_history_profile", {});
                               Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentHistoryScreen()));
                             },
                             child: Padding(
@@ -524,6 +526,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                           GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: (){
+                              logFirebase("holidays_profile", {});
                               Navigator.push(context, MaterialPageRoute(builder: (context) => const HolidayScreen()));
                             },
                             child: Padding(
@@ -561,6 +564,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                           GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: (){
+                              logFirebase("notifications_profile", {});
                               Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationListScreen()));
                             },
                             child: Padding(

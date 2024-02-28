@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:gap/gap.dart';
@@ -205,45 +206,48 @@ class _FacultyProfileScreenState extends BaseState<FacultyProfileScreen> {
                       ],
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(16, 0, 16, 22),
-                    decoration: BoxDecoration(
-                        color: grayButton,
-                        borderRadius: BorderRadius.circular(8)
-                    ),
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Gap(22),
-                        Container(alignment: Alignment.centerLeft,child: const Text("About",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600,color: Colors.black),)),
-                        const Gap(12),
-                        isReadMore
-                            ? HtmlWidget(getSet.about ?? '',textStyle: const TextStyle(fontWeight: FontWeight.w400,fontSize: 16,color: black))
-                            : Text((getSet.about ?? '').replaceAll(htmlExp, ""),style: const TextStyle(fontWeight: FontWeight.w400,fontSize: 16,color: black,),maxLines: 3,overflow: TextOverflow.ellipsis),
-                        const Gap(12),
-                        GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: (){
-                            setState(() {
-                              isReadMore = !isReadMore;
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 12,),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: brandColor,
+                  Visibility(
+                    visible: getSet.about?.isNotEmpty ?? false,
+                    child: Container(
+                      margin: const EdgeInsets.fromLTRB(16, 0, 16, 22),
+                      decoration: BoxDecoration(
+                          color: grayButton,
+                          borderRadius: BorderRadius.circular(8)
+                      ),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Gap(22),
+                          Container(alignment: Alignment.centerLeft,child: const Text("About",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600,color: Colors.black),)),
+                          const Gap(12),
+                          isReadMore
+                              ? HtmlWidget(getSet.about ?? '',textStyle: const TextStyle(fontWeight: FontWeight.w400,fontSize: 16,color: black))
+                              : Text((getSet.about ?? '').replaceAll(htmlExp, ""),style: const TextStyle(fontWeight: FontWeight.w400,fontSize: 16,color: black,),maxLines: 3,overflow: TextOverflow.ellipsis),
+                          const Gap(12),
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: (){
+                              setState(() {
+                                isReadMore = !isReadMore;
+                              });
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 12,),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: brandColor,
+                              ),
+                              padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                              child: Text(isReadMore
+                                  ? "Read Less"
+                                  : "Read More",style: const TextStyle(color: white,fontWeight: FontWeight.w400,fontSize: 14)),
                             ),
-                            padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                            child: Text(isReadMore
-                                ? "Read Less"
-                                : "Read More",style: const TextStyle(color: white,fontWeight: FontWeight.w400,fontSize: 14)),
                           ),
-                        ),
-                        const Gap(22),
-                      ],
+                          const Gap(22),
+                        ],
+                      ),
                     ),
                   ),
                 ],

@@ -13,6 +13,7 @@ import '../common_widget/placeholder.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../model/ModuleResponseModel.dart';
+import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import 'ResourceCenterClassScreen.dart';
 
@@ -288,6 +289,7 @@ class _ResourceCenterScreenState extends BaseState<ResourceCenterScreen> {
                                     }
                                   else
                                     {
+                                      logFirebase("resource_detail", {"module_name" : getSet.moduleName});
                                       startActivity(context, ResourceCenterClassScreen(getSet,false));
                                     }
                                 },

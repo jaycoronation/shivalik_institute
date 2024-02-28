@@ -133,9 +133,8 @@ class _NotificationListScreenState extends BaseState<NotificationListScreen> {
                                           width: 0.8
                                       )
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Image.asset("assets/images/ic_placeholder.png",width: 40,height: 40),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(12.0),
                                   ),
                                 ),
                                 const Gap(12),
@@ -176,9 +175,8 @@ class _NotificationListScreenState extends BaseState<NotificationListScreen> {
                                           width: 0.8
                                       )
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Image.asset("assets/images/ic_placeholder.png",width: 40,height: 40),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(12.0),
                                   ),
                                 ),
                                 const Gap(12),
@@ -219,9 +217,9 @@ class _NotificationListScreenState extends BaseState<NotificationListScreen> {
                                           width: 0.8
                                       )
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Image.asset("assets/images/ic_placeholder.png",width: 40,height: 40),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(12.0),
+                                    
                                   ),
                                 ),
                                 const Gap(12),
@@ -262,9 +260,9 @@ class _NotificationListScreenState extends BaseState<NotificationListScreen> {
                                         width: 0.8
                                     )
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Image.asset("assets/images/ic_placeholder.png",width: 40,height: 40),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(12.0),
+                                  
                                 ),
                               ),
                               const Gap(12),
@@ -305,9 +303,9 @@ class _NotificationListScreenState extends BaseState<NotificationListScreen> {
                                         width: 0.8
                                     )
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Image.asset("assets/images/ic_placeholder.png",width: 40,height: 40),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(12.0),
+                                  
                                 ),
                               ),
                               const Gap(12),
@@ -348,9 +346,9 @@ class _NotificationListScreenState extends BaseState<NotificationListScreen> {
                                         width: 0.8
                                     )
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Image.asset("assets/images/ic_placeholder.png",width: 40,height: 40),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(12.0),
+                                  
                                 ),
                               ),
                               const Gap(12),
@@ -401,6 +399,7 @@ class _NotificationListScreenState extends BaseState<NotificationListScreen> {
                                 child: GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: () {
+                                    logFirebase('notification_clicked',{'content' : getSet.title});
                                     print(jsonEncode(getSet));
                                     if (getSet.operation == "event_scheduled")
                                       {

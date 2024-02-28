@@ -170,6 +170,7 @@ class _BlogListScreenState extends BaseState<BlogListScreen> {
                                 child: GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: () {
+                                    logFirebase("articles_details", {});
                                     startActivityAnimation(context, BlogDetailsScreen(listBlog, index));
                                   },
                                   child: Column(
@@ -184,10 +185,10 @@ class _BlogListScreenState extends BaseState<BlogListScreen> {
                                           borderRadius: BorderRadius.circular(kBorderRadius),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.grey.withOpacity(0.1), //color of shadow
-                                              spreadRadius: 5, //spread radius
-                                              blurRadius: 9, // blur radius
-                                              offset: const Offset(0, 2), // changes position of shadow
+                                              color: Colors.grey.withOpacity(0.1),
+                                              spreadRadius: 5,
+                                              blurRadius: 9,
+                                              offset: const Offset(0, 2),
                                             )
                                           ],
                                         ),

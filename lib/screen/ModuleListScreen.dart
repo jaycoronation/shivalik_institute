@@ -314,7 +314,7 @@ class _ModuleListScreenState extends BaseState<ModuleListScreen> {
                                                    Container(
                                                      padding: const EdgeInsets.all(6),
                                                      decoration:  BoxDecoration(
-                                                       color: getSet.status == "Completed" ? greenbg : redbg,
+                                                       color: getSet.status == "Completed" ? greenBg : redBg,
                                                        borderRadius: const BorderRadius.only(
                                                            topRight: Radius.circular(8.0),
                                                            bottomRight: Radius.circular(0.0),

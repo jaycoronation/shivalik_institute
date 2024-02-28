@@ -134,15 +134,15 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                               MediumContainerPlaceholder(width: MediaQuery.of(context).size.width),
-                              Gap(8),
+                              const Gap(8),
                               TitlePlaceholder(width: MediaQuery.of(context).size.width),
-                              Gap(12),
+                              const Gap(12),
                               MediumContainerPlaceholder(width: MediaQuery.of(context).size.width),
-                              Gap(8),
+                              const Gap(8),
                               TitlePlaceholder(width: MediaQuery.of(context).size.width),
-                              Gap(12),
+                              const Gap(12),
                               MediumContainerPlaceholder(width: MediaQuery.of(context).size.width),
-                              Gap(8),
+                              const Gap(8),
                               TitlePlaceholder(width: MediaQuery.of(context).size.width),
                           ],
                         ),
@@ -273,11 +273,12 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                                   return GestureDetector(
                                     behavior: HitTestBehavior.opaque,
                                     onTap: () {
+                                      logFirebase("event_details", {'event_title' : listEvent[index].title, 'event_id' : listEvent[index].id});
                                       startActivity(context, EventsDetailsScreen(listEvent[index]));
                                     },
                                     child: Container(
                                       height: 300,
-                                      margin: EdgeInsets.only(top: 12),
+                                      margin: const EdgeInsets.only(top: 12),
                                       width : MediaQuery.of(context).size.width,
                                       decoration:  BoxDecoration(
                                         border: Border.all(color: white, width: 0.5),
@@ -358,7 +359,7 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                                 },
                               ),
                             ),
-                            Gap(22),
+                            const Gap(22),
                             Visibility(
                                 visible: _isLoadingMore,
                                 child: const LoadingMoreWidget()

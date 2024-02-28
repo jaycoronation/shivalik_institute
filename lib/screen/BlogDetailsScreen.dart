@@ -157,10 +157,10 @@ class _BlogDetailsScreen extends BaseState<BlogDetailsScreen> {
                 ),
                 Container(
                     margin: const EdgeInsets.only(left: 22,top: 12,bottom: 12),
-                    child: const Text("Related Articles",style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 18),)
+                    child: const Text("Related Articles",style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 18),)
                 ),
                 Container(
-                  margin: const EdgeInsets.only(left: 12,right: 12,top: 12),
+                  margin: const EdgeInsets.only(left: 12,right: 12),
                   child: AnimationLimiter(
                     child: ListView.builder(
                       scrollDirection: Axis.vertical,
@@ -224,65 +224,85 @@ class _BlogDetailsScreen extends BaseState<BlogDetailsScreen> {
       onTap: () {
         startActivity(context, BlogDetailsScreen(blogListData,index));
       },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 20),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(2),
-            border:Border.all(color: grayLight, width: 0.6,)
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 210,
-                width: MediaQuery.of(context).size.width,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(2),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+              alignment: Alignment.center,
+              decoration:  BoxDecoration(
+                color: white,
+                borderRadius: BorderRadius.circular(kBorderRadius),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 5,
+                    blurRadius: 9,
+                    offset: const Offset(0, 2),
+                  )
+                ],
+              ),
+              height: 190,
+              child: ClipRRect(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(kButtonCornerRadius),
+                  ),
                   child: Stack(
                     alignment: Alignment.topRight,
                     children: [
-                      blogListData[index].imageFull.toString().isNotEmpty
-                          ? FadeInImage.assetNetwork(
-                        image: blogListData[index].imageFull.toString() + "&h=500&zc=2",
-                        fit: BoxFit.cover,
+                      Container(
                         width: MediaQuery.of(context).size.width,
-                        height: 210,
-                        placeholder: 'assets/images/bg_gray.jpeg',
-                      ) : Image.asset('assets/images/bg_gray.jpeg',
-                          width: 50, height: 50),
+                        height: 190,
+                        decoration: BoxDecoration(
+                            color: lightgrey,
+                            image: DecorationImage(
+                              image: CachedNetworkImageProvider("${blogListData[index].imageFull}&h=500&q=100"),
+                              fit: BoxFit.cover,
+                            ),
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(kButtonCornerRadius),
+                            )),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(right: 12,top: 12),
+                        decoration: BoxDecoration(
+                          color: white.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(kBorderRadius),
+                        ),
+                        padding: const EdgeInsets.fromLTRB(6, 3, 6, 3),
+                        child: Text(toDisplayCase(blogListData[index].publishedDate ?? ''),style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 12)),
+                      )
                     ],
-                  ),
-                ),
-              ),
-              const Gap(12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(checkValidString(blogListData[index].title.toString()),
+                  )),
+            ),
+            Text(
+              toDisplayCase(blogListData[index].title.toString().trim()),
+              overflow: TextOverflow.clip,
+              maxLines: 2,
+              style: TextStyle(color: black, fontWeight: FontWeight.w500, fontSize: textFiledSize),
+            ),
+            const Gap(6),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Flexible(
+                  child: Text(
+                    checkValidString(blogListData[index].description.toString().replaceAll(htmlExp, "").replaceAll("&nbsp;", "").replaceAll("&quot;", "").replaceAll("&#39;", "'").replaceAll("<br />", "").trim()).toString(),
+                    overflow: TextOverflow.clip,
                     textAlign: TextAlign.start,
                     maxLines: 2,
-                    style: const TextStyle(fontSize: 20, color: black, fontWeight: FontWeight.w500),
+                    style: const TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 14),
                   ),
-                  const Gap(10),
-                  Text(checkValidString(blogListData[index].description!.toString()).toString().replaceAll(htmlExp, "").replaceAll("&nbsp;", "").replaceAll("&quot;", "").replaceAll("&#39;", "'").replaceAll("<br />", "").trim().toString(),
-                    textAlign: TextAlign.start,
-                    maxLines: 5,
-                    style: const TextStyle(fontSize: 16, color: grayDark, fontWeight: FontWeight.w400),
-                  ),
-                  const Gap(8),
-                  Text(blogListData[index].publishedDate.toString(),
-                    textAlign: TextAlign.start,
-                    style: const TextStyle(fontSize: 14, color: graySemiDark, fontWeight: FontWeight.w400),
-                  ),
-                  const Gap(10),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+            const Gap(6),
+          ],
         ),
       ),
     );

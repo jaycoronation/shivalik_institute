@@ -1,11 +1,10 @@
-
-import 'dart:ui';
-
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 
 var bottomWidgetKey = GlobalKey<State<BottomNavigationBar>>();
 
 bool isDashboardLoad = false;
+FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
 const Color white= Color(0xffffffff);
 const Color black= Color(0xff000000);
@@ -25,12 +24,7 @@ const Color lightPink= Color(0xffFFF6F5);
 const Color lightPinkBorder = Color(0xffF6EEEC);
 const Color lightPinkText = Color(0xffC47D83);
 const Color progress= Color(0xffD9D9D9);
-const Color greenbg= Color(0x4200a814);
-const Color redbg= Color(0x42FF0000);
+const Color greenBg= Color(0x4200a814);
+const Color redBg= Color(0x42FF0000);
 const Color brandColor= Color(0xFFe31e24);
 const Color lightgrey = Color(0xfff3f2f2);
-
-
-
-
-

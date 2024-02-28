@@ -65,7 +65,7 @@ dependencies:
   video_player: ^2.7.2
   share_plus: ^7.2.1
   firebase_core: ^2.24.2
-  firebase_messaging: ^14.7.10
+  firebase_messaging: ^14.7.15
   flutter_local_notifications: ^16.3.0
   flutter_widget_from_html: ^0.14.11
   simple_circular_progress_bar: ^1.0.2
@@ -75,12 +75,15 @@ dependencies:
   package_info_plus: ^5.0.1
   flutter_pptx: ^0.1.2+1
   shimmer: ^3.0.0
-  flutter_filereader: ^3.0.0
   flutter_file_downloader: ^1.2.1
   flutter_cache_manager: ^3.3.1
   webview_flutter:
   device_info_plus: ^9.0.3
   readmore: ^2.2.0
+  firebase_analytics: ^10.8.5
+  percent_indicator: ^4.2.3
+  excel: ^2.0.2
+  web_socket_channel: ^2.4.0
 
 dev_dependencies:
   flutter_test:

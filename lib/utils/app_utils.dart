@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shivalik_institute/utils/session_manager.dart';
 import '../constant/colors.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as tab;
 
@@ -43,6 +44,11 @@ TextStyle getTitleFontStyle(){
 
 TextStyle getSecondaryTitleFontStyle(){
   return GoogleFonts.rubik(fontWeight: FontWeight.w400, color: black, fontSize: 14);
+}
+
+void logFirebase(String name,Map<String,String?> params){
+  params.addAll({"user_name" : "${SessionManager().getName()} ${SessionManager().getLastName()}",'user_id' : SessionManager().getUserId()});
+  analytics.logEvent(name: name,parameters: params,).then((value) => debugPrint("LOGGED"));
 }
 
 String getCurrentYear() {

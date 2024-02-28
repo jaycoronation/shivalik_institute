@@ -32,7 +32,7 @@ class LectureScreen extends StatefulWidget {
 class _LectureScreenState extends BaseState<LectureScreen> {
 
   List<LectureList> listLecture = [];
-  List<UserList> listFaculty = [];
+  List<Faculties> listFaculty = [];
   int _pageIndex = 1;
   final int _pageResult = 10;
   bool _isSearchHideShow = false;
@@ -61,7 +61,6 @@ class _LectureScreenState extends BaseState<LectureScreen> {
     moduleGetSet = (widget as LectureScreen).moduleGetSet;
     filterType = (widget as LectureScreen).filter;
     getLectureList(true);
-    getFacultyList();
 
     _scrollViewController = ScrollController();
     _scrollViewController.addListener(() {
@@ -370,6 +369,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                   return GestureDetector(
                                     behavior: HitTestBehavior.opaque,
                                     onTap: () {
+                                      logFirebase('lecture_details', {'lecture_id': getSet.id,'lecture_title' : getSet.title});
                                       startActivity(context, LectureDetailsScreen(getSet.id ?? ''));
                                     },
                                     child: Container(
@@ -417,7 +417,13 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                               const Gap(8),
                                               Expanded(
                                                 flex: 2,
-                                                child: Text("${getSet.startTime} - ${getSet.endTime}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
+                                                child: Text(
+                                                    getSet.session1Endtime?.isEmpty ?? false
+                                                        ? getSet.session1Starttime?.isEmpty ?? false
+                                                        ? "${getSet.startTime} To ${getSet.endTime}"
+                                                        : getSet.session1Starttime ?? ''
+                                                        : "${getSet.session1Starttime} To ${getSet.session1Endtime}",
+                                                  style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),),
                                               ),
                                             ],
                                           ),
@@ -501,7 +507,6 @@ class _LectureScreenState extends BaseState<LectureScreen> {
     }
 
     Map<String, String> jsonBody = {
-      'batch_id': "",
       'faculty_id': selectedFacultyId,
       'filter': 'upcoming_class',
       'filter_by_class_status': "active",
@@ -528,6 +533,10 @@ class _LectureScreenState extends BaseState<LectureScreen> {
               listLecture = [];
             });
           }
+
+        listFaculty = [];
+        listFaculty.add(Faculties(id: '',name: 'All'));
+        listFaculty.addAll(moduleViewModel.response.filter?.faculties ?? []);
 
         if (moduleViewModel.response.lectureList?.isNotEmpty ?? false)
           {
@@ -569,28 +578,6 @@ class _LectureScreenState extends BaseState<LectureScreen> {
       _isLoadingMore = false;
     });
 
-  }
-
-  Future<void> getFacultyList() async {
-
-    Map<String, String> jsonBody = {
-      'filter': "faculty",
-      'limit': "",
-      'page': "",
-      'search': "",
-      'from_app' : FROM_APP
-    };
-
-    var facultyViewModel = Provider.of<UserListViewModel>(context,listen: false);
-    await facultyViewModel.getUserList(jsonBody);
-
-    if (facultyViewModel.response.success == "1")
-    {
-      listFaculty = [];
-      listFaculty.add(UserList(id: "",firstName: "All",lastName: ""));
-      listFaculty.addAll(facultyViewModel.response.list ?? []);
-      print("list faculty${listFaculty.length}");
-    }
   }
 
   showDateFilterBottomSheet() {
@@ -967,61 +954,59 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                           scrollDirection: Axis.vertical,
                           itemBuilder: (context, index) {
                             var getSet = listFaculty[index];
-                            return Visibility(
-                              visible: getSet != "All",
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () async {
-                                  setState(() {
-                                    selectedFacultyId = getSet.id ?? '';
-                                    selectedFaculty = "${getSet.firstName} ${getSet.lastName}";
-                                  });
-                                  getLectureList(true);
-                                  Navigator.pop(context);
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                                      margin: const EdgeInsets.only(top: 6, right: 12),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            "${getSet.firstName} ${getSet.lastName}",
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                color: black,
-                                                fontSize: 14,
-                                              overflow: TextOverflow.ellipsis
-                                            ),
+                            return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () async {
+                                setState(() {
+                                  selectedFacultyId = getSet.id ?? '';
+                                  selectedFaculty = "${getSet.name}";
+                                });
+                                logFirebase('lecture_details_faculty_filter', {'faculty_name': "${getSet.name}",'faculty_id' : getSet.id});
+                                getLectureList(true);
+                                Navigator.pop(context);
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                                    margin: const EdgeInsets.only(top: 6, right: 12),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "${getSet.name}",
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: black,
+                                              fontSize: 14,
+                                            overflow: TextOverflow.ellipsis
                                           ),
-                                          Visibility(
-                                            visible: getSet.designation?.isNotEmpty ?? false,
-                                            child: Flexible(
-                                              child: Text(
-                                                " (${getSet.designation ?? ''})",
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.w400,
-                                                    color: black,
-                                                    fontSize: 14,
-                                                    overflow: TextOverflow.ellipsis
-                                                ),
+                                        ),
+                                        Visibility(
+                                          visible: getSet.designation?.isNotEmpty ?? false,
+                                          child: Flexible(
+                                            child: Text(
+                                              " (${getSet.designation ?? ''})",
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  color: black,
+                                                  fontSize: 14,
+                                                  overflow: TextOverflow.ellipsis
                                               ),
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                    const Divider(
-                                      color: Colors.transparent,
-                                      height: 0.7,
-                                      thickness: 0.7,
-                                    )
-                                  ],
-                                ),
+                                  ),
+                                  const Divider(
+                                    color: Colors.transparent,
+                                    height: 0.7,
+                                    thickness: 0.7,
+                                  )
+                                ],
                               ),
                             );
                           },

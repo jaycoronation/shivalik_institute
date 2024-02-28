@@ -8,7 +8,7 @@ String lectureDetailsResponseModelToJson(LectureDetailsResponseModel data) => js
 class LectureDetailsResponseModel {
   LectureDetailsResponseModel({
       String? success, 
-      String? message, 
+      String? message,
       Details? details,}){
     _success = success;
     _message = message;
@@ -98,6 +98,7 @@ class Details {
   Details({
       String? id,
       String? batchId,
+
       String? moduleId,
       String? facultyId,
       String? title,
@@ -129,6 +130,7 @@ class Details {
       String? session1Prefix,
       String? session1FacultyName,
       String? session1LinkedProfile,
+      String? session1Location,
       String? session2Faculty,
       String? session2Topic,
       String? session2LectureType,
@@ -175,6 +177,7 @@ class Details {
     _session1Prefix = session1Prefix;
     _session1FacultyName = session1FacultyName;
     _session1LinkedProfile = session1LinkedProfile;
+    _session1Location = session1Location;
     _session2Faculty = session2Faculty;
     _session2Topic = session2Topic;
     _session2LectureType = session2LectureType;
@@ -234,6 +237,7 @@ class Details {
     _session1Prefix = json['session1_prefix'];
     _session1FacultyName = json['session1_faculty_name'];
     _session1LinkedProfile = json['session1_linked_profile'];
+    _session1Location = json['session1_location'];
     _session2Faculty = json['session2_faculty'];
     _session2Topic = json['session2_topic'];
     _session2LectureType = json['session2_lecture_type'];
@@ -281,6 +285,7 @@ class Details {
   String? _session1Prefix;
   String? _session1FacultyName;
   String? _session1LinkedProfile;
+  String? _session1Location;
   String? _session2Faculty;
   String? _session2Topic;
   String? _session2LectureType;
@@ -327,6 +332,7 @@ Details copyWith({  String? id,
   String? session1Prefix,
   String? session1FacultyName,
   String? session1LinkedProfile,
+  String? session1Location,
   String? session2Faculty,
   String? session2Topic,
   String? session2LectureType,
@@ -373,6 +379,7 @@ Details copyWith({  String? id,
   session1Prefix: session1Prefix ?? _session1Prefix,
   session1FacultyName: session1FacultyName ?? _session1FacultyName,
   session1LinkedProfile: session1LinkedProfile ?? _session1LinkedProfile,
+  session1Location: session1Location ?? _session1Location,
   session2Faculty: session2Faculty ?? _session2Faculty,
   session2Topic: session2Topic ?? _session2Topic,
   session2LectureType: session2LectureType ?? _session2LectureType,
@@ -420,6 +427,7 @@ Details copyWith({  String? id,
   String? get session1Prefix => _session1Prefix;
   String? get session1FacultyName => _session1FacultyName;
   String? get session1LinkedProfile => _session1LinkedProfile;
+  String? get session1Location => _session1Location;
   String? get session2Faculty => _session2Faculty;
   String? get session2Topic => _session2Topic;
   String? get session2LectureType => _session2LectureType;
@@ -477,6 +485,7 @@ Details copyWith({  String? id,
     map['session1_prefix'] = _session1Prefix;
     map['session1_faculty_name'] = _session1FacultyName;
     map['session1_linked_profile'] = _session1LinkedProfile;
+    map['session1_location'] = _session1Location;
     map['session2_faculty'] = _session2Faculty;
     map['session2_topic'] = _session2Topic;
     map['session2_lecture_type'] = _session2LectureType;

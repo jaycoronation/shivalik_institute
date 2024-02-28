@@ -2,6 +2,7 @@ import 'dart:convert';
 /// success : "1"
 /// message : "List Found"
 /// total_records : "1"
+/// filter : {"faculties":[{"id":"58","name":"Mr Aditya Trivedi"},{"id":"184","name":"Mr. Himanshu Parmar"},{"id":"193","name":"Mr. Manan  Doshi"}]}
 /// lecture_list : [{"id":"2","batch_id":"1","module_id":"2","faculty_id":"","title":"","brief":"","date":"27th Oct, 2023","start_time":"06:00 PM","end_time":"09:00 PM","is_active":"1","created_at":"18-10-2023","updated_at":"1697716662","deleted_at":"","is_cancelled":"","cancel_reason":"","batch_details":{"id":"1","name":"JRE08","start_date":"26-10-2023","start_time":"06:00 PM","end_time":"09:00 PM"},"module_details":{"id":"2","name":"Introduction to Real Estate","description":"Gain a foundational understanding of the dynamic world of real estate\r\nof reforms in the field of Real Estate"},"class_material":[],"class_worksheet":[],"class_no":"2","class_no_format":"JRE08-class2","session1_faculty":"57","session1_topic":"Overview on type of Markets","session1_lecture_type":"Normal","session1_starttime":"","session1_endtime":"","session1_prefix":"Dr.","session1_faculty_name":"Sapan  Shah","session1_linked_profile":"","session2_faculty":"59","session2_topic":"Ahmedabad Real Estate Market","session2_lecture_type":"Normal","session2_starttime":"","session2_endtime":"","session2_prefix":"Mr.","session2_faculty_name":"Anup  Shah","session2_linked_profile":""}]
 
 LecturesResponseModel lecturesResponseModelFromJson(String str) => LecturesResponseModel.fromJson(json.decode(str));
@@ -10,10 +11,12 @@ class LecturesResponseModel {
   LecturesResponseModel({
       String? success, 
       String? message, 
-      String? totalRecords, 
-      List<LectureList>? lectureList,}){
+      String? totalRecords,
+    Filter? filter,
+    List<LectureList>? lectureList,}){
     _success = success;
     _message = message;
+    _filter = filter;
     _totalRecords = totalRecords;
     _lectureList = lectureList;
 }
@@ -22,6 +25,7 @@ class LecturesResponseModel {
     _success = json['success'];
     _message = json['message'];
     _totalRecords = json['total_records'];
+    _filter = json['filter'] != null ? Filter.fromJson(json['filter']) : null;
     if (json['list'] != null) {
       _lectureList = [];
       json['list'].forEach((v) {
@@ -32,18 +36,22 @@ class LecturesResponseModel {
   String? _success;
   String? _message;
   String? _totalRecords;
+  Filter? _filter;
   List<LectureList>? _lectureList;
 LecturesResponseModel copyWith({  String? success,
   String? message,
   String? totalRecords,
+  Filter? filter,
   List<LectureList>? lectureList,
 }) => LecturesResponseModel(  success: success ?? _success,
   message: message ?? _message,
   totalRecords: totalRecords ?? _totalRecords,
+  filter: filter ?? _filter,
   lectureList: lectureList ?? _lectureList,
 );
   String? get success => _success;
   String? get message => _message;
+  Filter? get filter => _filter;
   String? get totalRecords => _totalRecords;
   List<LectureList>? get lectureList => _lectureList;
 
@@ -52,6 +60,9 @@ LecturesResponseModel copyWith({  String? success,
     map['success'] = _success;
     map['message'] = _message;
     map['total_records'] = _totalRecords;
+    if (_filter != null) {
+      map['filter'] = _filter?.toJson();
+    }
     if (_lectureList != null) {
       map['lecture_list'] = _lectureList?.map((v) => v.toJson()).toList();
     }
@@ -548,6 +559,85 @@ BatchDetails copyWith({  String? id,
     map['start_date'] = _startDate;
     map['start_time'] = _startTime;
     map['end_time'] = _endTime;
+    return map;
+  }
+
+}
+
+
+/// faculties : [{"id":"58","name":"Mr Aditya Trivedi"},{"id":"184","name":"Mr. Himanshu Parmar"},{"id":"193","name":"Mr. Manan  Doshi"}]
+
+Filter filterFromJson(String str) => Filter.fromJson(json.decode(str));
+String filterToJson(Filter data) => json.encode(data.toJson());
+class Filter {
+  Filter({
+    List<Faculties>? faculties,}){
+    _faculties = faculties;
+  }
+
+  Filter.fromJson(dynamic json) {
+    if (json['faculties'] != null) {
+      _faculties = [];
+      json['faculties'].forEach((v) {
+        _faculties?.add(Faculties.fromJson(v));
+      });
+    }
+  }
+  List<Faculties>? _faculties;
+  Filter copyWith({  List<Faculties>? faculties,
+  }) => Filter(  faculties: faculties ?? _faculties,
+  );
+  List<Faculties>? get faculties => _faculties;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    if (_faculties != null) {
+      map['faculties'] = _faculties?.map((v) => v.toJson()).toList();
+    }
+    return map;
+  }
+
+}
+
+/// id : "58"
+/// name : "Mr Aditya Trivedi"
+
+Faculties facultiesFromJson(String str) => Faculties.fromJson(json.decode(str));
+String facultiesToJson(Faculties data) => json.encode(data.toJson());
+class Faculties {
+  Faculties({
+    String? id,
+    String? designation,
+    String? name,}){
+    _id = id;
+    _designation = designation;
+    _name = name;
+  }
+
+  Faculties.fromJson(dynamic json) {
+    _id = json['id'];
+    _designation = json['designation'];
+    _name = json['name'];
+  }
+  String? _id;
+  String? _name;
+  String? _designation;
+  Faculties copyWith({  String? id,
+    String? designation,
+    String? name,
+  }) => Faculties(  id: id ?? _id,
+    designation: designation ?? _designation,
+    name: name ?? _name,
+  );
+  String? get id => _id;
+  String? get name => _name;
+  String? get designation => _designation;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['id'] = _id;
+    map['designation'] = _designation;
+    map['name'] = _name;
     return map;
   }
 

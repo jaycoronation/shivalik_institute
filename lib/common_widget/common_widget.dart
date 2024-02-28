@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constant/colors.dart';
 
-
 Widget getBackArrow(){
   return Container(
     alignment: Alignment.centerLeft,

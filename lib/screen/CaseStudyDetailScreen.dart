@@ -164,8 +164,11 @@ class _CaseStudyDetailScreen extends BaseState<CaseStudyDetailScreen> {
 
                 Container(
                     width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.fromLTRB(12, 22, 12, 22),
-                    child: getCommonButton("Read More", () {startActivity(context, PdfViewer(getSet.brochure ?? "", getSet.title ?? "")); }, false)
+                    margin: const EdgeInsets.fromLTRB(12, 22, 12, 22),
+                    child: getCommonButton("Read More", () {
+                      logFirebase("case_study_read_more", {});
+                      startActivity(context, PdfViewer(getSet.brochure ?? "", getSet.title ?? ""));
+                      }, false)
                 ),
                 Container(height: 18,),
               ],

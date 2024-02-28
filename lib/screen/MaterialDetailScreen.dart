@@ -9,11 +9,9 @@ import 'package:gap/gap.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/constant/global_context.dart';
 import 'package:shivalik_institute/screen/DashboardScreen.dart';
-import 'package:shivalik_institute/utils/FileReaderPage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common_widget/common_widget.dart';
@@ -293,6 +291,15 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                                 if (listDocument[index].fileType == "pdf")
                                   {
                                     startActivity(context, PdfViewer(listDocument[index].fullPath ?? "",listDocument[index].isPrivate ?? ""));
+                                  }
+                                else if ((listDocument[index].fileType == "xls") || (listDocument[index].fileType == "xlsx"))
+                                  {
+                                    Uri fileUri = Uri.parse(listDocument[index]. fullPath?? "");
+
+                                    if (await canLaunchUrl(fileUri))
+                                      {
+                                        launchUrl(fileUri,mode: LaunchMode.externalApplication);
+                                      }
                                   }
                                 else if (listDocument[index].fileType == "pptx")
                                   {

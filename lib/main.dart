@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,11 +53,13 @@ import 'model/LecturesResponseModel.dart';
 import 'model/ModuleResponseModel.dart';
 import 'push_notification/PushNotificationService.dart';
 import 'screen/FacultyProfileScreen.dart';
+import 'package:web_socket_channel/io.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SessionManagerMethods.init();
-  Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  Firebase.initializeApp(name: 'SIRE',options: DefaultFirebaseOptions.currentPlatform);
 
   await PushNotificationService().setupInteractedMessage();
 
@@ -80,6 +83,13 @@ Future<void> main() async {
           SessionManager().setClassId(initialMessage.data['content_id']);
         }
     }
+
+  final channel = IOWebSocketChannel.connect('ws://your-api-url');
+  channel.stream.listen((message) {
+    // Handle incoming messages
+    print('Received: $message');
+    // Update UI or perform any necessary action based on the received message
+  });
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((value) => runApp(
     MultiProvider(
@@ -186,6 +196,9 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSwatch(primarySwatch: createMaterialColor(white)).copyWith(secondary: white)
       ),
       navigatorKey: NavigationService.navigatorKey,
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: analytics),
+      ],
       home: const MyHomePage(title: 'Shivalik Institute'),
       builder: (context, child) {
         return MediaQuery(
@@ -220,21 +233,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState(){
+    analytics.setAnalyticsCollectionEnabled(true);
     getVersionFromLocal();
     getAppVersion();
+
     super.initState();
   }
 
-  void doSomeAsyncStuff() {
+  Future<void> doSomeAsyncStuff() async {
+    await FirebaseAnalytics.instance.logAppOpen(parameters: {"user_name" : "${SessionManager().getName()} ${SessionManager().getLastName()}"});
     SessionManager sessionManager = SessionManager();
     if (sessionManager.checkIsLoggedIn() ?? false)
     {
       if (NavigationService.notif_type.isNotEmpty)
       {
         var contentId = NavigationService.notif_type;
-
-
-        print("CONTENT ID ==== $contentId");
 
         if (contentId == "event_scheduled")
         {

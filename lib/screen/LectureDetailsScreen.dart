@@ -137,9 +137,9 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                Image.asset('assets/images/ic_module.png',width: 22,height: 22,),
                                 const Gap(12),
-                                Text(lectureGetSet.moduleDetails?.name ?? '', style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 14),),
+                                Text("${lectureGetSet.moduleDetails?.name ?? ''} (${lectureGetSet.classNo ?? ''})", style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 14),),
                               ],
                             ),
                             const Gap(8),
@@ -147,31 +147,21 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
-                                const Gap(12),
-                                Text(lectureGetSet.classNo ?? '', style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 14),),
-                              ],
-                            ),
-                            const Gap(8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                Image.asset('assets/images/ic_class_date.png',width: 22,height: 22,),
                                 const Gap(12),
                                 Text(universalDateConverter("yyy-MM-dd", "dd MMM, yyyy", lectureGetSet.date ?? ''), style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 14),),
                               ],
                             ),
                             const Gap(8),
-                            Row(
+                            /*Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                Image.asset('assets/images/ic_class_time.png',width: 22,height: 22,),
                                 const Gap(12),
-                                Text("${lectureGetSet.startTime} to ${lectureGetSet.endTime}", style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 14),),
+                                Text(lectureGetSet.session1Endtime?.isEmpty ?? false ? lectureGetSet.session1Starttime ?? '' : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}", style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 14),),
                               ],
-                            )
+                            )*/
                           ],
                         ),
                         const Gap(12),
@@ -184,13 +174,14 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                             GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: () {
+                                logFirebase('faculty_profile', {'faculty_name': lectureGetSet.session1FacultyName,'faculty_id' : lectureGetSet.session1Faculty});
                                 startActivity(context, FacultyProfileScreen(lectureGetSet.session1Faculty ?? ''));
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                  Image.asset('assets/images/ic_teacher.png',width: 22,height: 22,),
                                   const Gap(12),
                                   Text("${lectureGetSet.session1FacultyName}", style: const TextStyle(color: brandColor,fontWeight: FontWeight.w500,fontSize: 14,overflow: TextOverflow.clip),),
                                 ],
@@ -201,32 +192,49 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                Image.asset('assets/images/ic_topic.png',width: 22,height: 22,),
                                 const Gap(12),
-                                Text("${lectureGetSet.session1Topic}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),),
+                                Flexible(child: Text("${lectureGetSet.session1Topic}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),)),
                               ],
                             ),
                             const Gap(8),
+
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
+                                Image.asset('assets/images/ic_class_time.png',width: 22,height: 22,),
                                 const Gap(12),
-                                Text("${lectureGetSet.session1LectureType}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14,overflow: TextOverflow.clip),),
+                                Text(lectureGetSet.session1Endtime?.isEmpty ?? false
+                                    ? lectureGetSet.session1Starttime?.isEmpty ?? false
+                                    ? "${lectureGetSet.startTime} To ${lectureGetSet.endTime}"
+                                    : lectureGetSet.session1Starttime ?? ''
+                                    : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}",
+                                  style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
                               ],
                             ),
-                            const Gap(8),
                             Visibility(
-                              visible: lectureGetSet.session1Starttime?.isNotEmpty ?? false,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset('assets/images/ic_grey_placeholder.png',width: 22,height: 22,),
-                                  const Gap(12),
-                                  Text(lectureGetSet.session1Endtime?.isEmpty ?? false ? lectureGetSet.session1Starttime ?? '' : "${lectureGetSet.session1Starttime} To ${lectureGetSet.session1Endtime}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
-                                ],
+                              visible: lectureGetSet.session1Location?.isNotEmpty ?? false,
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 8),
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () async {
+                                    if (await canLaunchUrl(Uri.parse(lectureGetSet.session1Location ?? '')))
+                                      {
+                                        launchUrl(Uri.parse(lectureGetSet.session1Location ?? ''),mode: LaunchMode.externalApplication);
+                                      }
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Image.asset('assets/images/ic_location.png',width: 22,height: 22,),
+                                      const Gap(12),
+                                      Text(lectureGetSet.session1Location ?? '', style: const TextStyle(color: brandColor,fontWeight: FontWeight.w400,fontSize: 14),),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -288,15 +296,6 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Module", style: TextStyle(color: black,fontWeight: FontWeight.w600,fontSize: 16),),
-                            const Gap(8),
-                            Row(
-                              children: [
-                                const Expanded(flex: 1,child: Text("Name", style: TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16),)),
-                                Expanded(flex: 3,child: Text("${lectureGetSet.moduleDetails?.name}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),)),
-                              ],
-                            ),
-                            const Gap(6),
                             Text("${lectureGetSet.moduleDetails?.description}", style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 15),),
                           ],
                         ),
@@ -694,10 +693,7 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
               List<ClassMaterial> listTempMaterial = lectureGetSet.classMaterial ?? [];
               for (var i=0; i < listTempMaterial.length;i++)
                 {
-                  if (listTempMaterial[i].allowMaterialAccess == "1")
-                    {
-                      listClassMaterial.add(listTempMaterial[i]);
-                    }
+                  listClassMaterial.add(listTempMaterial[i]);
                 }
             }
 
@@ -716,4 +712,5 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
   void castStatefulWidget() {
     widget is LectureDetailsScreen;
   }
+
 }
