@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 import '../common_widget/common_widget.dart';
 import '../constant/colors.dart';
@@ -33,27 +34,28 @@ class _MediaScreenState extends BaseState<MediaScreen> {
               child: getBackArrow(),
             ),
             centerTitle: true,
+
             title: Container(
+              height: 38,
               decoration: BoxDecoration(
                   color: grayLight,
                   borderRadius: BorderRadius.circular(8)
               ),
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: PreferredSize(
                 preferredSize: Size(100, 60),
                 child: TabBar(
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicatorColor: Colors.transparent,
                   labelColor: black,
-                  // padding: EdgeInsets.all(14),
                   indicatorPadding: EdgeInsets.only(top: 6.0, bottom: 6, right: 0, left: 0),
                   indicatorWeight: 4.0,
-                  labelStyle: TextStyle(color: brandColor, fontSize: 12, fontWeight: FontWeight.w600),
-                  // labelPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+                  labelStyle: TextStyle(color: brandColor, fontSize: 14, fontWeight: FontWeight.w500),
+                  labelPadding: EdgeInsets.only(left: 12.0, right: 12.0, top: 4, bottom: 4),
                   isScrollable: true,
                   unselectedLabelColor: black,
                   indicator: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                     color: Colors.white,
                   ),
                   tabs: const [
@@ -71,7 +73,37 @@ class _MediaScreenState extends BaseState<MediaScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                     Text("media")
+                      GridView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                              crossAxisCount: 4,
+                              mainAxisExtent: 100
+                          ),
+                          itemCount: 4,
+                          itemBuilder: (BuildContext ctx, index) {
+                            return AnimationConfiguration.staggeredList(
+                              position: index,
+                              duration: const Duration(milliseconds: 600),
+                              child: SlideAnimation(
+                                verticalOffset: 100.0,
+                                child: FadeInAnimation(
+                                  child: GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: (){},
+                                    child: Container(
+                                      height: 50,
+                                      // width: 110,
+                                      color: grayLight,
+                                    )
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                      ),
                     ],
                   ),
                 ),
