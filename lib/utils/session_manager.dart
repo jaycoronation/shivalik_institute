@@ -25,10 +25,12 @@ class SessionManager {
   final String batchName = "batchName";
   final String batchId = "batchId";
   final String batchIdMain = "batchIdMain";
+  final String isBatchAdmin = "is_batch_admin";
 
 
   //set data into shared preferences...
-  Future createLoginSession(String apiUserId,String apiFirstName ,String apiLastName, String apiuserType,  String apiaccessToken,String apiProfilePic,String apiIsAlumini)
+  Future createLoginSession(String apiUserId,String apiFirstName ,String apiLastName, String apiuserType,  String apiaccessToken,String apiProfilePic,String apiIsAlumini,
+      String apiisBatchAdmin )
       async {
     await SessionManagerMethods.setBool(isLoggedIn, true);
     await SessionManagerMethods.setString(userId,apiUserId);
@@ -38,6 +40,7 @@ class SessionManager {
     await SessionManagerMethods.setString(accessToken,apiaccessToken);
     await SessionManagerMethods.setString(profilePic,apiProfilePic);
     await SessionManagerMethods.setString(isAlumini,apiIsAlumini);
+    await SessionManagerMethods.setString(isBatchAdmin,apiisBatchAdmin);
   }
 
   bool? checkIsLoggedIn() {
@@ -79,6 +82,18 @@ class SessionManager {
   async {
     await SessionManagerMethods.setString(isAlumini, apiIsAlumni);
   }
+
+
+  String? getIsBatchAdmin() {
+    return SessionManagerMethods.getString(isBatchAdmin);
+  }
+
+  Future<void> setIsBatchAdmin(String apiisBatchAdmin)
+  async {
+    await SessionManagerMethods.setString(isBatchAdmin, apiisBatchAdmin);
+  }
+
+
 
   String? getUserId() {
     return SessionManagerMethods.getString(userId);

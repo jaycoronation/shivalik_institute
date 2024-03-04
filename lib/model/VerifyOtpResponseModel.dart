@@ -68,13 +68,15 @@ class User {
   User({
       String? id, 
       String? firstName, 
-      String? lastName, 
+      String? isBatchAdmin,
+      String? lastName,
       String? isAlumini,
       String? userType,
       String? profilePic, 
       String? accessToken,}){
     _id = id;
     _firstName = firstName;
+    _isBatchAdmin = isBatchAdmin;
     _isAlumini = isAlumini;
     _lastName = lastName;
     _userType = userType;
@@ -85,6 +87,7 @@ class User {
   User.fromJson(dynamic json) {
     _id = json['id'];
     _firstName = json['first_name'];
+    _isBatchAdmin = json['is_batch_admin'];
     _isAlumini = json['is_alumini'];
     _lastName = json['last_name'];
     _userType = json['user_type'];
@@ -93,6 +96,7 @@ class User {
   }
   String? _id;
   String? _firstName;
+  String? _isBatchAdmin;
   String? _lastName;
   String? _isAlumini;
   String? _userType;
@@ -100,6 +104,7 @@ class User {
   String? _accessToken;
 User copyWith({  String? id,
   String? firstName,
+  String? isBatchAdmin,
   String? lastName,
   String? isAlumini,
   String? userType,
@@ -107,6 +112,7 @@ User copyWith({  String? id,
   String? accessToken,
 }) => User(  id: id ?? _id,
   firstName: firstName ?? _firstName,
+  isBatchAdmin: isBatchAdmin ?? _isBatchAdmin,
   lastName: lastName ?? _lastName,
   isAlumini: isAlumini ?? _isAlumini,
   userType: userType ?? _userType,
@@ -115,6 +121,7 @@ User copyWith({  String? id,
 );
   String? get id => _id;
   String? get firstName => _firstName;
+  String? get isBatchAdmin => _isBatchAdmin;
   String? get lastName => _lastName;
   String? get isAlumini => _isAlumini;
   String? get userType => _userType;
@@ -125,6 +132,7 @@ User copyWith({  String? id,
     final map = <String, dynamic>{};
     map['id'] = _id;
     map['first_name'] = _firstName;
+    map['is_batch_admin'] = _isBatchAdmin;
     map['last_name'] = _lastName;
     map['is_alumini'] = _isAlumini;
     map['user_type'] = _userType;

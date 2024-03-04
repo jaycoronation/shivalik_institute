@@ -205,7 +205,8 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                               value.user?.userType ?? "",
                                               value.user?.accessToken ?? "",
                                               value.user?.profilePic ?? "",
-                                              value.user?.isAlumini ?? ''
+                                              value.user?.isAlumini ?? '',
+                                              value.user?.isBatchAdmin ?? ''
                                             );
                                             startActivity(context, const DashboardScreen());
                                           }
@@ -340,7 +341,8 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                               value.user?.userType ?? "",
                                               value.user?.accessToken ?? "",
                                               value.user?.profilePic ?? "",
-                                              value.user?.isAlumini ?? ''
+                                              value.user?.isAlumini ?? '',
+                                              value.user?.isBatchAdmin ?? ''
                                             );
                                             startActivity(context, DashboardScreen());
                                             showToast(value.message, context);

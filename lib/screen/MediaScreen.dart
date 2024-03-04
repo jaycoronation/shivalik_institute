@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:gap/gap.dart';
 
 import '../common_widget/common_widget.dart';
 import '../constant/colors.dart';
@@ -15,6 +16,9 @@ class MediaScreen extends StatefulWidget {
 }
 
 class _MediaScreenState extends BaseState<MediaScreen> {
+  final ScrollController scrollViewController = ScrollController();
+
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -111,10 +115,42 @@ class _MediaScreenState extends BaseState<MediaScreen> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Text("pdf")
-                    ],
+                  child:  ListView.builder(
+                    controller: scrollViewController,
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: 4,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          //startActivity(context, ModuleDetailsScreen(getSet));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset('assets/images/ic_file.png', width: 55, height: 55,),
+                                  Gap(12),
+                                  Text('File name',style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
+                                ],
+                              ),
+                              Gap(12),
+                              Divider(
+                                height: 1,
+                                thickness: 1,
+                                color: grayLight,
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
