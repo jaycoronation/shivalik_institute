@@ -84,7 +84,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -102,7 +102,7 @@ class _HolidayScreenState extends BaseState<HolidayScreen> {
                           const Gap(12),
                           SingleContainerPlaceholder(width: MediaQuery.of(context).size.width,),
                           const Gap(20),
-                          const Row(
+                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [

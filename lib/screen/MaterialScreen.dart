@@ -66,7 +66,7 @@ class _MaterialScreenState extends BaseState<MaterialScreen> {
                               color: white,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Column(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -94,7 +94,7 @@ class _MaterialScreenState extends BaseState<MaterialScreen> {
                               borderRadius: BorderRadius.circular(8),
 
                             ),
-                            child: const Column(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

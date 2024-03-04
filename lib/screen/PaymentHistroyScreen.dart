@@ -56,7 +56,7 @@ class _PaymentHistoryScreenState extends BaseState<PaymentHistoryScreen> {
               ? Shimmer.fromColors(
                   baseColor: Colors.grey.shade100 ,
                   highlightColor: Colors.grey.shade400,
-                  child: const SingleChildScrollView(
+                  child: SingleChildScrollView(
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(12, 8, 12, 8),
                       child: Column(

@@ -29,3 +29,4 @@ const Color redBg= Color(0x42FF0000);
 const Color brandColor= Color(0xFFe31e24);
 const Color lightGrey = Color(0xfff3f2f2);
 const chatBoxBg = Color(0xfff6f6f6);
+const blue = Color(0xff007aff);

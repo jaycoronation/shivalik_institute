@@ -24,10 +24,12 @@ import '../common_widget/loading.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../constant/firebase_constant.dart';
+import '../model/GroupResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../utils/full_screen_image.dart';
 import '../utils/pdf_viewer.dart';
+import 'GroupProfileScreen.dart';
 import 'WebViewContainer.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -47,6 +49,9 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   bool isSendButtonVisible = false;
   String selectedMedia = '';
   String documentID = '';
+  bool _isLoading = false;
+  List<UserList> listUser = [];
+
 
   bool isFormConvList = false;
 
@@ -55,6 +60,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
   @override
   void initState(){
+    _getPeoplesList();
     isFormConvList = (widget as ChatScreen).isFormConvList;
     messagesStream = firestoreInstance
         .collection(batch)
@@ -83,7 +89,12 @@ class _ChatScreenState extends BaseState<ChatScreen> {
         ),
         titleSpacing: 0,
         centerTitle: false,
-        title: getTitle('SIRE Connect'),
+        title: GestureDetector(
+          onTap: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => GroupProfileScreen(listUser)));
+          },
+            child: getTitle('SIRE Connect')
+        ),
       ),
       body: Column(
         children: [
@@ -1040,6 +1051,51 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     if (statusCode == 200 && dataResponse.success == '1') {
 
     } else {
+
+    }
+  }
+
+
+  _getPeoplesList() async {
+
+    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+
+    final url = Uri.parse(userListUrl);
+
+    Map<String, String> jsonBody = {
+      'batch_id': "4",
+      'course_id': "",
+      'faculty_id': "",
+      'filter': "student",
+      'filter_by': "",
+      'from_app':"true",
+      'is_alumini':"",
+      'limit':"25",
+      'module_id':"",
+      'movedStudent':"0",
+      "moved_by":"",
+      'page':"1",
+      "search":"",
+      "total":"0",
+    };
+
+    final response = await http.post(url, body: jsonBody);
+
+    final statusCode = response.statusCode;
+    print(response);
+    final body = response.body;
+    Map<String, dynamic> user = jsonDecode(body);
+    var dataResponse = GroupResponseModel.fromJson(user);
+
+    if (statusCode == 200 && dataResponse.success == "1")
+    {
+      setState(() {
+        listUser = dataResponse.list ?? [];
+      });
+    }
+    else {
 
     }
   }

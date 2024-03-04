@@ -1607,7 +1607,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                             child: Text("event",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
                           ),
                           const Text(" : ",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),),
-                          Expanded(
+                          Expanded    (
                             flex: 2,
                             child: Text(title ?? "",style:  const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
                           ),

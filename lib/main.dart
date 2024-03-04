@@ -192,10 +192,10 @@ class MyApp extends StatelessWidget {
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: analytics),
       ],
-      home: const MyHomePage(title: 'Shivalik Institute'),
+      home: MyHomePage(title: 'Shivalik Institute'),
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
+          data: MediaQuery.of(context).copyWith(),
           child: child!,
         );
       },
@@ -247,7 +247,6 @@ class _MyHomePageState extends State<MyHomePage> {
           Timer(const Duration(seconds: 3),(){
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  EventsDetailsScreen(EventList())),(route) => false);
           });
-
         }
         else if (contentId == "lecture_complete")
         {
