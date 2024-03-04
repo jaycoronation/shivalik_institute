@@ -84,6 +84,9 @@ dependencies:
   percent_indicator: ^4.2.3
   excel: ^2.0.2
   web_socket_channel: ^2.4.0
+  cloud_firestore: ^4.15.6
+  chat_bubbles: ^1.5.0
+  firebase_storage: ^11.6.7
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -51,6 +52,29 @@ void logFirebase(String name,Map<String,String?> params){
   analytics.logEvent(name: name,parameters: params,).then((value) => debugPrint("LOGGED"));
 }
 
+String getFileExtension(String fileNameParam) {
+
+  String fileName = checkValidString(fileNameParam);
+
+  try {
+    print('.${fileName.split('.').last}');
+    return ".${fileName.split('.').last}";
+  } catch(e){
+    return "";
+  }
+}
+
+String getFileNameWithExtension(String fileNameParam) {
+
+  String fileName = checkValidString(fileNameParam);
+
+  try {
+    return fileName.split('/').last;
+  } catch(e){
+    return "";
+  }
+}
+
 String getCurrentYear() {
   String formattedDate = "0";
   var now = DateTime.now();
@@ -61,13 +85,64 @@ String getCurrentYear() {
 }
 
 checkValidString (String? value) {
-  if (value == null || value == "null" || value == "<null>")
+  if (value == null || value == "null" || value == "<null>" || value == "Null")
   {
     value = "";
   }
   return value.trim();
 }
 
+
+String timeStampToDateTimeForMsg(Timestamp? myTimeStamp)
+{
+  if(myTimeStamp !=null)
+  {
+    DateTime myDateTime = myTimeStamp.toDate();
+
+
+    var dateCon = DateFormat('yyyy-MM-dd HH:mm:ss').format(myDateTime);
+    return universalDateConverter("yyyy-MM-dd HH:mm:ss", "hh:mm a", dateCon);
+  }
+  else
+  {
+    return "";
+  }
+}
+
+String getDayFromTimestamp(Timestamp? myTimeStamp)
+{
+  if(myTimeStamp !=null)
+  {
+    Timestamp myDateTime = myTimeStamp;
+    var dateCon = DateFormat('yyyy-MM-dd HH:mm:ss').format((myDateTime).toDate());
+
+    return convertToDay(dateCon);
+  }
+  else
+  {
+    return "";
+  }
+}
+
+String convertToDay(String dateTime) {
+  DateTime input = DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTime, false);
+
+  DateTime now = DateTime.now();
+  DateTime yesterday = now.subtract(const Duration(days: 1));
+
+  String formattedInput = DateFormat('dd/MM/yyyy').format(input);
+  String formattedNow = DateFormat('dd/MM/yyyy').format(now);
+  String formattedYesterday = DateFormat('dd/MM/yyyy').format(yesterday);
+
+  if (formattedInput == formattedNow) {
+    return 'Today';
+  } else if (formattedInput == formattedYesterday) {
+    return 'Yesterday';
+  } else {
+    //return universalDateConverter("yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy", dateTime);
+    return universalDateConverter("yyyy-MM-dd HH:mm:ss", "EEE dd,MMM", dateTime);
+  }
+}
 
 showToast(String? message,BuildContext? context){
   Fluttertoast.showToast(
@@ -109,7 +184,7 @@ isValidPhoneNumber(String? input)
 /*convert string to CamelCase*/
 toDisplayCase (String str) {
   try {
-    return str.toLowerCase().split(' ').map((word) {
+    return checkValidString(str).toLowerCase().split(' ').map((word) {
         String leftText = (word.length > 1) ? word.substring(1, word.length) : '';
         return word[0].toUpperCase() + leftText;
       }).join(' ');

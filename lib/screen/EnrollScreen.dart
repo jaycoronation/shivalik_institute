@@ -397,7 +397,6 @@ class _EnrollScreenState extends BaseState<EnrollScreen> {
         listBatches = getSet.batchList ?? [];
       });
     }
-
   }
 
   @override

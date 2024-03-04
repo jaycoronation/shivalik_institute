@@ -62,127 +62,129 @@ class _LoginWithOTPScreenState extends BaseState<LoginWithOTPScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Gap(50),
-                        Container(
-                          alignment: Alignment.center,
-                          child: Image.asset( 'assets/images/ic_shivalik_ins_logo.png', width: 160, height: 70),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 8, right: 8,top: 80),
-                          child: TextField(
-                            cursorColor: black,
-                            controller: _mobileCotroller,
-                            focusNode: inputNode,
-                            autofocus:true,
-                            maxLength: 10,
-                            keyboardType: TextInputType.number,
-                            style: getTextFiledStyle(),
-                            decoration: InputDecoration(
-                              hintText: 'Mobile Number',
-                              counterText: "",
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(kEditTextCornerRadius),
-                                  borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: gray)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(kEditTextCornerRadius),
-                                  borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: gray)),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Gap(50),
+                          Container(
+                            alignment: Alignment.center,
+                            child: Image.asset( 'assets/images/ic_shivalik_ins_logo.png', width: 160, height: 70),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(left: 8, right: 8,top: 80),
+                            child: TextField(
+                              cursorColor: black,
+                              controller: _mobileCotroller,
+                              focusNode: inputNode,
+                              autofocus:true,
+                              maxLength: 10,
+                              keyboardType: TextInputType.number,
+                              style: getTextFiledStyle(),
+                              decoration: InputDecoration(
+                                hintText: 'Mobile Number',
+                                counterText: "",
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(kEditTextCornerRadius),
+                                    borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: gray)),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(kEditTextCornerRadius),
+                                    borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: gray)),
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 30,left: 8, right: 8),
-                          width: double.infinity,
-                          child: TextButton(
-                              style: ButtonStyle(
-                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(kBorderRadius),
+                          Container(
+                            margin: const EdgeInsets.only(top: 30,left: 8, right: 8),
+                            width: double.infinity,
+                            child: TextButton(
+                                style: ButtonStyle(
+                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(kBorderRadius),
+                                      ),
                                     ),
-                                  ),
-                                  backgroundColor: MaterialStateProperty.all<Color>(black)
-                              ),
-                              onPressed: () async {
-                                FocusScope.of(context).requestFocus(FocusNode());
-                                String contact = _mobileCotroller.text.toString().trim();
-                                if (contact.isEmpty)
-                                {
-                                  showSnackBar("Please enter a mobile number", context);
-                                }
-                                else if (contact.length != 10)
-                                {
-                                  showSnackBar("Please enter valid mobile number", context);
-                                }
-                                else
-                                {
-                                  if (isOnline)
+                                    backgroundColor: MaterialStateProperty.all<Color>(black)
+                                ),
+                                onPressed: () async {
+                                  FocusScope.of(context).requestFocus(FocusNode());
+                                  String contact = _mobileCotroller.text.toString().trim();
+                                  if (contact.isEmpty)
                                   {
-                                    sendOTP();
-
+                                    showSnackBar("Please enter a mobile number", context);
+                                  }
+                                  else if (contact.length != 10)
+                                  {
+                                    showSnackBar("Please enter valid mobile number", context);
                                   }
                                   else
                                   {
-                                    noInterNet(context);
+                                    if (isOnline)
+                                    {
+                                      sendOTP();
+
+                                    }
+                                    else
+                                    {
+                                      noInterNet(context);
+                                    }
                                   }
-                                }
-                              },
-                              child: _isLoading
-                                  ? const Padding(
-                                    padding: EdgeInsets.only(top: 10,bottom: 10),
-                                    child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: white,strokeWidth: 2)),
-                                  )
-                                  : const Padding(
-                                    padding: EdgeInsets.only(top: 10,bottom: 10),
-                                    child: Text(
-                                      "Submit",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w400),
-                                    ),
-                              )
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          margin: const EdgeInsets.only(bottom: 22, left: 14, top: 25),
-                          child: RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                              style: const TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w400),
-                              children: [
-                                const TextSpan(
-                                  text: 'By clicking above you agree to\n',
-                                  style: TextStyle(fontSize: 14, color: grayDark, fontWeight: FontWeight.w400),
-                                ),
-                                TextSpan(
-                                  text: "Terms & Conditions",
-                                  style: TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w500),
-                                    recognizer: TapGestureRecognizer()..onTap = () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const WebViewContainer('https://www.shivalik.institute/terms-conditions/', 'Terms & Conditions', '0')));
-                                    }
-                                ),
-                                const TextSpan(
-                                  text: ' and ',
-                                  style: TextStyle(fontSize: 14, color: grayDark, fontWeight: FontWeight.w400),
-                                ),
-                                TextSpan(
-                                  text: "Privacy Policy",
-                                  style: const TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w500),
-                                    recognizer: TapGestureRecognizer()..onTap = () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const WebViewContainer('https://www.shivalik.institute/privacy-policy/', 'Privacy Policy', '0')));
-                                    }
-                                ),
-                                const TextSpan(
-                                  text: ' of Shivalik Institute of Real Estate.',
-                                  style: TextStyle(fontSize: 14, color: grayDark, fontWeight: FontWeight.w400),
-                                ),
-                              ],
+                                },
+                                child: _isLoading
+                                    ? const Padding(
+                                      padding: EdgeInsets.only(top: 10,bottom: 10),
+                                      child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: white,strokeWidth: 2)),
+                                    )
+                                    : const Padding(
+                                      padding: EdgeInsets.only(top: 10,bottom: 10),
+                                      child: Text(
+                                        "Submit",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w400),
+                                      ),
+                                )
                             ),
                           ),
-                        ),
-                      ],
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            margin: const EdgeInsets.only(bottom: 22, left: 14, top: 25),
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style: const TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w400),
+                                children: [
+                                  const TextSpan(
+                                    text: 'By clicking above you agree to\n',
+                                    style: TextStyle(fontSize: 14, color: grayDark, fontWeight: FontWeight.w400),
+                                  ),
+                                  TextSpan(
+                                    text: "Terms & Conditions",
+                                    style: TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w500),
+                                      recognizer: TapGestureRecognizer()..onTap = () {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => const WebViewContainer('https://www.shivalik.institute/terms-conditions/', 'Terms & Conditions', '0')));
+                                      }
+                                  ),
+                                  const TextSpan(
+                                    text: ' and ',
+                                    style: TextStyle(fontSize: 14, color: grayDark, fontWeight: FontWeight.w400),
+                                  ),
+                                  TextSpan(
+                                    text: "Privacy Policy",
+                                    style: const TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w500),
+                                      recognizer: TapGestureRecognizer()..onTap = () {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => const WebViewContainer('https://www.shivalik.institute/privacy-policy/', 'Privacy Policy', '0')));
+                                      }
+                                  ),
+                                  const TextSpan(
+                                    text: ' of Shivalik Institute of Real Estate.',
+                                    style: TextStyle(fontSize: 14, color: grayDark, fontWeight: FontWeight.w400),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     )
                 ),
                 Column(

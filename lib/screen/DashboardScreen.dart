@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,8 @@ import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/common_widget.dart';
 import 'package:shivalik_institute/model/CommonResponseModel.dart';
 import 'package:shivalik_institute/screen/CaseStudyScreen.dart';
+import 'package:shivalik_institute/screen/ChatScreen.dart';
+import 'package:shivalik_institute/screen/ConversationScreen.dart';
 import 'package:shivalik_institute/screen/EventsScreen.dart';
 import 'package:shivalik_institute/screen/FacultyProfileScreen.dart';
 import 'package:shivalik_institute/screen/FeedbackFormScreenNew.dart';
@@ -35,7 +38,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../common_widget/PlaceholderTile.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
+import '../constant/firebase_constant.dart';
 import '../constant/global_context.dart';
+import '../model/BatchResponseModel.dart';
 import '../model/BlogListResponseModel.dart';
 import '../model/CalendarEventModel.dart';
 import '../model/CaseStudyResponseModel.dart';
@@ -48,6 +53,7 @@ import '../model/TestimonialResponseModel.dart';
 import '../model/UpdateDeviceTokenModel.dart';
 import '../utils/base_class.dart';
 import '../utils/session_manager_methods.dart';
+import '../viewmodels/BatchViewModel.dart';
 import '../viewmodels/CaseStudyViewModel.dart';
 import '../viewmodels/DashboardViewModel.dart';
 import '../viewmodels/ModuleViewModel.dart';
@@ -89,6 +95,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   List<LectureList> listLecture = [];
   List<TestimonialsList> listTestimonials = [];
   List<MediaList> mediaList = [];
+  List<BatchList> listBatches = [];
 
   Details getSet = Details();
   List<HolidaysList> listUpcomingHolidays = [];
@@ -116,7 +123,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     getCaseStudyList(true);
     getDeviceToken();
     getBlogList();
-    getPendingFeedbacks();
+    //getPendingFeedbacks();
+    getBatchData();
 
     FirebaseMessaging.onMessage.listen((message) {
 
@@ -148,23 +156,20 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         }
       });
 
-      print('<><>Dashboard onMessage id--->$id');
+     /* print('<><>Dashboard onMessage id--->$id');
       print('<><>Dashboard onMessage contentType--->$contentType');
       print('<><>Dashboard onMessage title--->$title');
       print('<><>Dashboard onMessage messageData--->$messageData');
-      print("<><>Dashboard onMessage Image URL : $image <><>");
+      print("<><>Dashboard onMessage Image URL : $image <><>");*/
 
       NavigationService.notif_id = id;
 
       if (contentType == "lecture_complete")
       {
-        //NavigationService.class_id = id;
         sessionManager.setClassId(id);
-        getStudentAttendance();
+        getPendingFeedbacks();
       }
     });
-
-    print("sessionManager.getProfilePic() ==== ${sessionManager.getProfilePic()}");
 
     super.initState();
   }
@@ -237,6 +242,27 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 ),
               ),
               const Gap(12),
+              /*InkWell(
+                onTap: (){
+                  //logFirebase('chat',{});
+                  if (sessionManager.getMainBatchId()?.contains(",") ?? false)
+                    {
+                      startActivity(context, const ConversationScreen());
+                    }
+                  else
+                    {
+                      startActivity(context, const ChatScreen(false));
+                    }
+                },
+                customBorder: const CircleBorder(),
+                child: Container(
+                    padding: const EdgeInsets.all(4),
+                    height: 34,
+                    width: 34,
+                    child: Image.asset('assets/images/ic_chat.png',color: black,width: 26,height: 26)
+                ),
+              ),
+              const Gap(12),*/
             ],
           ),
           body: Consumer<DashboardViewModel>(
@@ -1317,6 +1343,26 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 }
             },
           ),
+          floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                if (sessionManager.getMainBatchId()?.contains(",") ?? false)
+                {
+                  startActivity(context, const ConversationScreen());
+                }
+                else
+                {
+                  startActivity(context, const ChatScreen(false));
+                }
+              },
+            child: Container(
+                padding: const EdgeInsets.all(4),
+                height: 34,
+                width: 34,
+                child: Image.asset('assets/images/ic_chat.png',color: white,width: 26,height: 26)
+            ),
+            backgroundColor: black,
+
+          ),
         ),
         onWillPop: (){
           SystemNavigator.pop();
@@ -1376,7 +1422,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               width: MediaQuery.of(context).size.width,
                               height: 190,
                               decoration: BoxDecoration(
-                                  color: lightgrey,
+                                  color: lightGrey,
                                   image: DecorationImage(
                                     image: CachedNetworkImageProvider("${listBlog[index].imageFull}&h=500&q=100"),
                                     fit: BoxFit.cover,
@@ -1656,6 +1702,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       setState(() {
         getSet = userViewModel.response.details ?? Details();
       });
+      sessionManager.setProfilePic(getSet.profilePic ?? '');
+      sessionManager.setBatchName(getSet.batchName ?? '');
+      sessionManager.setBatchId(getSet.batchId ?? '');
+      sessionManager.setMainBatchId(getSet.batchId ?? '');
       if (NavigationService.isForPendingFees)
       {
         if (await canLaunchUrl(Uri.parse(getSet.paymentLink ?? '')))
@@ -1664,19 +1714,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           launchUrl(Uri.parse(getSet.paymentLink ?? ''),mode: LaunchMode.externalApplication);
         }
       }
-
-      sessionManager.setProfilePic(getSet.profilePic ?? '');
-
-      if (sessionManager.getClassId() != "")
-      {
-        if (sessionManager.getClassId() != getSet.lastFeedbackClassId)
-          {
-            Future.delayed(Duration.zero, () {
-              getStudentAttendance();
-            });
-          }
-      }
-
     }
     else
     {
@@ -1967,68 +2004,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     }
   }
 
-  getStudentAttendance() async {
-
-    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
-      HttpLogger(logLevel: LogLevel.BODY),
-    ]);
-
-    final url = Uri.parse(lectureAttendance);
-
-    Map<String, String> jsonBody = {
-      'class_id': sessionManager.getClassId() ?? '',
-      'user_id':sessionManager.getUserId() ?? '',
-      'from_app':FROM_APP,
-    };
-
-    final response = await http.post(url, body: jsonBody, headers: {
-      "Authorization": AuthHeader,
-    });
-
-    final statusCode = response.statusCode;
-    final body = response.body;
-    Map<String, dynamic> user = jsonDecode(body);
-    var dataResponse = CommonResponseModel.fromJson(user);
-
-    if (statusCode == 200 && dataResponse.success == "1")
-    {
-      setState(() {
-        hasAttendLecture = true;
-      });
-      openFeedbackForm();
-    }
-    else if (dataResponse.success == "0")
-    {
-      setState(() {
-        hasAttendLecture = false;
-      });
-    }
-  }
-
-  void openFeedbackForm() {
-    /*showModalBottomSheet<bool>(
-      isScrollControlled: true,
-      isDismissible: false,
-      enableDrag: false,
-      context: context,
-      builder: (BuildContext context) {
-        return ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.88),
-          child: const ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12)
-            ),
-              child: FeedbackFormScreen()
-          ),
-        );
-      },
-    );*/
-
-    //startActivity(context, FeedbackFormScreenNew());
-
-  }
-
   getPendingFeedbacks() async {
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
@@ -2055,6 +2030,74 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       }
     else
       {}
+  }
+
+  Future<void> getBatchData() async {
+    Map<String, String> jsonBody = {
+      'batch_status': "",
+      'from_app':"true",
+      'limit':'',
+      'page':'1',
+      'total':'0',
+      'user_type':"1"
+    };
+    BatchViewModel batchViewModel = Provider.of<BatchViewModel>(context,listen: false);
+    await batchViewModel.batchData(jsonBody);
+
+    if (batchViewModel.response.success == '1')
+    {
+      listBatches = batchViewModel.response.batchList ?? [];
+
+      print("listBatches === ${listBatches.length}");
+
+      for (var i=0; i < listBatches.length; i++)
+        {
+          var getSetBatch = listBatches[i];
+          print("getSetBatch === ${jsonEncode(getSetBatch)}");
+          addBatchesOnDatabase(getSetBatch);
+        }
+
+    }
+  }
+
+  addBatchesOnDatabase(BatchList getSet) {
+    final usersRef = firestoreInstance.collection(batch);
+    final userDocRef = usersRef.doc(getSet.id);
+
+    var userDoc = getSet.toJson();
+
+    userDoc.addAll(
+      {
+        'last_message': {
+          'content': '',
+          'senderId': '',
+          'sender_name': '',
+          'timestamp': FieldValue.serverTimestamp(),
+          'type': ''
+        },
+        'message_count': 1,
+      }
+    );
+
+    userDocRef.get().then((doc) {
+      if (doc.exists) {
+        userDocRef.update(userDoc).then((_) {
+          print("Added batch to collection");
+        }).catchError((error) {
+          print("ERROR == ${error}");
+        });
+      } else {
+        userDocRef.set(userDoc).then((_) {
+          print("Added batch to collection");
+        }).catchError((error) {
+          print("ERROR == ${error}");
+        });
+      }
+    }).catchError((error) {
+      print("ERROR == ${error}");
+      // Handle any errors while checking for the user document
+    });
+
   }
 
 }

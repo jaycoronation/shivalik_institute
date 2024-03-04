@@ -84,13 +84,6 @@ Future<void> main() async {
         }
     }
 
-  final channel = IOWebSocketChannel.connect('ws://your-api-url');
-  channel.stream.listen((message) {
-    // Handle incoming messages
-    print('Received: $message');
-    // Update UI or perform any necessary action based on the received message
-  });
-
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((value) => runApp(
     MultiProvider(
       providers: [

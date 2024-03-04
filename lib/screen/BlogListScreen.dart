@@ -204,7 +204,7 @@ class _BlogListScreenState extends BaseState<BlogListScreen> {
                                                   width: MediaQuery.of(context).size.width,
                                                   height: 190,
                                                   decoration: BoxDecoration(
-                                                      color: lightgrey,
+                                                      color: lightGrey,
                                                       image: DecorationImage(
                                                         image: CachedNetworkImageProvider("${listBlog[index].imageFull}&h=500&q=100"),
                                                         fit: BoxFit.cover,

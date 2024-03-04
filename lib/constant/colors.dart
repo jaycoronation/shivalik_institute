@@ -27,4 +27,5 @@ const Color progress= Color(0xffD9D9D9);
 const Color greenBg= Color(0x4200a814);
 const Color redBg= Color(0x42FF0000);
 const Color brandColor= Color(0xFFe31e24);
-const Color lightgrey = Color(0xfff3f2f2);
+const Color lightGrey = Color(0xfff3f2f2);
+const chatBoxBg = Color(0xfff6f6f6);

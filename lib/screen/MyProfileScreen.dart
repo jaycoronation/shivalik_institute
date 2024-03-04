@@ -164,7 +164,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                             const Spacer(),
                             const Gap(34),
                             Text(
-                              toDisplayCase("${getSet.firstName} ${getSet.lastName}" ),
+                              "${getSet.firstName ?? ''} ${getSet.lastName ?? ''}",
                               textAlign: TextAlign.start,
                               style: const TextStyle(fontWeight: FontWeight.w500, color: black, fontSize: 22, fontFamily: 'Colfax'),
                             ),

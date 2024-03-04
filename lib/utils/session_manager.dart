@@ -22,6 +22,9 @@ class SessionManager {
   final String feedbackClassId = "feedbackClassId";
   final String profilePic = "profilePic";
   final String isAlumini = "isAlumini";
+  final String batchName = "batchName";
+  final String batchId = "batchId";
+  final String batchIdMain = "batchIdMain";
 
 
   //set data into shared preferences...
@@ -39,6 +42,33 @@ class SessionManager {
 
   bool? checkIsLoggedIn() {
     return SessionManagerMethods.getBool(isLoggedIn);
+  }
+
+  String? getMainBatchId() {
+    return SessionManagerMethods.getString(batchIdMain);
+  }
+
+  Future<void> setMainBatchId(String apiMainBatchId)
+  async {
+    await SessionManagerMethods.setString(batchIdMain, apiMainBatchId);
+  }
+
+  String? getBatchId() {
+    return SessionManagerMethods.getString(batchId);
+  }
+
+  Future<void> setBatchId(String apiBatchId)
+  async {
+    await SessionManagerMethods.setString(batchId, apiBatchId);
+  }
+
+  String? getBatchName() {
+    return SessionManagerMethods.getString(batchName);
+  }
+
+  Future<void> setBatchName(String apiBatchName)
+  async {
+    await SessionManagerMethods.setString(batchName, apiBatchName);
   }
 
   String? getIsAlumni() {

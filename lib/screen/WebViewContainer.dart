@@ -12,9 +12,11 @@ class WebViewContainer extends StatefulWidget {
   final String url;
   final String title;
   final String isPrivate;
+
   const WebViewContainer(this.url, this.title, this.isPrivate, {super.key});
+
   @override
-  _WebViewContainerState createState() => _WebViewContainerState();
+  State<WebViewContainer> createState() => _WebViewContainerState();
 }
 
 class _WebViewContainerState extends State<WebViewContainer> {
@@ -28,7 +30,7 @@ class _WebViewContainerState extends State<WebViewContainer> {
 
     isPrivate = widget.isPrivate;
 
-    print("isPrivate === ${isPrivate}");
+    print("isPrivate === $isPrivate");
 
     if (isPrivate == "1")
     {
@@ -52,18 +54,11 @@ class _WebViewContainerState extends State<WebViewContainer> {
               });
             }
           },
-          onWebResourceError: (WebResourceError error) {},
-          onNavigationRequest: (NavigationRequest navigation) {
-            print(navigation.url);
-            if (navigation.url.contains("payment=failed"))
-            {
-              Navigator.pop(context,"failed");
-            }
-            else if (navigation.url.contains("payment=success"))
-            {
-              Navigator.pop(context,"success");
-            }
-            return NavigationDecision.navigate;
+          onWebResourceError: (WebResourceError error) {
+            print("description ==== ${error.description}");
+            print("errorCode ==== ${error.errorCode}");
+            print("url ==== ${error.url}");
+
           },
         ),
       )

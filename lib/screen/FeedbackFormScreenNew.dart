@@ -90,7 +90,7 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
                   controller: pageController,
                   itemCount: listPendingFeedbacks.length,
                   scrollDirection: Axis.horizontal,
-                  physics: const NeverScrollableScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
                   onPageChanged: (value) {
                     setState(() {
                       formId = listPendingFeedbacks[value].feedbackFormId ?? '';

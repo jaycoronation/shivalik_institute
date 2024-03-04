@@ -19,6 +19,7 @@ class XlsViewer extends StatefulWidget {
 class _XlsViewer extends BaseState<XlsViewer> {
 
   String fileUrl = '';
+  Excel excel = Excel.createExcel();
 
   @override
   void initState(){
@@ -46,7 +47,7 @@ class _XlsViewer extends BaseState<XlsViewer> {
               return Text('Error: ${snapshot.error}');
             } else {
               return SingleChildScrollView(
-                child: Text(snapshot.data ?? ''),
+                child: Container()
               );
             }
           },
@@ -63,7 +64,7 @@ class _XlsViewer extends BaseState<XlsViewer> {
       {
         // Read the XLSX file
         var bytes = response.bodyBytes;
-        var excel = Excel.decodeBytes(bytes);
+        excel = Excel.decodeBytes(bytes);
         String excelData = '';
 
         // Iterate through rows and columns to read data
