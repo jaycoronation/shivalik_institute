@@ -49,7 +49,8 @@ TextStyle getSecondaryTitleFontStyle(){
 
 void logFirebase(String name,Map<String,String?> params){
   params.addAll({"user_name" : "${SessionManager().getName()} ${SessionManager().getLastName()}",'user_id' : SessionManager().getUserId()});
-  analytics.logEvent(name: name,parameters: params,).then((value) => debugPrint("LOGGED"));
+  analytics.logEvent(name: name,parameters: params,).then((value) {
+  });
 }
 
 String getFileExtension(String fileNameParam) {

@@ -124,6 +124,7 @@ class Details {
       String? about,
       String? id,
       String? courseId,
+      String? isBatchAdmin,
       String? isAlumini,
       String? pincode,
       String? lastFeedbackClassId,
@@ -199,6 +200,7 @@ class Details {
     _pincode = pincode;
     _lastFeedbackClassId = lastFeedbackClassId;
     _courseId = courseId;
+    _isBatchAdmin = isBatchAdmin;
     _isAlumini = isAlumini;
     _prefixName = prefixName;
     _batchName = batchName;
@@ -275,6 +277,7 @@ class Details {
     _pincode = json['pincode'];
     _lastFeedbackClassId = json['last_feedback_class_id'];
     _courseId = json['course_id'];
+    _isBatchAdmin = json['is_batch_admin'];
     _isAlumini = json['is_alumini'];
     _prefixName = json['prefix_name'];
     _batchName = json['batch_name'];
@@ -347,6 +350,7 @@ class Details {
   String? _about;
   String? _id;
   String? _courseId;
+  String? _isBatchAdmin;
   String? _isAlumini;
   String? _pincode;
   String? _lastFeedbackClassId;
@@ -420,6 +424,7 @@ class Details {
 Details copyWith({  String? id,
   String? about,
   String? courseId,
+  String? isBatchAdmin,
   String? isAlumini,
   String? pincode,
   String? lastFeedbackClassId,
@@ -493,6 +498,7 @@ Details copyWith({  String? id,
 }) => Details(  id: id ?? _id,
   about: about ?? _about,
   courseId: courseId ?? _courseId,
+  isBatchAdmin: isBatchAdmin ?? _isBatchAdmin,
   isAlumini: isAlumini ?? _isAlumini,
   pincode: pincode ?? _pincode,
   lastFeedbackClassId: lastFeedbackClassId ?? _lastFeedbackClassId,
@@ -569,6 +575,7 @@ Details copyWith({  String? id,
   String? get pincode => _pincode;
   String? get lastFeedbackClassId => _lastFeedbackClassId;
   String? get courseId => _courseId;
+  String? get isBatchAdmin => _isBatchAdmin;
   String? get isAlumini => _isAlumini;
   String? get prefixName => _prefixName;
   String? get batchName => _batchName;
@@ -645,6 +652,7 @@ Details copyWith({  String? id,
     map['pincode'] = _pincode;
     map['last_feedback_class_id'] = _lastFeedbackClassId;
     map['course_id'] = _courseId;
+    map['is_batch_admin'] = _isBatchAdmin;
     map['is_alumini'] = _isAlumini;
     map['prefix_name'] = _prefixName;
     map['batch_name'] = _batchName;

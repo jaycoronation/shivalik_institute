@@ -1,36 +1,36 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:chat_bubbles/date_chips/date_chip.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
-import 'package:shivalik_institute/model/CommonResponseModel.dart';
 import 'package:shivalik_institute/model/MessageSchema.dart';
-import 'package:shivalik_institute/utils/xls_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../constant/firebase_constant.dart';
+import '../model/DeviceTokenResponseModel.dart';
 import '../model/GroupResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../utils/full_screen_image.dart';
 import '../utils/pdf_viewer.dart';
 import 'GroupProfileScreen.dart';
-import 'WebViewContainer.dart';
 
 class ChatScreen extends StatefulWidget {
   final bool isFormConvList;
@@ -46,12 +46,12 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   TextEditingController replyController = TextEditingController();
 
   List<MessageSchema> listMessages = [];
+  List<DeviceTokens> listDeviceTokens = [];
   bool isSendButtonVisible = false;
   String selectedMedia = '';
   String documentID = '';
   bool _isLoading = false;
   List<UserList> listUser = [];
-
 
   bool isFormConvList = false;
 
@@ -61,6 +61,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   @override
   void initState(){
     _getPeoplesList();
+    getDeviceTokens();
     isFormConvList = (widget as ChatScreen).isFormConvList;
     messagesStream = firestoreInstance
         .collection(batch)
@@ -90,11 +91,22 @@ class _ChatScreenState extends BaseState<ChatScreen> {
         titleSpacing: 0,
         centerTitle: false,
         title: GestureDetector(
-          onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => GroupProfileScreen(listUser)));
-          },
+            behavior: HitTestBehavior.opaque,
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => GroupProfileScreen(listUser)));
+            },
             child: getTitle('SIRE Connect')
         ),
+        actions: [
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => GroupProfileScreen(listUser)));
+              },
+              child: Image.asset('assets/images/ic_information.png',width: 22,height: 22,)
+          ),
+          const Gap(12),
+        ],
       ),
       body: Column(
         children: [
@@ -140,8 +152,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                         physics: const BouncingScrollPhysics(),
                         itemCount: listMessages.length,
                         itemBuilder: (context, index) {
-                          //final isDifferentDate = previousMessage == null || getDayFromTimestamp(currentMessage.timestamp) != getDayFromTimestamp(previousMessage?.timestamp);
-
                           final lastIndex = index < listMessages.length - 1 ? index + 1 : index;
 
                           final isDifferentDateNew = getDayFromTimestamp(listMessages[index].timestamp) != getDayFromTimestamp(listMessages[lastIndex].timestamp);
@@ -864,7 +874,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       setState(() {
         selectedMedia = croppedFile.path;
         print("_pickImage picImgPath crop ====>$selectedMedia");
-        Navigator.pop(context);
         _uploadDoc(File(croppedFile.path), getFileNameWithExtension(croppedFile.path), getFileExtension(croppedFile.path),'media');
         // sendMediaRequest(context, conversationData.conversationId.toString(), selectedMedia);
         // Navigator.pop(context);
@@ -878,7 +887,17 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       setState(() {
         //isFileUploading = true;
       });
-      Reference reference = FirebaseStorage.instance.ref().child('SIRE/$fileName');
+      Reference reference = FirebaseStorage.instance.ref();
+
+      if (type == "media")
+        {
+          reference = FirebaseStorage.instance.ref().child('SIRE/${sessionManager.getBatchId() ?? ''}/Media/$fileName');
+        }
+      else if (type == "document")
+        {
+          reference = FirebaseStorage.instance.ref().child('SIRE/${sessionManager.getBatchId() ?? ''}/Document/$fileName');
+        }
+
       UploadTask uploadTask = reference.putFile(file);
       TaskSnapshot snapshot = await uploadTask;
       var imageUrl = await snapshot.ref.getDownloadURL();
@@ -908,7 +927,18 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       isEdited: false
     );
 
-    sendNotificationToUser(content,type);
+    if(listDeviceTokens.isNotEmpty)
+    {
+      if (type == "text")
+        {
+          await sendNotificationToUser(content);
+        }
+      else
+        {
+          await sendNotificationToUser("${sessionManager.getName()} ${sessionManager.getLastName()} has uploaded a document");
+        }
+
+    }
 
     var messageSendQuery = await firestoreInstance.collection(batch).doc(sessionManager.getBatchId()).collection(messages).add(messageData.toJson());
     print('<><><><><><><>');
@@ -931,28 +961,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
     await updateMemberDataOnFireBase(content,type);
 
-   /* if(listDeviceTokens.isNotEmpty)
-    {
-      if (mentionedUsers.isNotEmpty)
-      {
 
-        for (ContactData user in conversationsController.groupParticipantGetSet.value)
-        {
-          if (mentionedUsers.containsValue(user.id))
-          {
-            await sendNotificationToMentionedUser(taskComment,user.name,user.id.toString());
-          }
-          else
-          {
-            await sendNotificationToUser(taskComment);
-          }
-        }
-      }
-      else
-      {
-        await sendNotificationToUser(taskComment);
-      }
-    }*/
 
   }
 
@@ -968,13 +977,56 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       'message_count': FieldValue.increment(1),
     };
 
-
     // Update Conversation Document Data to group collection
     final groupDocRef = firestoreInstance
         .collection(batch)
         .doc(sessionManager.getBatchId());
 
     await groupDocRef.update(updateData);
+  }
+
+  sendNotificationToUser(String msg) async {
+    var token = List<String>.empty(growable: true);
+    for(int i=0; i < listDeviceTokens.length; i++)
+    {
+      if (listDeviceTokens[i].userId != sessionManager.getUserId().toString())
+        {
+          token.add(checkValidString(listDeviceTokens[i].deviceToken));
+        }
+    }
+
+    String constructFCMPayload(List<String> token) {
+      return jsonEncode(
+        <String, dynamic>{
+          'notification': <String, dynamic>{
+            'body': msg,
+            'title': "New message from ${checkValidString(sessionManager.getName())} ${checkValidString(sessionManager.getLastName())} on SIRE Connect",
+          },
+          'data': <String, dynamic>{'content_id': sessionManager.getBatchId() ?? '', 'message': msg, 'operation': "user_chat",},
+          'content_available' : true,
+          'registration_ids': token
+        },
+
+      );
+    }
+
+    if (token.isEmpty) {
+      showSnackBar('Unable to send FCM message, no token exists.', context);
+      return;
+    }
+
+    try {
+      //Send  Message
+      http.Response response = await http.post(Uri.parse(fcmSendURL),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': fcmServerKey,
+          },
+          body: constructFCMPayload(token));
+      log("status: ${response.statusCode} | Message Sent Successfully!");
+    } catch (e) {
+      log("error push notification $e");
+    }
   }
 
   @override
@@ -1009,37 +1061,17 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     return iconPath;
   }
 
-  sendNotificationToUser(String content, String type) async {
+  getDeviceTokens() async {
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
 
-    final url = Uri.parse(messageNotification);
-
-    String message = '';
-
-    if (type == "text")
-      {
-        message = "${sessionManager.getName()} ${sessionManager.getLastName()} has send new message ${content}";
-      }
-    else if (type == "media")
-      {
-        message = "${sessionManager.getName()} ${sessionManager.getLastName()} has uploaded media file";
-      }
-    else if (type == "document")
-      {
-        message = "${sessionManager.getName()} ${sessionManager.getLastName()} has uploaded document file";
-      }
+    final url = Uri.parse(batchWiseDeviceToken);
 
     Map<String, String> jsonBody = {};
 
     jsonBody = {
-      'batch_IDs': sessionManager.getBatchId() ?? '',
-      'message': message,
-      'notification_type_id': '9',
-      'send_to': 'Batch Student',
-      'sending_status' : 'Send Now',
-      'title' : 'New Message on SIRE Connect',
+      'batch_id': sessionManager.getBatchId() ?? '',
     };
 
     final response = await http.post(url, body: jsonBody);
@@ -1047,11 +1079,20 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     final statusCode = response.statusCode;
     final body = response.body;
     Map<String, dynamic> apiResponse = jsonDecode(body);
-    var dataResponse = CommonResponseModel.fromJson(apiResponse);
-    if (statusCode == 200 && dataResponse.success == '1') {
+    var dataResponse = DeviceTokenResponseModel.fromJson(apiResponse);
+    if (statusCode == 200 && dataResponse.success == 1) {
 
-    } else {
+      for (var i=0; i < (dataResponse.deviceTokens?.length ?? 0); i++)
+        {
+          if (sessionManager.getUserId() == dataResponse.deviceTokens?[i].userId)
+            {
+              listDeviceTokens.add(dataResponse.deviceTokens?[i] ?? DeviceTokens());
+            }
+        }
 
+    }
+    else
+    {
     }
   }
 
@@ -1065,14 +1106,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     final url = Uri.parse(userListUrl);
 
     Map<String, String> jsonBody = {
-      'batch_id': "4",
+      'batch_id': sessionManager.getBatchId() ?? '',
       'course_id': "",
       'faculty_id': "",
       'filter': "student",
       'filter_by': "",
       'from_app':"true",
+      'limit': '',
       'is_alumini':"",
-      'limit':"25",
       'module_id':"",
       'movedStudent':"0",
       "moved_by":"",

@@ -10,6 +10,7 @@
         android:label="SIRE"
         android:name="${applicationName}"
         android:networkSecurityConfig="@xml/network_config"
+        android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher">
 
         <activity

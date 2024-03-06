@@ -23,30 +23,45 @@ class _GroupProfileScreenState extends BaseState<GroupProfileScreen> {
   final ScrollController scrollViewController = ScrollController();
   List<UserList> listUser = [];
   String batchName = "";
-
+  int totalMediaCount = 0;
 
   @override
   void initState(){
     listUser = (widget as GroupProfileScreen).listUser;
+
+    listUser.sort((a, b) => b.isBatchAdmin.toString().compareTo(a.isBatchAdmin.toString()));
+
+
     if(listUser.isNotEmpty)
       {
         batchName = listUser[0].batch?.name ?? "";
       }
     print("list user ====${listUser.length}");
+
+    getFirebaseImageFolder();
     super.initState();
   }
 
   void getFirebaseImageFolder() {
-    final Reference storageRef = FirebaseStorage.instance.ref().child('SIRE').child('Media');
+    final Reference storageRef = FirebaseStorage.instance.ref().child('SIRE').child(sessionManager.getBatchId() ?? '').child('Media');
     storageRef.listAll().then((result) {
-      print("result is $result");
+
+      setState(() {
+        final List<Reference> allFiles = result.items;
+        totalMediaCount += allFiles.length;
+        print("result is ${allFiles.length}");
+      });
     });
 
 
-    final Reference storageRefDoc = FirebaseStorage.instance.ref().child('SIRE').child('Document');
+    final Reference storageRefDoc = FirebaseStorage.instance.ref().child('SIRE').child(sessionManager.getBatchId() ?? '').child('Document');
 
     storageRefDoc.listAll().then((result) {
-      print("result is $result");
+      setState(() {
+        final List<Reference> allFiles = result.items;
+        totalMediaCount += allFiles.length;
+        print("result is ${allFiles.length}");
+      });
     });
   }
 
@@ -68,21 +83,7 @@ class _GroupProfileScreenState extends BaseState<GroupProfileScreen> {
             ),
             titleSpacing: 0,
             centerTitle: true,
-            title: GestureDetector(
-                onTap: (){
-
-                },
-                child: getTitle('Group Info')
-            ),
-            actions: const [
-              Padding(
-                padding: EdgeInsets.only(top: 16,bottom: 16, right: 16),
-                child: Text("Edit",
-                  textAlign: TextAlign.start,
-                  style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16),
-                ),
-              )
-            ],
+            title: getTitle('Group Info'),
           ),
           body: Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
@@ -90,105 +91,33 @@ class _GroupProfileScreenState extends BaseState<GroupProfileScreen> {
               child: Column(
                 children: [
                   const Gap(20),
-                  Center(
-                      child: Image.asset('assets/images/ic_user_placeholder.png', width: 120, height: 120,)
-                  ),
-                  const Gap(18),
-                   Text(batchName,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(fontWeight: FontWeight.w600, color: black, fontSize: 24),
-                  ),
-                  const Gap(8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text("Group",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(fontWeight: FontWeight.w400, color: grayDarkNew, fontSize: 16),
-                      ),
-                      const Gap(8),
-                      Container(
-                        width: 4,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: grayDarkNew,
-                        ),
-                      ),
-                      const Gap(8),
-                      Text(
-                      "${listUser.length} Member",
-                        textAlign: TextAlign.start,
-                        style: const TextStyle(fontWeight: FontWeight.w400, color: grayDarkNew, fontSize: 16),
-                      ),
-                    ],
-                  ),
+                 Container(
+                   width: 120,
+                   height: 120,
+                   decoration: BoxDecoration(
+                     color: grayLight,
+                     borderRadius: BorderRadius.circular(12)
+                   ),
+                   alignment: Alignment.center,
+                   child: Column(
+                     mainAxisAlignment: MainAxisAlignment.center,
+                     crossAxisAlignment: CrossAxisAlignment.center,
+                     children: [
+                       Text(sessionManager.getBatchName() ?? '',
+                         textAlign: TextAlign.start,
+                         style: const TextStyle(fontWeight: FontWeight.w600, color: black, fontSize: 26),
+                       ),
+                       const Gap(8),
+                       Text(
+                         "${listUser.length} Members",
+                         textAlign: TextAlign.start,
+                         style: const TextStyle(fontWeight: FontWeight.w400, color: grayDarkNew, fontSize: 14),
+                       ),
+                     ],
+                   ),
+                 ),
+
                   const Gap(22),
-                 /* Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(18, 12, 18, 12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: white,
-                          ),
-                          child: Column(
-                            children: [
-                              Image.asset('assets/images/ic_Phone.png', width: 20, height: 20, color: blue,),
-                              const Gap(10),
-                              const Text("Audio",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 14),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Gap(8),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(18, 12, 18, 12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: white,
-                          ),
-                          child: Column(
-                            children: [
-                              Image.asset('assets/images/ic_video.png', width: 20, height: 20, color: blue,),
-                              const Gap(10),
-                              const Text("Video",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 14),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Gap(8),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(18, 12, 18, 12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: white,
-                          ),
-                          child: Column(
-                            children: [
-                              Image.asset('assets/images/ic_search.png', width: 20, height: 20, color: blue,),
-                              const Gap(10),
-                              const Text("Search",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 14),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),*/
-                  // const Gap(18),
                   const Gap(14),
                   Container(
                     width: MediaQuery.of(context).size.width,
@@ -197,15 +126,16 @@ class _GroupProfileScreenState extends BaseState<GroupProfileScreen> {
                       borderRadius: BorderRadius.circular(8),
                       color: white,
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => MediaScreen()));
-                          },
-                          child: Row(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const MediaScreen()));
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
                             children: [
                               Container(
                                   padding: const EdgeInsets.all(6),
@@ -216,25 +146,26 @@ class _GroupProfileScreenState extends BaseState<GroupProfileScreen> {
                                   child: Image.asset('assets/images/ic_gallery.png', width: 20, height: 20, color: white,)
                               ),
                               const Gap(10),
-                              const Text("Media, Link, and Docs",
+                              const Text("Media and Docs",
                                 textAlign: TextAlign.start,
                                 style: TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16),
                               ),
                             ],
                           ),
-                        ),
-                        const Gap(10),
-                         Row(
-                          children: [
-                            Text("1,002",
-                              textAlign: TextAlign.start,
-                              style: TextStyle(fontWeight: FontWeight.w400, color: graySemiDark, fontSize: 18),
-                            ),
-                            Gap(8),
-                            Image.asset('assets/images/ic_arrow_right.png', width: 20, height: 20, color: graySemiDark,)
-                          ],
-                        ),
-                      ],
+                          const Gap(10),
+                           Row(
+                            children: [
+                              Text(
+                                totalMediaCount.toString(),
+                                textAlign: TextAlign.start,
+                                style: const TextStyle(fontWeight: FontWeight.w400, color: graySemiDark, fontSize: 18),
+                              ),
+                              const Gap(8),
+                              Image.asset('assets/images/ic_arrow_right.png', width: 20, height: 20, color: graySemiDark,)
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const Gap(26),
@@ -246,14 +177,6 @@ class _GroupProfileScreenState extends BaseState<GroupProfileScreen> {
                         textAlign: TextAlign.start,
                         style: const TextStyle(fontWeight: FontWeight.w600, color: black, fontSize: 18),
                       ),
-                      Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(18),
-                            color: grayLight,
-                          ),
-                          child: Image.asset('assets/images/ic_search.png', width: 16, height: 16, color: grayDarkNew,)
-                      )
                     ],
                   ),
                   const Gap(18),

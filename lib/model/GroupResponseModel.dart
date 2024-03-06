@@ -145,7 +145,8 @@ class UserList {
   UserList({
       String? id, 
       String? courseId, 
-      String? prefixName, 
+      String? isBatchAdmin,
+      String? prefixName,
       String? firstName, 
       String? lastName, 
       String? enrollmentNo, 
@@ -220,6 +221,7 @@ class UserList {
       String? prevBatch,}){
     _id = id;
     _courseId = courseId;
+    _isBatchAdmin = isBatchAdmin;
     _prefixName = prefixName;
     _firstName = firstName;
     _lastName = lastName;
@@ -298,6 +300,7 @@ class UserList {
   UserList.fromJson(dynamic json) {
     _id = json['id'];
     _courseId = json['course_id'];
+    _isBatchAdmin = json['is_batch_admin'];
     _prefixName = json['prefix_name'];
     _firstName = json['first_name'];
     _lastName = json['last_name'];
@@ -374,6 +377,7 @@ class UserList {
   }
   String? _id;
   String? _courseId;
+  String? _isBatchAdmin;
   String? _prefixName;
   String? _firstName;
   String? _lastName;
@@ -449,6 +453,7 @@ class UserList {
   String? _prevBatch;
 UserList copyWith({  String? id,
   String? courseId,
+  String? isBatchAdmin,
   String? prefixName,
   String? firstName,
   String? lastName,
@@ -524,6 +529,7 @@ UserList copyWith({  String? id,
   String? prevBatch,
 }) => UserList(  id: id ?? _id,
   courseId: courseId ?? _courseId,
+  isBatchAdmin: isBatchAdmin ?? _isBatchAdmin,
   prefixName: prefixName ?? _prefixName,
   firstName: firstName ?? _firstName,
   lastName: lastName ?? _lastName,
@@ -600,6 +606,7 @@ UserList copyWith({  String? id,
 );
   String? get id => _id;
   String? get courseId => _courseId;
+  String? get isBatchAdmin => _isBatchAdmin;
   String? get prefixName => _prefixName;
   String? get firstName => _firstName;
   String? get lastName => _lastName;
@@ -678,6 +685,7 @@ UserList copyWith({  String? id,
     final map = <String, dynamic>{};
     map['id'] = _id;
     map['course_id'] = _courseId;
+    map['is_batch_admin'] = _isBatchAdmin;
     map['prefix_name'] = _prefixName;
     map['first_name'] = _firstName;
     map['last_name'] = _lastName;

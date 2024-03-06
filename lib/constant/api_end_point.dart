@@ -43,4 +43,4 @@ const saveFeedbackUrl = "${MAIN_URL}form_submission";
 const removeDeviceToken = "${MAIN_URL}remove_device_token";
 const lectureAttendance = "${MAIN_URL}attendance_report/user_lecture_attendance";
 const pendingFeedback = "${MAIN_URL}pending_feedbacks";
-const messageNotification = "${MAIN_URL}send_manual_notificaiton";
+const batchWiseDeviceToken = "${MAIN_URL}get_batch_device_tokens";

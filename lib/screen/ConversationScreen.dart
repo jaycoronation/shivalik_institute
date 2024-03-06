@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 import 'package:shivalik_institute/constant/firebase_constant.dart';
+import 'package:shivalik_institute/model/BatchResponseModel.dart';
 import 'package:shivalik_institute/model/ConversationSchema.dart';
 import 'package:shivalik_institute/screen/ChatScreen.dart';
 import 'package:shivalik_institute/utils/app_utils.dart';
@@ -16,7 +17,8 @@ import '../constant/colors.dart';
 import '../utils/base_class.dart';
 
 class ConversationScreen extends StatefulWidget {
-  const ConversationScreen({super.key});
+  final List<BatchList> listBatches;
+  const ConversationScreen(this.listBatches, {super.key});
 
   @override
   BaseState<ConversationScreen> createState() => _ConversationScreenState();
@@ -27,13 +29,24 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
   late Stream<QuerySnapshot> messagesStream;
 
   List<ConversationSchema> listData = [];
+  List<BatchList> listBatches = [];
 
   @override
   void initState(){
     super.initState();
 
+    listBatches = (widget as ConversationScreen).listBatches;
     List<String> listBatchIds = [];
-    listBatchIds = sessionManager.getMainBatchId()?.split(",") ?? [];
+    for (var i=0; i < listBatches.length; i++)
+      {
+        if (listBatches[i].batchStatus == 'ongoing')
+          {
+            listBatchIds.add(listBatches[i].id ?? '');
+          }
+      }
+
+
+    //listBatchIds = sessionManager.getMainBatchId()?.split(",") ?? [];
 
     print("<><><><>");
     print(listBatchIds.toString());
@@ -61,7 +74,7 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
         title: getTitle('SIRE Connect'),
       ),
       body: Container(
-        margin: EdgeInsets.only(top: 12),
+        margin: const EdgeInsets.only(top: 12),
         child: StreamBuilder<QuerySnapshot>(
           stream: messagesStream,
           builder: (context, snapshot) {
@@ -132,7 +145,11 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
                       return GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () {
+
+                          print("ID ==== ${listData[index].id ?? ''}");
+
                           sessionManager.setBatchId(listData[index].id ?? '');
+                          sessionManager.setBatchName(listData[index].name ?? '');
                           startActivity(context, const ChatScreen(true));
                         },
                         child: Container(
@@ -180,18 +197,19 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
                                           child: sessionManager.getUserId() == listData[index].lastMessage?.senderId
                                               ? Row(
                                                 mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   const Text("You: ", style: TextStyle(fontSize: 12,fontWeight: FontWeight.w600,color: graySemiDark),),
-                                                  Text(listData[index].lastMessage?.content ?? '', style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: black),)
+                                                  getMessageContent(listData[index].lastMessage ?? LastMessage()),
+                                                  
                                                 ],
                                               )
                                               : Row(
                                                 mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text("${listData[index].lastMessage?.senderName ?? ''}: ", style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w600,color: graySemiDark),),
-                                                  Text(listData[index].lastMessage?.content ?? '', style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: black),)
+                                                  getMessageContent(listData[index].lastMessage ?? LastMessage()),
                                                 ],
                                               ),
                                         ),
@@ -227,6 +245,40 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
   @override
   void castStatefulWidget() {
     widget is ConversationScreen;
+  }
+
+  Widget getMessageContent(LastMessage lastMessage) {
+    Widget dataWidget = Container();
+    if (lastMessage.type == "text")
+      {
+        dataWidget = Text(lastMessage.content ?? '', style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: black),);
+      }
+    else if (lastMessage.type == "document")
+      {
+        dataWidget =  Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset('assets/images/ic_file.png',width: 22,height: 22,color: grayLight,),
+            const Gap(6),
+            const Text('Document', style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: black),)
+          ],
+        );
+      }
+    else if (lastMessage.type == "media")
+      {
+        dataWidget =  Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset('assets/images/ic_camera_chat.png',width: 22,height: 22,color: grayLight,),
+            const Gap(6),
+            const Text('Media', style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: black),)
+          ],
+        );
+      }
+
+    return dataWidget;
   }
 
 }

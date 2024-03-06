@@ -13,6 +13,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shivalik_institute/constant/api_end_point.dart';
+import 'package:shivalik_institute/screen/ChatScreen.dart';
 import 'package:shivalik_institute/screen/DashboardScreen.dart';
 import 'package:shivalik_institute/screen/EventDetailsScreen.dart';
 import 'package:shivalik_institute/screen/LectureDetailsScreen.dart';
@@ -82,6 +83,10 @@ Future<void> main() async {
         {
           SessionManager().setClassId(initialMessage.data['content_id']);
         }
+      else if (NavigationService.notif_type == "user_chat")
+        {
+          SessionManager().setBatchId(initialMessage.data['content_id']);
+        }
     }
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((value) => runApp(
@@ -126,6 +131,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (NavigationService.notif_type == "lecture_complete")
     {
       SessionManager().setClassId(message.data['content_id']);
+    }
+  else if (NavigationService.notif_type == "user_chat")
+    {
+      SessionManager().setBatchId(message.data['content_id']);
     }
 
 }
@@ -192,7 +201,7 @@ class MyApp extends StatelessWidget {
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: analytics),
       ],
-      home: MyHomePage(title: 'Shivalik Institute'),
+      home: const MyHomePage(title: 'Shivalik Institute'),
       builder: (context, child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(),
@@ -251,7 +260,7 @@ class _MyHomePageState extends State<MyHomePage> {
         else if (contentId == "lecture_complete")
         {
           Timer(const Duration(seconds: 3),(){
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  DashboardScreen()),(route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  const DashboardScreen()),(route) => false);
           });
 
         }
@@ -305,6 +314,12 @@ class _MyHomePageState extends State<MyHomePage> {
           {
             Timer(const Duration(seconds: 3),(){
               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => FacultyProfileScreen(NavigationService.notif_id)),(route) => false);
+            });
+          }
+        else if (contentId == "user_chat")
+          {
+            Timer(const Duration(seconds: 3),(){
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const ChatScreen(false)),(route) => false);
             });
           }
         else

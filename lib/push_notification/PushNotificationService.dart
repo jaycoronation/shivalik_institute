@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:shivalik_institute/firebase_options.dart';
 import 'package:shivalik_institute/model/LecturesResponseModel.dart';
+import 'package:shivalik_institute/screen/ChatScreen.dart';
 import 'package:shivalik_institute/screen/DashboardScreen.dart';
 import 'package:shivalik_institute/screen/FacultyProfileScreen.dart';
 import 'package:shivalik_institute/screen/LectureDetailsScreen.dart';
@@ -233,6 +234,11 @@ class PushNotificationService {
               SessionManager().setClassId(id);
             }
 
+          if (contentType == "user_chat")
+            {
+              SessionManager().setBatchId(id);
+            }
+
           const DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails(
               presentSound: true, presentAlert: true);
 
@@ -352,6 +358,12 @@ class PushNotificationService {
       {
         NavigationService.navigatorKey.currentState!.pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => FacultyProfileScreen(NavigationService.notif_id ?? '')), (Route<dynamic> route) => false
+        );
+      }
+    else if (contentId == "user_chat")
+      {
+        NavigationService.navigatorKey.currentState!.pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const ChatScreen(false)), (Route<dynamic> route) => false
         );
       }
     else

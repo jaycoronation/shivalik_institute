@@ -123,7 +123,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     getCaseStudyList(true);
     getDeviceToken();
     getBlogList();
-    //getPendingFeedbacks();
+    getPendingFeedbacks();
     getBatchData();
 
     FirebaseMessaging.onMessage.listen((message) {
@@ -1345,9 +1345,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
           ),
           floatingActionButton: FloatingActionButton(
               onPressed: () {
-                if (sessionManager.getMainBatchId()?.contains(",") ?? false)
+                logFirebase("sire_connect", {"batch_name" : sessionManager.getBatchName()});
+                if (sessionManager.getIsBatchAdmin() == "1")
                 {
-                  startActivity(context, const ConversationScreen());
+                  startActivity(context, ConversationScreen(listBatches));
                 }
                 else
                 {
@@ -1706,6 +1707,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       sessionManager.setBatchName(getSet.batchName ?? '');
       sessionManager.setBatchId(getSet.batchId ?? '');
       sessionManager.setMainBatchId(getSet.batchId ?? '');
+      sessionManager.setIsBatchAdmin(getSet.isBatchAdmin ?? '');
       if (NavigationService.isForPendingFees)
       {
         if (await canLaunchUrl(Uri.parse(getSet.paymentLink ?? '')))
@@ -2066,27 +2068,28 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
     var userDoc = getSet.toJson();
 
-    userDoc.addAll(
-      {
-        'last_message': {
-          'content': '',
-          'senderId': '',
-          'sender_name': '',
-          'timestamp': FieldValue.serverTimestamp(),
-          'type': ''
-        },
-        'message_count': 1,
-      }
-    );
-
     userDocRef.get().then((doc) {
       if (doc.exists) {
-        userDocRef.update(userDoc).then((_) {
+        /*userDocRef.update(userDoc).then((_) {
           print("Added batch to collection");
         }).catchError((error) {
           print("ERROR == ${error}");
-        });
+        });*/
       } else {
+
+        userDoc.addAll(
+            {
+              'last_message': {
+                'content': '',
+                'senderId': '',
+                'sender_name': '',
+                'timestamp': FieldValue.serverTimestamp(),
+                'type': ''
+              },
+              'message_count': 1,
+            }
+        );
+
         userDocRef.set(userDoc).then((_) {
           print("Added batch to collection");
         }).catchError((error) {
