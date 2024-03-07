@@ -43,6 +43,13 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
           {
             listBatchIds.add(listBatches[i].id ?? '');
           }
+
+
+        if (listBatches[i].name == 'JRE10')
+        {
+          listBatchIds.add(listBatches[i].id ?? '');
+        }
+
       }
 
 
@@ -251,7 +258,7 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
     Widget dataWidget = Container();
     if (lastMessage.type == "text")
       {
-        dataWidget = Text(lastMessage.content ?? '', style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: black),);
+        dataWidget = Expanded(child: Text(lastMessage.content ?? '', style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: black, overflow: TextOverflow.ellipsis), overflow: TextOverflow.ellipsis,maxLines: 1,));
       }
     else if (lastMessage.type == "document")
       {

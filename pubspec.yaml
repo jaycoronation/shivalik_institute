@@ -60,7 +60,7 @@ dependencies:
   flutter_staggered_animations: ^1.0.0
   flutter_expanded_tile: ^0.3.7
   cached_network_image:
-  flutter_calendar_week: ^3.0.2
+  flutter_calendar_week:
   chewie: ^1.7.1
   video_player:
   share_plus: ^7.2.1
@@ -84,8 +84,14 @@ dependencies:
   excel: ^2.0.2
   web_socket_channel: ^2.4.0
   cloud_firestore: ^4.15.6
-  chat_bubbles: ^1.5.0
+  chat_bubbles:
   firebase_storage: ^11.6.7
+  flutter_cart: ^0.0.8
+  flutter_reaction_button: ^3.0.0+3
+  emoji_picker_flutter:
+  pull_down_button: ^0.9.3
+
+
 
 dev_dependencies:
   flutter_test:

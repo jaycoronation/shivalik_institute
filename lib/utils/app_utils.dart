@@ -291,7 +291,7 @@ void launchCustomTab(BuildContext context,String url) async {
       ),
       safariVCOption: const tab.SafariViewControllerOption(
         preferredBarTintColor: black,
-        preferredControlTintColor: Colors.white,
+        preferredControlTintColor: white,
         barCollapsingEnabled: true,
         entersReaderIfAvailable: false,
         dismissButtonStyle: tab.SafariViewControllerDismissButtonStyle.close,

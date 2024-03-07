@@ -107,11 +107,13 @@ class _EnrollScreenState extends BaseState<EnrollScreen> {
                         hintText: 'Email',
                         counterText: "",
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(kEditTextCornerRadius),
-                            borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: gray)),
+                          borderRadius: BorderRadius.circular(kEditTextCornerRadius),
+                          borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: gray),
+                        ),
                         focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(kEditTextCornerRadius),
-                            borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: gray)),
+                          borderRadius: BorderRadius.circular(kEditTextCornerRadius),
+                          borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: gray),
+                        ),
                       ),
                     ),
                   ),
@@ -127,11 +129,13 @@ class _EnrollScreenState extends BaseState<EnrollScreen> {
                         hintText: 'Contact No',
                         counterText: "",
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(kEditTextCornerRadius),
-                            borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: gray)),
+                          borderRadius: BorderRadius.circular(kEditTextCornerRadius),
+                          borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: gray)
+                        ),
                         focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(kEditTextCornerRadius),
-                            borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: gray)),
+                          borderRadius: BorderRadius.circular(kEditTextCornerRadius),
+                          borderSide:  const BorderSide(width: 1, style: BorderStyle.solid, color: gray)
+                        ),
                       ),
                     ),
                   ),
@@ -164,7 +168,11 @@ class _EnrollScreenState extends BaseState<EnrollScreen> {
                                 margin: const EdgeInsets.only(right: 12),
                                 child: const Padding(
                                   padding: EdgeInsets.only(top: 10,bottom: 10),
-                                  child: SizedBox(width: 20,height: 20,child: CircularProgressIndicator(color: black,strokeWidth: 2)),
+                                  child: SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(color: black,strokeWidth: 2)
+                                  ),
                                 ),
                               ),
                             )
