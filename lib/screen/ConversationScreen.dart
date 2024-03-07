@@ -52,7 +52,6 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
 
       }
 
-
     //listBatchIds = sessionManager.getMainBatchId()?.split(",") ?? [];
 
     print("<><><><>");

@@ -155,10 +155,36 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                   {
                     // moveToBottom();
                     listMessages = [];
-                    var messages = snapshot.data!.docs;
+                    var messages = snapshot.data?.docs ?? [];
 
-                    for (var message in messages)
+                    for (var message in (snapshot.data?.docs ?? []))
                     {
+                      var isReactionAvailable = false;
+                      if (message.data().containsKey('reactions'))
+                        {
+                          isReactionAvailable = true;
+                        }
+
+                      for (var document in (snapshot.data?.docs ?? [])) {
+                        if (document.data().containsKey('reactions'))
+                        {
+                          // Access the value of the new field if it exists
+                          var fieldValue = document.data()['reactions'];
+
+
+                          print('IS CONTENT FILED ==== ${fieldValue}');
+
+                          // Your logic here using the fieldValue
+                        }
+                        else
+                        {
+                          print('IS CONTENT IS NOT AVAILABLE');
+                        }
+                      }
+
+
+
+                      checkReactions(snapshot);
                       var getSet = MessageSchema(
                         senderId: message['sender_id'],
                         sender: message['sender'],
@@ -168,7 +194,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                         documentId: message['document_id'] != null ? message['document_id'] ?? '' : '',
                         isEdited: message['is_edited'],
                         isDelete: message['is_delete'],
-                        timestamp: Timestamp.now()
+                        timestamp: Timestamp.now(),
+                        reactions: isReactionAvailable == true ? message['reactions'] : {}
                       );
                       listMessages.add(getSet);
                     }
@@ -183,8 +210,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                         final lastIndex = index < listMessages.length - 1 ? index + 1 : index;
 
                         final isDifferentDateNew = getDayFromTimestamp(listMessages[index].timestamp) != getDayFromTimestamp(listMessages[lastIndex].timestamp);
-
-                        print("isDifferentDateNew === ${isDifferentDateNew}");
 
                         return GestureDetector(
                           behavior: HitTestBehavior.opaque,
@@ -248,135 +273,566 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                 )
                               else
 
-                                Flexible(
-                                  child: sessionManager.getUserId() == listMessages[index].senderId
-                                      ? PullDownButton(
-                                    itemBuilder: (context) => [
-                                      PullDownMenuActionsRow.small(
-                                          items: [
-                                            PullDownMenuItem(
-                                              onTap: () {
-                                                setState(() {
-                                                  valueEmoji = '1';
-                                                });
-                                              },
-                                              title: '',
-                                              iconWidget: Image.asset('assets/images/ic_thum.png', width: 20, height: 20,),
-                                            ),
-                                            PullDownMenuItem(
-                                              onTap: () {
-                                                setState(() {
-                                                  valueEmoji = '2';
-                                                });
-                                              },
-                                              title: 'Copy',
-                                              iconWidget: Image.asset('assets/images/ic_heart.png', width: 20, height: 20,),
-                                            ),
-                                            PullDownMenuItem(
-                                              onTap: () {
-                                                setState(() {
-                                                  valueEmoji = '3';
-                                                });
-                                              },
-                                              title: 'Edit',
-                                              iconWidget: Image.asset('assets/images/ic_smile.png', width: 20, height: 20,),
-                                            ),
-                                            PullDownMenuItem(
-                                              onTap: () {
-                                                setState(() {
-                                                  valueEmoji = '4';
-                                                });
-                                              },
-                                              title: 'Edit',
-                                              iconWidget: Image.asset('assets/images/ic_emotional.png', width: 20, height: 20,),
-                                            ),
+                                sessionManager.getUserId() == listMessages[index].senderId
+                                    ? PullDownButton(
+                                      itemBuilder: (context) => [
+                                        PullDownMenuActionsRow.small(
+                                            items: [
+                                              PullDownMenuItem(
+                                                onTap: () {
+                                                  setState(() {
+                                                    valueEmoji = '1';
+                                                  });
+                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                },
+                                                title: '',
+                                                iconWidget: Image.asset('assets/images/ic_thum.png', width: 20, height: 20,),
+                                              ),
+                                              PullDownMenuItem(
+                                                onTap: () {
+                                                  setState(() {
+                                                    valueEmoji = '2';
+                                                  });
+                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                },
+                                                title: 'Copy',
+                                                iconWidget: Image.asset('assets/images/ic_heart.png', width: 20, height: 20,),
+                                              ),
+                                              PullDownMenuItem(
+                                                onTap: () {
+                                                  setState(() {
+                                                    valueEmoji = '3';
+                                                  });
+                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                },
+                                                title: 'Edit',
+                                                iconWidget: Image.asset('assets/images/ic_smile.png', width: 20, height: 20,),
+                                              ),
+                                              PullDownMenuItem(
+                                                onTap: () {
+                                                  setState(() {
+                                                    valueEmoji = '4';
+                                                  });
+                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                },
+                                                title: 'Edit',
+                                                iconWidget: Image.asset('assets/images/ic_emotional.png', width: 20, height: 20,),
+                                              ),
 
-                                          ]),
-                                      PullDownMenuItem(
-                                        title: 'Edit',
-                                        onTap: () async {
-                                          updateTxtBottomSheet(listMessages[index]);
-                                        },
+                                            ]
+                                        ),
+                                        PullDownMenuItem(
+                                          title: 'Edit',
+                                          icon: Icons.edit,
+                                          onTap: () async {
+                                            updateTxtBottomSheet(listMessages[index]);
+                                          },
 
+                                        ),
+                                        PullDownMenuItem(
+                                          title: 'Delete',
+                                          itemTheme: PullDownMenuItemTheme(textStyle: TextStyle(color: Colors.red)),
+                                          iconColor: Colors.red,
+                                          icon: Icons.delete_outline_rounded,
+                                          onTap: () {
+                                            deleteMessage(listMessages[index].documentId ?? '');
+                                          },
+                                        ),
+                                      ],
+                                      buttonBuilder: (context, showMenu) {
+                                        return GestureDetector(
+                                          onLongPress: showMenu,
+                                          child: listMessages[index].type == "media"
+                                              ? Container(
+                                            margin: EdgeInsets.only(top: 4, bottom: 4, left: sessionManager.getUserId() == listMessages[index].senderId  ? 50 : 12 , right: sessionManager.getUserId() == listMessages[index].senderId ? 12 : 50),
+                                            decoration: BoxDecoration(color: white, border: Border.all(color: white), borderRadius: BorderRadius.circular(8)),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                List<String> listImage = [];
+                                                listImage.add(listMessages[index].content.toString());
+
+                                                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                  return FullScreenImage("", listImage, index);
+                                                }));
+                                              },
+                                              child: Container(
+                                                margin: const EdgeInsets.all(5),
+                                                decoration: BoxDecoration(color: white, border: Border.all(color: white), borderRadius: BorderRadius.circular(8)),
+                                                width: MediaQuery.of(context).size.width,
+                                                padding: EdgeInsets.zero,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Visibility(
+                                                      visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                      child: Text(
+                                                        listMessages[index].sender ?? '',
+                                                        style: const TextStyle(
+                                                            color: graySemiDark,
+                                                            fontSize: 12,
+                                                            fontWeight: FontWeight.w500
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const Gap(6),
+                                                    listMessages[index].content?.isNotEmpty ?? false
+                                                        ? listMessages[index].content?.startsWith("https") ?? false
+                                                        ? FadeInImage.assetNetwork(
+                                                      image: listMessages[index].content.toString().trim(),
+                                                      fit: BoxFit.cover,
+                                                      placeholder: 'assets/images/cover_thumb.jpg',
+                                                      height: 140,
+                                                      width: MediaQuery.of(context).size.width,
+                                                    )
+                                                        : Image.file(File(listMessages[index].content ?? ''), fit: BoxFit.cover,height: 140,width: MediaQuery.of(context).size.width,)
+                                                        : Image.asset('assets/images/cover_thumb.jpg', fit: BoxFit.fill,height: 140,width: MediaQuery.of(context).size.width,),
+                                                    const Gap(6),
+                                                    Text(
+                                                      timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                      textAlign: TextAlign.end,
+                                                      style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                              : listMessages[index].type == "document"
+                                              ? GestureDetector(
+                                            behavior: HitTestBehavior.opaque,
+                                            onTap: () async {
+                                              if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
+                                              {
+                                                startActivity(context, PdfViewer(listMessages[index].content ?? '', '0'));
+                                              }
+                                              else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
+                                              {
+                                                if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                {
+                                                  launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                }
+                                              }
+                                              else
+                                              {
+                                                if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                {
+                                                  launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                }
+                                              }
+                                            },
+                                            child: Container(
+                                              margin: EdgeInsets.only(
+                                                  left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
+                                                  right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
+                                                  bottom: 6
+                                              ),
+                                              padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Visibility(
+                                                    visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                    child: Text(
+                                                      listMessages[index].sender ?? '',
+                                                      style: const TextStyle(
+                                                          color: graySemiDark,
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.w500
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const Gap(6),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: grayGradient,
+                                                      borderRadius: BorderRadius.circular(6),
+                                                    ),
+                                                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
+                                                        const Gap(8),
+                                                        Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
+                                                            Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  const Gap(6),
+                                                  Text(
+                                                    timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                    textAlign: TextAlign.end,
+                                                    style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                              : Container(
+                                            margin: EdgeInsets.only(
+                                                left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
+                                                right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
+                                                bottom: 6
+                                            ),
+                                            padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(6),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Visibility(
+                                                  visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                  child: Text(
+                                                    listMessages[index].sender ?? '',
+                                                    style: const TextStyle(
+                                                        color: graySemiDark,
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.w500
+                                                    ),
+                                                  ),
+                                                ),
+                                                Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
+                                                Text(
+                                                  listMessages[index].content ?? '',
+                                                  style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w500
+                                                  ),
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Visibility(
+                                                      visible: listMessages[index].isEdited ?? false,
+                                                      child: Row(
+                                                        children: [
+                                                          const Text(
+                                                            "Edited",
+                                                            textAlign: TextAlign.end,
+                                                            style: TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                          ),
+                                                          const Gap(4),
+                                                          Container(
+                                                            decoration: const BoxDecoration(shape: BoxShape.circle, color: graySemiDark),
+                                                            width: 4,
+                                                            height: 4,
+                                                          ),
+                                                          const Gap(4),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                      textAlign: TextAlign.end,
+                                                      style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                    ),
+
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                    : PullDownButton(
+                                      itemBuilder: (context) => [
+                                        PullDownMenuActionsRow.small(
+                                            items: [
+                                              PullDownMenuItem(
+                                                onTap: () {
+                                                  setState(() {
+                                                    valueEmoji = '1';
+                                                  });
+                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                },
+                                                title: '',
+                                                iconWidget: Image.asset('assets/images/ic_thum.png', width: 20, height: 20,),
+                                              ),
+                                              PullDownMenuItem(
+                                                onTap: () {
+                                                  setState(() {
+                                                    valueEmoji = '2';
+                                                  });
+                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                },
+                                                title: 'Copy',
+                                                iconWidget: Image.asset('assets/images/ic_heart.png', width: 20, height: 20,),
+                                              ),
+                                              PullDownMenuItem(
+                                                onTap: () {
+                                                  setState(() {
+                                                    valueEmoji = '3';
+                                                  });
+                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                },
+                                                title: 'Edit',
+                                                iconWidget: Image.asset('assets/images/ic_smile.png', width: 20, height: 20,),
+                                              ),
+                                              PullDownMenuItem(
+                                                onTap: () {
+                                                  setState(() {
+                                                    valueEmoji = '4';
+                                                  });
+                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                },
+                                                title: 'Edit',
+                                                iconWidget: Image.asset('assets/images/ic_emotional.png', width: 20, height: 20,),
+                                              ),
+                                            ]
+                                        ),
+                                      ],
+                                      buttonBuilder: (context, showMenu) {
+                                        return GestureDetector(
+                                          onLongPress: showMenu,
+                                          child: listMessages[index].type == "media"
+                                              ? Container(
+                                            margin: EdgeInsets.only(top: 4, bottom: 4, left: sessionManager.getUserId() == listMessages[index].senderId  ? 50 : 12 , right: sessionManager.getUserId() == listMessages[index].senderId ? 12 : 50),
+                                            decoration: BoxDecoration(color: white, border: Border.all(color: white), borderRadius: BorderRadius.circular(8)),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                List<String> listImage = [];
+                                                listImage.add(listMessages[index].content.toString());
+
+                                                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                  return FullScreenImage("", listImage, index);
+                                                }));
+                                              },
+                                              child: Container(
+                                                margin: const EdgeInsets.all(5),
+                                                decoration: BoxDecoration(color: white, border: Border.all(color: white), borderRadius: BorderRadius.circular(8)),
+                                                width: MediaQuery.of(context).size.width,
+                                                padding: EdgeInsets.zero,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Visibility(
+                                                      visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                      child: Text(
+                                                        listMessages[index].sender ?? '',
+                                                        style: const TextStyle(
+                                                            color: graySemiDark,
+                                                            fontSize: 12,
+                                                            fontWeight: FontWeight.w500
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const Gap(6),
+                                                    listMessages[index].content?.isNotEmpty ?? false
+                                                        ? listMessages[index].content?.startsWith("https") ?? false
+                                                        ? FadeInImage.assetNetwork(
+                                                      image: listMessages[index].content.toString().trim(),
+                                                      fit: BoxFit.cover,
+                                                      placeholder: 'assets/images/cover_thumb.jpg',
+                                                      height: 140,
+                                                      width: MediaQuery.of(context).size.width,
+                                                    )
+                                                        : Image.file(File(listMessages[index].content ?? ''), fit: BoxFit.cover,height: 140,width: MediaQuery.of(context).size.width,)
+                                                        : Image.asset('assets/images/cover_thumb.jpg', fit: BoxFit.fill,height: 140,width: MediaQuery.of(context).size.width,),
+                                                    const Gap(6),
+                                                    Text(
+                                                      timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                      textAlign: TextAlign.end,
+                                                      style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                              : listMessages[index].type == "document"
+                                              ? GestureDetector(
+                                            behavior: HitTestBehavior.opaque,
+                                            onTap: () async {
+                                              if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
+                                              {
+                                                startActivity(context, PdfViewer(listMessages[index].content ?? '', '0'));
+                                              }
+                                              else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
+                                              {
+                                                if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                {
+                                                  launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                }
+                                              }
+                                              else
+                                              {
+                                                if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                {
+                                                  launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                }
+                                              }
+                                            },
+                                            child: Container(
+                                              margin: EdgeInsets.only(
+                                                  left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
+                                                  right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
+                                                  bottom: 6
+                                              ),
+                                              padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Visibility(
+                                                    visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                    child: Text(
+                                                      listMessages[index].sender ?? '',
+                                                      style: const TextStyle(
+                                                          color: graySemiDark,
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.w500
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const Gap(6),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: grayGradient,
+                                                      borderRadius: BorderRadius.circular(6),
+                                                    ),
+                                                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
+                                                        const Gap(8),
+                                                        Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
+                                                            Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  const Gap(6),
+                                                  Text(
+                                                    timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                    textAlign: TextAlign.end,
+                                                    style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                              : Container(
+                                            margin: EdgeInsets.only(
+                                                left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
+                                                right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
+                                                bottom: 6
+                                            ),
+                                            padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(6),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Visibility(
+                                                  visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                  child: Text(
+                                                    listMessages[index].sender ?? '',
+                                                    style: const TextStyle(
+                                                        color: graySemiDark,
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.w500
+                                                    ),
+                                                  ),
+                                                ),
+                                                Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
+                                                Text(
+                                                  listMessages[index].content ?? '',
+                                                  style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w500
+                                                  ),
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Visibility(
+                                                      visible: listMessages[index].isEdited ?? false,
+                                                      child: Row(
+                                                        children: [
+                                                          const Text(
+                                                            "Edited",
+                                                            textAlign: TextAlign.end,
+                                                            style: TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                          ),
+                                                          const Gap(4),
+                                                          Container(
+                                                            decoration: const BoxDecoration(shape: BoxShape.circle, color: graySemiDark),
+                                                            width: 4,
+                                                            height: 4,
+                                                          ),
+                                                          const Gap(4),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                      textAlign: TextAlign.end,
+                                                      style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                    ),
+
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        );
+                                      },
+                                    ),
+                              listMessages[index].reactions?.isNotEmpty ?? false
+                                  ? Container(
+                                      padding: const EdgeInsets.all(6),
+                                      margin: const EdgeInsets.only(left: 16, right: 16),
+                                      decoration: const BoxDecoration(
+                                          color: grayLight,
+                                          shape: BoxShape.circle
                                       ),
-                                      PullDownMenuItem(
-                                        title: 'Delete',
-                                        onTap: () {
-                                          deleteMessage(listMessages[index].documentId ?? '');
-                                        },
-                                      ),
-                                    ],
-                                    buttonBuilder: (context, showMenu) {
-                                      return GestureDetector(
-                                        onLongPress: showMenu,
-                                        child: messageView(index),
-                                      );
-                                    },
+                                      child: Image.asset(getIconImage(listMessages[index].reactions ?? {}),width: 16,height: 16,)
                                   )
-                                      : PullDownButton(
-                                    itemBuilder: (context) => [
-                                      PullDownMenuActionsRow.small(
-                                          items: [
-                                            PullDownMenuItem(
-                                              onTap: () {
-                                                setState(() {
-                                                  valueEmoji = '1';
-                                                });
-                                              },
-                                              title: '',
-                                              iconWidget: Image.asset('assets/images/ic_thum.png', width: 20, height: 20,),
-                                            ),
-                                            PullDownMenuItem(
-                                              onTap: () {
-                                                setState(() {
-                                                  valueEmoji = '2';
-                                                });
-                                              },
-                                              title: 'Copy',
-                                              iconWidget: Image.asset('assets/images/ic_heart.png', width: 20, height: 20,),
-                                            ),
-                                            PullDownMenuItem(
-                                              onTap: () {
-                                                setState(() {
-                                                  valueEmoji = '3';
-                                                });
-                                              },
-                                              title: 'Edit',
-                                              iconWidget: Image.asset('assets/images/ic_smile.png', width: 20, height: 20,),
-                                            ),
-                                            PullDownMenuItem(
-                                              onTap: () {
-                                                setState(() {
-                                                  valueEmoji = '4';
-                                                });
-                                              },
-                                              title: 'Edit',
-                                              iconWidget: Image.asset('assets/images/ic_emotional.png', width: 20, height: 20,),
-                                            ),
-
-                                          ]),
-                                    ],
-                                    buttonBuilder: (context, showMenu) {
-                                      return GestureDetector(
-                                        onLongPress: showMenu,
-                                        child: messageView(index),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              // valueEmoji.isNotEmpty
-                              //     ? Container(
-                              //     padding: const EdgeInsets.all(6),
-                              //     margin: const EdgeInsets.only(left: 16, right: 16),
-                              //     decoration: const BoxDecoration(
-                              //         color: grayLight,
-                              //         shape: BoxShape.circle
-                              //     ),
-                              //     child: Image.asset(getIconImage(),width: 16,height: 16,)
-                              // )
-                              //     : Container(
-                              //   color: Colors.transparent,
-                              // ),
+                                  : Container(
+                                color: Colors.transparent,
+                              ),
                             ],
                           ),
                         );
@@ -481,6 +937,26 @@ class _ChatScreenState extends BaseState<ChatScreen> {
         ],
       ),
     );
+  }
+
+  void checkReactions(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
+    // Assuming you're fetching documents and iterating over them
+    for (var document in (snapshot.data?.docs ?? [])) {
+      if (document.data().containsKey('reactions'))
+      {
+        // Access the value of the new field if it exists
+        var fieldValue = document.data()['reactions'];
+
+
+        print('IS CONTENT FILED ==== ${fieldValue}');
+
+        // Your logic here using the fieldValue
+      }
+      else
+      {
+        print('IS CONTENT IS NOT AVAILABLE');
+      }
+    }
   }
 
   void moveToBottom(){
@@ -911,8 +1387,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
     await updateMemberDataOnFireBase(content,type);
 
-
-
   }
 
   updateMemberDataOnFireBase(String taskComment,String type) async {
@@ -933,6 +1407,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
         .doc(sessionManager.getBatchId());
 
     await groupDocRef.update(updateData);
+  }
+
+  Future<void> addReaction(String messageId, String userId, String reaction) async {
+    DocumentReference messageRef = firestoreInstance.collection(batch).doc(sessionManager.getBatchId()).collection(messages).doc(messageId);
+
+    messageRef.update({
+      'reactions.$userId': reaction,
+    });
   }
 
   sendNotificationToUser(String msg) async {
@@ -1046,7 +1528,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     }
   }
 
-
   _getPeoplesList() async {
 
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
@@ -1091,8 +1572,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     }
   }
 
-  String getIconImage(){
+  String getIconImage(Map<String, dynamic> reactions){
     String emoji = '';
+    String valueEmoji = '';
+
+    for (var key in reactions.values)
+      {
+        valueEmoji = key;
+      }
 
     if (valueEmoji == '1')
     {

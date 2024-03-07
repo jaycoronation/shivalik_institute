@@ -123,7 +123,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     getCaseStudyList(true);
     getDeviceToken();
     getBlogList();
-    getPendingFeedbacks();
+    //getPendingFeedbacks();
     getBatchData();
 
     FirebaseMessaging.onMessage.listen((message) {
