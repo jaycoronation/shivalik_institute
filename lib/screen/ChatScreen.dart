@@ -166,25 +166,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                           isReactionAvailable = true;
                         }
 
-                      for (var document in (snapshot.data?.docs ?? [])) {
-                        if (document.data().containsKey('reactions'))
-                        {
-                          // Access the value of the new field if it exists
-                          var fieldValue = document.data()['reactions'];
-
-
-                          print('IS CONTENT FILED ==== ${fieldValue}');
-
-                          // Your logic here using the fieldValue
-                        }
-                        else
-                        {
-                          print('IS CONTENT IS NOT AVAILABLE');
-                        }
-                      }
-
-
-
                       checkReactions(snapshot);
                       var getSet = MessageSchema(
                         senderId: message['sender_id'],
@@ -1491,21 +1472,64 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     await groupDocRef.update(updateData);
   }
 
-  // Future<void> addReaction(String messageId, String userId, String reaction) async {
-  //   DocumentReference messageRef = firestoreInstance.collection(batch).doc(sessionManager.getBatchId()).collection(messages).doc(messageId);
-  //
-  //   messageRef.update({
-  //     'reactions.$userId': reaction,
-  //   });
-  // }
+  Future<void> addReaction(String messageId, ReactionModel updatedReaction) async {
 
-  void addReaction(String messageId, ReactionModel reaction) {
     // Reference to the message document
     DocumentReference messageRef = firestoreInstance.collection(batch).doc(sessionManager.getBatchId()).collection(messages).doc(messageId);
+
+    // Retrieve the current reactions from Firestore
+
+    DocumentSnapshot messageSnapshot = await messageRef.get();
+    Map<String, dynamic>? data = messageSnapshot.data() as Map<String, dynamic>?;
+
+    // Check if the document contains the "reactions" field
+    List<dynamic> reactions = data?['reactions'] ?? [];
+
+    // Check if the user has already reacted
+    bool userAlreadyReacted = reactions.any((reaction) => reaction['userId'] == updatedReaction.userId);
+
+    if (userAlreadyReacted) {
+      // If the user has already reacted, update the reaction
+      reactions = reactions.map((reaction) {
+        if (reaction['userId'] == updatedReaction.userId) {
+          return updatedReaction.toMap();
+        }
+        return reaction;
+      }).toList();
+    } else {
+      // If the user has not reacted yet, add a new reaction to the reactions array
+      reactions.add(updatedReaction.toMap());
+    }
+
     // Update the reactions array in the message document
-    messageRef.update({
-      'reactions': FieldValue.arrayUnion([reaction.toMap()]),
-    });
+    await messageRef.set({'reactions': reactions}, SetOptions(merge: true));
+  }
+
+  Future<void> removeReaction(String messageId, String userId) async {
+    // Reference to the message document
+    DocumentReference messageRef =
+    FirebaseFirestore.instance.collection('messages').doc(messageId);
+
+    // Retrieve the current reactions from Firestore
+    DocumentSnapshot messageSnapshot = await messageRef.get();
+    Map<String, dynamic>? data = messageSnapshot.data() as Map<String, dynamic>?;
+
+    // Check if the document contains the "reactions" field
+    List<dynamic> reactions = data?['reactions'] ?? [];
+
+    if (reactions != null) {
+      // Find the index of the reaction corresponding to the user ID
+      int index = reactions.indexWhere(
+              (reaction) => reaction['userId'] == userId);
+
+      if (index != -1) {
+        // Remove the reaction at the specified index
+        reactions.removeAt(index);
+
+        // Update the reactions array in the message document
+        await messageRef.update({'reactions': reactions});
+      }
+    }
   }
 
   sendNotificationToUser(String msg) async {
@@ -1994,31 +2018,5 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       },
     );
   }
-
-/*
-  Future<void> updateOrAddReaction(String messageId, ReactionModel updatedReaction) async {
-    // Reference to the message document
-    DocumentReference messageRef = firestoreInstance.collection(batch).doc(sessionManager.getBatchId()).collection(messages).doc(messageId);
-
-    // Retrieve the current reactions from Firestore
-    DocumentSnapshot messageSnapshot = await messageRef.get();
-    List<dynamic> reactions = messageSnapshot.data()['reactions'] ?? [];
-
-    // Find the reaction index corresponding to the user ID
-    int index = reactions.indexWhere(
-            (reaction) => reaction['userId'] == updatedReaction.userId);
-
-    if (index != -1) {
-      // If the user has already reacted, update the reaction at the specified index
-      reactions[index] = updatedReaction.toMap();
-    } else {
-      // If the user has not reacted yet, add a new reaction to the reactions array
-      reactions.add(updatedReaction.toMap());
-    }
-
-    // Update the reactions array in the message document
-    await messageRef.set({'reactions': reactions}, SetOptions(merge: true));
-  }
-*/
 
 }
