@@ -28,6 +28,7 @@ import '../constant/colors.dart';
 import '../constant/firebase_constant.dart';
 import '../model/DeviceTokenResponseModel.dart';
 import '../model/GroupResponseModel.dart';
+import '../model/ReactionModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../utils/full_screen_image.dart';
@@ -48,6 +49,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   TextEditingController replyController = TextEditingController();
 
   List<MessageSchema> listMessages = [];
+  // List<ReactionModel> listReaction = [];
   List<DeviceTokens> listDeviceTokens = [];
   bool isSendButtonVisible = false;
   String selectedMedia = '';
@@ -84,7 +86,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       icon: Image.asset('assets/images/ic_hund.png', width: 20, height: 20,),
     ),
   ];
-
 
   @override
   void initState(){
@@ -195,7 +196,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                         isEdited: message['is_edited'],
                         isDelete: message['is_delete'],
                         timestamp: Timestamp.now(),
-                        reactions: isReactionAvailable == true ? message['reactions'] : {}
+                        reactions: isReactionAvailable == true ? message['reactions'] : []
                       );
                       listMessages.add(getSet);
                     }
@@ -283,7 +284,15 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   setState(() {
                                                     valueEmoji = '1';
                                                   });
-                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+
+                                                  var reaction = ReactionModel(
+                                                    userId: sessionManager.getUserId().toString(),
+                                                    profilePicUrl: sessionManager.getProfilePic().toString(),
+                                                    reactionIcon: valueEmoji,
+                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                                                  );
+
+                                                  addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: '',
                                                 iconWidget: Image.asset('assets/images/ic_thum.png', width: 20, height: 20,),
@@ -293,7 +302,15 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   setState(() {
                                                     valueEmoji = '2';
                                                   });
-                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                  var reaction = ReactionModel(
+                                                    userId: sessionManager.getUserId().toString(),
+                                                    profilePicUrl: sessionManager.getProfilePic().toString(),
+                                                    reactionIcon: valueEmoji,
+                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+
+                                                  );
+
+                                                  addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: 'Copy',
                                                 iconWidget: Image.asset('assets/images/ic_heart.png', width: 20, height: 20,),
@@ -303,7 +320,15 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   setState(() {
                                                     valueEmoji = '3';
                                                   });
-                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                  var reaction = ReactionModel(
+                                                    userId: sessionManager.getUserId().toString(),
+                                                    profilePicUrl: sessionManager.getProfilePic().toString(),
+                                                    reactionIcon: valueEmoji,
+                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+
+                                                  );
+
+                                                  addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: 'Edit',
                                                 iconWidget: Image.asset('assets/images/ic_smile.png', width: 20, height: 20,),
@@ -313,7 +338,15 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   setState(() {
                                                     valueEmoji = '4';
                                                   });
-                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                  var reaction = ReactionModel(
+                                                    userId: sessionManager.getUserId().toString(),
+                                                    profilePicUrl: sessionManager.getProfilePic().toString(),
+                                                    reactionIcon: valueEmoji,
+                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+
+                                                  );
+
+                                                  addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: 'Edit',
                                                 iconWidget: Image.asset('assets/images/ic_emotional.png', width: 20, height: 20,),
@@ -565,7 +598,15 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   setState(() {
                                                     valueEmoji = '1';
                                                   });
-                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                  var reaction = ReactionModel(
+                                                    userId: sessionManager.getUserId().toString(),
+                                                    profilePicUrl: sessionManager.getProfilePic().toString(),
+                                                    reactionIcon: valueEmoji,
+                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+
+                                                  );
+
+                                                  addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: '',
                                                 iconWidget: Image.asset('assets/images/ic_thum.png', width: 20, height: 20,),
@@ -575,7 +616,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   setState(() {
                                                     valueEmoji = '2';
                                                   });
-                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                  var reaction = ReactionModel(
+                                                    userId: sessionManager.getUserId().toString(),
+                                                    profilePicUrl: sessionManager.getProfilePic().toString(),
+                                                    reactionIcon: valueEmoji,
+                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                                                  );
+
+                                                  addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: 'Copy',
                                                 iconWidget: Image.asset('assets/images/ic_heart.png', width: 20, height: 20,),
@@ -585,7 +633,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   setState(() {
                                                     valueEmoji = '3';
                                                   });
-                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                  var reaction = ReactionModel(
+                                                    userId: sessionManager.getUserId().toString(),
+                                                    profilePicUrl: sessionManager.getProfilePic().toString(),
+                                                    reactionIcon: valueEmoji,
+                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                                                  );
+
+                                                  addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: 'Edit',
                                                 iconWidget: Image.asset('assets/images/ic_smile.png', width: 20, height: 20,),
@@ -595,7 +650,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   setState(() {
                                                     valueEmoji = '4';
                                                   });
-                                                  addReaction(listMessages[index].documentId.toString(),sessionManager.getUserId().toString(),valueEmoji);
+                                                  var reaction = ReactionModel(
+                                                    userId: sessionManager.getUserId().toString(),
+                                                    profilePicUrl: sessionManager.getProfilePic().toString(),
+                                                    reactionIcon: valueEmoji,
+                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                                                  );
+
+                                                  addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: 'Edit',
                                                 iconWidget: Image.asset('assets/images/ic_emotional.png', width: 20, height: 20,),
@@ -662,92 +724,30 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                               ),
                                             ),
                                           )
-                                              : listMessages[index].type == "document"
-                                              ? GestureDetector(
-                                            behavior: HitTestBehavior.opaque,
-                                            onTap: () async {
-                                              if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
-                                              {
-                                                startActivity(context, PdfViewer(listMessages[index].content ?? '', '0'));
-                                              }
-                                              else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
-                                              {
-                                                if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                            : listMessages[index].type == "document"
+                                            ? GestureDetector(
+                                              behavior: HitTestBehavior.opaque,
+                                              onTap: () async {
+                                                if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
                                                 {
-                                                  launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                  startActivity(context, PdfViewer(listMessages[index].content ?? '', '0'));
                                                 }
-                                              }
-                                              else
-                                              {
-                                                if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
                                                 {
-                                                  launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                  if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                  {
+                                                    launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                  }
                                                 }
-                                              }
-                                            },
-                                            child: Container(
-                                              margin: EdgeInsets.only(
-                                                  left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
-                                                  right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
-                                                  bottom: 6
-                                              ),
-                                              padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(6),
-                                              ),
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Visibility(
-                                                    visible: listMessages[index].senderId != sessionManager.getUserId(),
-                                                    child: Text(
-                                                      listMessages[index].sender ?? '',
-                                                      style: const TextStyle(
-                                                          color: graySemiDark,
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const Gap(6),
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      color: grayGradient,
-                                                      borderRadius: BorderRadius.circular(6),
-                                                    ),
-                                                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      children: [
-                                                        Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
-                                                        const Gap(8),
-                                                        Column(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
-                                                            Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const Gap(6),
-                                                  Text(
-                                                    timeStampToDateTimeForMsg(listMessages[index].timestamp),
-                                                    textAlign: TextAlign.end,
-                                                    style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                              : Container(
+                                                else
+                                                {
+                                                  if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                  {
+                                                    launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                  }
+                                                }
+                                              },
+                                          child: Container(
                                             margin: EdgeInsets.only(
                                                 left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
                                                 right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
@@ -761,6 +761,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                             child: Column(
                                               mainAxisAlignment: MainAxisAlignment.start,
                                               crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Visibility(
                                                   visible: listMessages[index].senderId != sessionManager.getUserId(),
@@ -773,65 +774,132 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                     ),
                                                   ),
                                                 ),
-                                                Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
-                                                Text(
-                                                  listMessages[index].content ?? '',
-                                                  style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w500
+                                                const Gap(6),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: grayGradient,
+                                                    borderRadius: BorderRadius.circular(6),
+                                                  ),
+                                                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
+                                                      const Gap(8),
+                                                      Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
+                                                          Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
+                                                        ],
+                                                      )
+                                                    ],
                                                   ),
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.end,
-                                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    Visibility(
-                                                      visible: listMessages[index].isEdited ?? false,
-                                                      child: Row(
-                                                        children: [
-                                                          const Text(
-                                                            "Edited",
-                                                            textAlign: TextAlign.end,
-                                                            style: TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-                                                          ),
-                                                          const Gap(4),
-                                                          Container(
-                                                            decoration: const BoxDecoration(shape: BoxShape.circle, color: graySemiDark),
-                                                            width: 4,
-                                                            height: 4,
-                                                          ),
-                                                          const Gap(4),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      timeStampToDateTimeForMsg(listMessages[index].timestamp),
-                                                      textAlign: TextAlign.end,
-                                                      style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-                                                    ),
-
-                                                  ],
+                                                const Gap(6),
+                                                Text(
+                                                  timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                  textAlign: TextAlign.end,
+                                                  style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
                                                 )
                                               ],
                                             ),
-                                          )
+                                          ),
+                                        )
+                                            : Container(
+                                              margin: EdgeInsets.only(
+                                                  left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
+                                                  right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
+                                                  bottom: 6
+                                              ),
+                                              padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Visibility(
+                                                    visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                    child: Text(
+                                                      listMessages[index].sender ?? '',
+                                                      style: const TextStyle(
+                                                          color: graySemiDark,
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.w500
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
+                                                  Text(
+                                                    listMessages[index].content ?? '',
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w500
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Visibility(
+                                                        visible: listMessages[index].isEdited ?? false,
+                                                        child: Row(
+                                                          children: [
+                                                            const Text(
+                                                              "Edited",
+                                                              textAlign: TextAlign.end,
+                                                              style: TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                            ),
+                                                            const Gap(4),
+                                                            Container(
+                                                              decoration: const BoxDecoration(shape: BoxShape.circle, color: graySemiDark),
+                                                              width: 4,
+                                                              height: 4,
+                                                            ),
+                                                            const Gap(4),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                        textAlign: TextAlign.end,
+                                                        style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                      ),
+
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                        )
                                         );
                                       },
                                     ),
                               listMessages[index].reactions?.isNotEmpty ?? false
-                                  ? Container(
-                                      padding: const EdgeInsets.all(6),
-                                      margin: const EdgeInsets.only(left: 16, right: 16),
-                                      decoration: const BoxDecoration(
-                                          color: grayLight,
-                                          shape: BoxShape.circle
-                                      ),
-                                      child: Image.asset(getIconImage(listMessages[index].reactions ?? {}),width: 16,height: 16,)
+                                  ? GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: (){
+                                        openReactionBottomSheet();
+                                      },
+                                    child: Container(
+                                        padding: const EdgeInsets.all(6),
+                                        margin: const EdgeInsets.only(left: 16, right: 16),
+                                        decoration: const BoxDecoration(
+                                            color: grayLight,
+                                            shape: BoxShape.circle
+                                        ),
+                                        child: Image.asset(getIconImage(listMessages[index].reactions ?? []),width: 16,height: 16,)
+                                    ),
                                   )
                                   : Container(
-                                color: Colors.transparent,
+                                    color: Colors.transparent,
                               ),
                             ],
                           ),
@@ -1132,6 +1200,20 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     }
   }
 
+  deleteReaction(String messageId, String userId, String reaction) async {
+    try {
+      await FirebaseFirestore.instance
+        .collection(batch)
+        .doc(sessionManager.getBatchId())
+        .collection(messages)
+        .doc(reaction)
+        .delete();
+      print('Message deleted successfully');
+    } catch (e) {
+      print('Error deleted message: $e');
+    }
+  }
+
   void _showActionDialog() {
     showModalBottomSheet<void>(
       context: context,
@@ -1409,11 +1491,20 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     await groupDocRef.update(updateData);
   }
 
-  Future<void> addReaction(String messageId, String userId, String reaction) async {
-    DocumentReference messageRef = firestoreInstance.collection(batch).doc(sessionManager.getBatchId()).collection(messages).doc(messageId);
+  // Future<void> addReaction(String messageId, String userId, String reaction) async {
+  //   DocumentReference messageRef = firestoreInstance.collection(batch).doc(sessionManager.getBatchId()).collection(messages).doc(messageId);
+  //
+  //   messageRef.update({
+  //     'reactions.$userId': reaction,
+  //   });
+  // }
 
+  void addReaction(String messageId, ReactionModel reaction) {
+    // Reference to the message document
+    DocumentReference messageRef = firestoreInstance.collection(batch).doc(sessionManager.getBatchId()).collection(messages).doc(messageId);
+    // Update the reactions array in the message document
     messageRef.update({
-      'reactions.$userId': reaction,
+      'reactions': FieldValue.arrayUnion([reaction.toMap()]),
     });
   }
 
@@ -1572,13 +1663,17 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     }
   }
 
-  String getIconImage(Map<String, dynamic> reactions){
+  String getIconImage(List<dynamic> listReactions){
     String emoji = '';
     String valueEmoji = '';
+    List<ReactionModel> listReactionsTemp = [];
 
-    for (var key in reactions.values)
+    for (var i=0; i < listReactions.length; i++)
       {
-        valueEmoji = key;
+        if (i == 0)
+          {
+            valueEmoji = listReactions[i]['reactionIcon'];
+          }
       }
 
     if (valueEmoji == '1')
@@ -1822,5 +1917,108 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       ),
     );
   }
+
+  void openReactionBottomSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20)
+          )
+      ),
+      backgroundColor: white,
+      // barrierColor: Colors.white,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.88),
+              child: SingleChildScrollView(
+                child: Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 12,left: 12,right: 12,bottom: MediaQuery.of(context).viewInsets.bottom),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(height: 8,),
+                          Center(
+                            child: Container(
+                                height: 2,
+                                width: 40,
+                                color: black,
+                                margin: const EdgeInsets.only(bottom: 12)
+                            ),
+                          ),
+                          ListView.builder(
+                            // scrollDirection: Axis.horizontal,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: 4,
+                            itemBuilder: (context, index) {
+                               return Column(
+                                 children: [
+                                   Row(
+                                     children: [
+                                       Image.asset('assets/images/ic_user_placeholder.png', width: 36, height: 36,),
+                                       const Gap(12),
+                                       const Expanded(child: Text("Pratiksha Panchal",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),)),
+                                       Image.asset('assets/images/ic_user_placeholder.png', width: 20, height: 20,),
+                                     ],
+                                   ),
+                                   const Gap(8),
+                                   const Divider(
+                                     height: 0.5,
+                                     thickness: 0.5,
+                                     color: grayLight,
+                                   ),
+                                   const Gap(8),
+                                 ],
+                               );
+                              },
+                          ),
+                          const Gap(12),
+                        ],
+                      ),
+                    )
+
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+/*
+  Future<void> updateOrAddReaction(String messageId, ReactionModel updatedReaction) async {
+    // Reference to the message document
+    DocumentReference messageRef = firestoreInstance.collection(batch).doc(sessionManager.getBatchId()).collection(messages).doc(messageId);
+
+    // Retrieve the current reactions from Firestore
+    DocumentSnapshot messageSnapshot = await messageRef.get();
+    List<dynamic> reactions = messageSnapshot.data()['reactions'] ?? [];
+
+    // Find the reaction index corresponding to the user ID
+    int index = reactions.indexWhere(
+            (reaction) => reaction['userId'] == updatedReaction.userId);
+
+    if (index != -1) {
+      // If the user has already reacted, update the reaction at the specified index
+      reactions[index] = updatedReaction.toMap();
+    } else {
+      // If the user has not reacted yet, add a new reaction to the reactions array
+      reactions.add(updatedReaction.toMap());
+    }
+
+    // Update the reactions array in the message document
+    await messageRef.set({'reactions': reactions}, SetOptions(merge: true));
+  }
+*/
 
 }

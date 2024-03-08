@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shivalik_institute/model/ReactionModel.dart';
 /// sender : "Jay Mistry"
 /// sender_id : "96"
 /// content : "Hi this is jay mistry"
@@ -20,7 +21,7 @@ class MessageSchema {
       String? passedDateFormate,
       bool? isEdited,
       bool? isDelete,
-      Map<String,dynamic>? reactions,
+      List<dynamic>? reactions,
       Timestamp? timestamp,}){
     _sender = sender;
     _senderId = senderId;
@@ -54,7 +55,7 @@ class MessageSchema {
   String? _passedDateFormate;
   bool? _isEdited;
   bool? _isDelete;
-  Map<String,dynamic>? _reactions;
+  List<dynamic>? _reactions;
   Timestamp? _timestamp;
 MessageSchema copyWith({  String? sender,
   String? senderId,
@@ -64,7 +65,7 @@ MessageSchema copyWith({  String? sender,
   String? documentId,
   String? passedDateFormate,
   bool? isEdited,
-  Map<String,dynamic>? reactions,
+  List<dynamic>? reactions,
   bool? isDelete,
   Timestamp? timestamp,
 }) => MessageSchema(  sender: sender ?? _sender,
@@ -88,7 +89,7 @@ MessageSchema copyWith({  String? sender,
   String? get passedDateFormate => _passedDateFormate;
   bool? get isEdited => _isEdited;
   bool? get isDelete => _isDelete;
-  Map<String,dynamic>? get reactions => _reactions;
+  List<dynamic>? get reactions => _reactions;
   Timestamp? get timestamp => _timestamp;
 
   Map<String, dynamic> toJson() {
