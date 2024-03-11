@@ -68,6 +68,7 @@ import 'MyProfileScreen.dart';
 import '../common_widget/no_data_new.dart';
 import 'ResourceCenterClassScreen.dart';
 import '../model/UserProfileResponseModel.dart';
+import 'EmojiBottomsheetScreen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -319,7 +320,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                           width: double.infinity,
                           height: 50.0,
                           margin: const EdgeInsets.only(top: 16,right: 16,left: 16),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             shape: BoxShape.rectangle,
                             color: Colors.white,
                           ),
@@ -328,7 +329,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                           width: double.infinity,
                           height: 50.0,
                           margin: const EdgeInsets.only(top: 16,right: 16,left: 16),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             shape: BoxShape.rectangle,
                             color: Colors.white,
                           ),
@@ -337,7 +338,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                           width: double.infinity,
                           height: 50.0,
                           margin: const EdgeInsets.only(top: 16,right: 16,left: 16),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             shape: BoxShape.rectangle,
                             color: Colors.white,
                           ),
@@ -1656,9 +1657,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 listSubmission.add(listModule[i]);
               }
           }
-
       }
-
   }
 
   Future<void> getCaseStudyList(bool isFirstTime) async {
@@ -1814,7 +1813,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
           listCalenderDataTemp.sort((a, b) => DateFormat("dd-MM-yyyy").parse(a.date.toString()).compareTo(DateFormat("dd-MM-yyyy").parse(b.date.toString())),);
 
-          listCalenderData = listCalenderDataTemp.where((date) => !DateFormat("dd-MM-yyyy").parse(date.date.toString()).isBefore(DateTime.now().subtract(Duration(days: 1)))).toList();
+          listCalenderData = listCalenderDataTemp.where((date) => !DateFormat("dd-MM-yyyy").parse(date.date.toString()).isBefore(DateTime.now().subtract(const Duration(days: 1)))).toList();
           //listCalenderData = listCalenderDataTemp;
 
           /*int selectedIndex = 0;

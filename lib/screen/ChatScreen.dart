@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,6 +34,7 @@ import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../utils/full_screen_image.dart';
 import '../utils/pdf_viewer.dart';
+import 'EmojiBottomsheetScreen.dart';
 import 'GroupProfileScreen.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -49,7 +51,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   TextEditingController replyController = TextEditingController();
 
   List<MessageSchema> listMessages = [];
-  // List<ReactionModel> listReaction = [];
+  List<ReactionModel> listReaction = [];
   List<DeviceTokens> listDeviceTokens = [];
   bool isSendButtonVisible = false;
   String selectedMedia = '';
@@ -140,7 +142,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       body: Column(
         children: [
           const Gap(12),
-          Expanded(
+          Expanded (
             child: StreamBuilder<QuerySnapshot>(
               stream: messagesStream,
               builder: (context, snapshot) {
@@ -192,6 +194,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                         final lastIndex = index < listMessages.length - 1 ? index + 1 : index;
 
                         final isDifferentDateNew = getDayFromTimestamp(listMessages[index].timestamp) != getDayFromTimestamp(listMessages[lastIndex].timestamp);
+                        listReaction = listMessages[index].reactions?.map((dynamic item) {
+                          return ReactionModel(
+                            userName: item["userName"],
+                            profilePicUrl: item["profilePicUrl"],
+                            reactionIcon: item["reactionIcon"],
+                            userId: item["userId"],
+                          );
+                        }).toList() ?? [];
 
                         return GestureDetector(
                           behavior: HitTestBehavior.opaque,
@@ -263,7 +273,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                               PullDownMenuItem(
                                                 onTap: () {
                                                   setState(() {
-                                                    valueEmoji = '1';
+                                                    valueEmoji = '👍';
                                                   });
 
                                                   var reaction = ReactionModel(
@@ -275,13 +285,13 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
-                                                title: '',
-                                                iconWidget: Image.asset('assets/images/ic_thum.png', width: 20, height: 20,),
+                                                title: '👍',
+                                                iconWidget:  Text('👍',),
                                               ),
                                               PullDownMenuItem(
                                                 onTap: () {
                                                   setState(() {
-                                                    valueEmoji = '2';
+                                                    valueEmoji = '❤️';
                                                   });
                                                   var reaction = ReactionModel(
                                                     userId: sessionManager.getUserId().toString(),
@@ -293,13 +303,13 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
-                                                title: 'Copy',
-                                                iconWidget: Image.asset('assets/images/ic_heart.png', width: 20, height: 20,),
+                                                title: '❤️',
+                                                iconWidget: Text('❤️',),
                                               ),
                                               PullDownMenuItem(
                                                 onTap: () {
                                                   setState(() {
-                                                    valueEmoji = '3';
+                                                    valueEmoji =  '😂';
                                                   });
                                                   var reaction = ReactionModel(
                                                     userId: sessionManager.getUserId().toString(),
@@ -310,27 +320,30 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   );
 
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
+                                                },
+                                                title: '😂',
+                                                iconWidget: Text('😂',),
+                                              ),
+                                              PullDownMenuItem(
+                                                onTap: () {
+                                                  // setState(() {
+                                                  //   valueEmoji = '4';
+                                                  // });
+                                                  // var reaction = ReactionModel(
+                                                  //   userId: sessionManager.getUserId().toString(),
+                                                  //   profilePicUrl: sessionManager.getProfilePic().toString(),
+                                                  //   reactionIcon: valueEmoji,
+                                                  //   userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                                                  //
+                                                  // );
+
+                                                  // addReaction(listMessages[index].documentId.toString(),reaction);
+
+                                                  openEmojiBottomSheet(listMessages[index]);
+
                                                 },
                                                 title: 'Edit',
-                                                iconWidget: Image.asset('assets/images/ic_smile.png', width: 20, height: 20,),
-                                              ),
-                                              PullDownMenuItem(
-                                                onTap: () {
-                                                  setState(() {
-                                                    valueEmoji = '4';
-                                                  });
-                                                  var reaction = ReactionModel(
-                                                    userId: sessionManager.getUserId().toString(),
-                                                    profilePicUrl: sessionManager.getProfilePic().toString(),
-                                                    reactionIcon: valueEmoji,
-                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
-
-                                                  );
-
-                                                  addReaction(listMessages[index].documentId.toString(),reaction);
-                                                },
-                                                title: 'Edit',
-                                                iconWidget: Image.asset('assets/images/ic_emotional.png', width: 20, height: 20,),
+                                                iconWidget: Image.asset('assets/images/ic_add.png', width: 20, height: 20, color: grayDarkNew,),
                                               ),
 
                                             ]
@@ -577,7 +590,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                               PullDownMenuItem(
                                                 onTap: () {
                                                   setState(() {
-                                                    valueEmoji = '1';
+                                                    valueEmoji = '👍';
                                                   });
                                                   var reaction = ReactionModel(
                                                     userId: sessionManager.getUserId().toString(),
@@ -589,13 +602,13 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
-                                                title: '',
-                                                iconWidget: Image.asset('assets/images/ic_thum.png', width: 20, height: 20,),
+                                                title: '👍',
+                                                iconWidget: Text('👍',),
                                               ),
                                               PullDownMenuItem(
                                                 onTap: () {
                                                   setState(() {
-                                                    valueEmoji = '2';
+                                                    valueEmoji = '❤️';
                                                   });
                                                   var reaction = ReactionModel(
                                                     userId: sessionManager.getUserId().toString(),
@@ -606,13 +619,13 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
-                                                title: 'Copy',
-                                                iconWidget: Image.asset('assets/images/ic_heart.png', width: 20, height: 20,),
+                                                title: '❤️',
+                                                iconWidget: Text('❤️',),
                                               ),
                                               PullDownMenuItem(
                                                 onTap: () {
                                                   setState(() {
-                                                    valueEmoji = '3';
+                                                    valueEmoji = '😂';
                                                   });
                                                   var reaction = ReactionModel(
                                                     userId: sessionManager.getUserId().toString(),
@@ -622,26 +635,27 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   );
 
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
+                                                },
+                                                title: '😂',
+                                                iconWidget: Text('😂'),
+                                              ),
+                                              PullDownMenuItem(
+                                                onTap: () {
+                                                  // setState(() {
+                                                  //   valueEmoji = '4';
+                                                  // });
+                                                  // var reaction = ReactionModel(
+                                                  //   userId: sessionManager.getUserId().toString(),
+                                                  //   profilePicUrl: sessionManager.getProfilePic().toString(),
+                                                  //   reactionIcon: valueEmoji,
+                                                  //   userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                                                  // );
+                                                  //
+                                                  // addReaction(listMessages[index].documentId.toString(),reaction);
+                                                  openEmojiBottomSheet(listMessages[index]);
                                                 },
                                                 title: 'Edit',
-                                                iconWidget: Image.asset('assets/images/ic_smile.png', width: 20, height: 20,),
-                                              ),
-                                              PullDownMenuItem(
-                                                onTap: () {
-                                                  setState(() {
-                                                    valueEmoji = '4';
-                                                  });
-                                                  var reaction = ReactionModel(
-                                                    userId: sessionManager.getUserId().toString(),
-                                                    profilePicUrl: sessionManager.getProfilePic().toString(),
-                                                    reactionIcon: valueEmoji,
-                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
-                                                  );
-
-                                                  addReaction(listMessages[index].documentId.toString(),reaction);
-                                                },
-                                                title: 'Edit',
-                                                iconWidget: Image.asset('assets/images/ic_emotional.png', width: 20, height: 20,),
+                                                iconWidget: Image.asset('assets/images/ic_add.png', width: 20, height: 20,color: grayDarkNew,),
                                               ),
                                             ]
                                         ),
@@ -867,16 +881,28 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                   ? GestureDetector(
                                       behavior: HitTestBehavior.opaque,
                                       onTap: (){
-                                        openReactionBottomSheet();
+                                        print("message lstttt${listMessages[index].reactions}");
+
+                                        listReaction = listMessages[index].reactions?.map((dynamic item) {
+                                          return ReactionModel(
+                                            userName: item["userName"],
+                                            profilePicUrl: item["profilePicUrl"],
+                                            reactionIcon: item["reactionIcon"],
+                                            userId: item["userId"],
+                                          );
+                                        }).toList() ?? [];
+
+                                        openReactionBottomSheet(listMessages[index].documentId ?? "");
                                       },
                                     child: Container(
                                         padding: const EdgeInsets.all(6),
-                                        margin: const EdgeInsets.only(left: 16, right: 16),
-                                        decoration: const BoxDecoration(
+                                        margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                                        decoration: BoxDecoration(
                                             color: grayLight,
-                                            shape: BoxShape.circle
+                                            shape: BoxShape.rectangle,
+                                          borderRadius: BorderRadius.circular(4)
                                         ),
-                                        child: Image.asset(getIconImage(listMessages[index].reactions ?? []),width: 16,height: 16,)
+                                        child: calculateTopReactions(listMessages[index].reactions ?? []),
                                     ),
                                   )
                                   : Container(
@@ -1507,8 +1533,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
   Future<void> removeReaction(String messageId, String userId) async {
     // Reference to the message document
-    DocumentReference messageRef =
-    FirebaseFirestore.instance.collection('messages').doc(messageId);
+    DocumentReference messageRef
+         = firestoreInstance.collection(batch).doc(sessionManager.getBatchId()).collection(messages).doc(messageId);
 
     // Retrieve the current reactions from Firestore
     DocumentSnapshot messageSnapshot = await messageRef.get();
@@ -1687,8 +1713,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     }
   }
 
-  String getIconImage(List<dynamic> listReactions){
-    String emoji = '';
+  Widget getIconImage(List<dynamic> listReactions){
+    Widget emoji = Container();
     String valueEmoji = '';
     List<ReactionModel> listReactionsTemp = [];
 
@@ -1702,29 +1728,59 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
     if (valueEmoji == '1')
     {
-      emoji = 'assets/images/ic_thum.png';
+      emoji = Text('👍',);
     }
     else if (valueEmoji == '2')
     {
-      emoji = 'assets/images/ic_heart.png';
+      emoji = Text('❤️',);
     }
     else if (valueEmoji == '3')
     {
-      emoji = 'assets/images/ic_smile.png';
+      emoji = Text('😂');
     }
     else if (valueEmoji == '4')
     {
-      emoji = 'assets/images/ic_emotional.png';
+      emoji = Text('');
     }
     else if (valueEmoji == '5')
     {
-      emoji = 'assets/images/ic_hund.png';
+      emoji = Image.asset('assets/images/ic_hund.png',width: 16, height: 16,);
     }
-    else if (valueEmoji == '6')
+    else
     {
-
+      emoji = Text(valueEmoji);
     }
 
+    return emoji;
+  }
+
+  Widget getIconImageSheet(String valueEmoji){
+    Widget emoji =  Container();
+
+    if (valueEmoji == '1')
+    {
+      emoji = Text('👍',);
+    }
+    else if (valueEmoji == '2')
+    {
+      emoji = Text('❤️',);
+    }
+    else if (valueEmoji == '3')
+    {
+      emoji = Text('😂');
+    }
+    else if (valueEmoji == '4')
+    {
+      emoji = Image.asset('assets/images/ic_emotional.png',width: 16, height: 16,);
+    }
+    else if (valueEmoji == '5')
+    {
+      emoji = Image.asset('assets/images/ic_hund.png',width: 16, height: 16,);
+    }
+    else
+    {
+      emoji = Text(valueEmoji);
+    }
     return emoji;
   }
 
@@ -1942,15 +1998,15 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     );
   }
 
-  void openReactionBottomSheet() {
+  void openReactionBottomSheet(String documentId) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20)
-          )
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20)
+        )
       ),
       backgroundColor: white,
       // barrierColor: Colors.white,
@@ -1981,26 +2037,67 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                             // scrollDirection: Axis.horizontal,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: 4,
+                            itemCount: listReaction.length,
                             itemBuilder: (context, index) {
-                               return Column(
-                                 children: [
-                                   Row(
-                                     children: [
-                                       Image.asset('assets/images/ic_user_placeholder.png', width: 36, height: 36,),
-                                       const Gap(12),
-                                       const Expanded(child: Text("Pratiksha Panchal",style: TextStyle(color: grayDarkNew,fontSize: 14,fontWeight: FontWeight.w400),)),
-                                       Image.asset('assets/images/ic_user_placeholder.png', width: 20, height: 20,),
-                                     ],
-                                   ),
-                                   const Gap(8),
-                                   const Divider(
-                                     height: 0.5,
-                                     thickness: 0.5,
-                                     color: grayLight,
-                                   ),
-                                   const Gap(8),
-                                 ],
+                               return GestureDetector(
+                                 behavior: HitTestBehavior.opaque,
+                                 onTap: (){
+                                   if(sessionManager.getUserId() == listReaction[index].userId)
+                                   print("message delete");
+                                     {
+                                       removeReaction(documentId,listReaction[index].userId,);
+                                       Navigator.pop(context);
+                                       print("message deleteeee");
+                                     }
+                                 },
+                                 child: Column(
+                                   children: [
+                                     Row(
+                                       children: [
+                                         listReaction[index].profilePicUrl.isEmpty ?? true
+                                             ? ClipOval(
+                                               child: Image.asset(
+                                                 'assets/images/ic_user_placeholder.png',
+                                                 height: 36,
+                                                 width: 36,
+                                                 fit: BoxFit.cover,
+                                               ),
+                                             )
+                                             : ClipOval(
+                                               child: Image.network(
+                                                 listReaction[index].profilePicUrl,
+                                                 height: 36,
+                                                 width: 36,
+                                                 fit: BoxFit.cover,
+                                               ),
+                                             ),
+                                         const Gap(12),
+                                         Expanded(
+                                             child: Column(
+                                               mainAxisAlignment: MainAxisAlignment.start,
+                                               crossAxisAlignment: CrossAxisAlignment.start,
+                                             children: [
+                                               Text(listReaction[index].userName,style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                                               Gap(2),
+                                               Visibility(
+                                                 visible: sessionManager.getUserId() == listReaction[index].userId,
+                                                   child: Text("Tap to remove",style: TextStyle(color: grayDarkNew,fontSize: 12,fontWeight: FontWeight.w400),)
+                                               ),
+                                             ],
+                                         )),
+                                         getIconImageSheet(listReaction[index].reactionIcon ?? ""),
+                                         // Image.asset(getIconImageSheet(listReaction[index].reactionIcon ?? ""), width: 20, height: 20,),
+                                       ],
+                                     ),
+                                     const Gap(8),
+                                     const Divider(
+                                       height: 0.5,
+                                       thickness: 0.5,
+                                       color: grayLight,
+                                     ),
+                                     const Gap(8),
+                                   ],
+                                 ),
                                );
                               },
                           ),
@@ -2008,7 +2105,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                         ],
                       ),
                     )
-
                   ],
                 ),
               ),
@@ -2019,4 +2115,95 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     );
   }
 
+  void openEmojiBottomSheet(MessageSchema listMessag) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+      ),
+      builder: (BuildContext context) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.7, // Adjust height as needed
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(height: 8,),
+                  Center(
+                    child: Container(
+                        height: 2,
+                        width: 40,
+                        color: black,
+                        margin: const EdgeInsets.only(bottom: 12)
+                    ),
+                  ),
+                  Container(height: 12,),
+                  Expanded(
+                    child: EmojiPicker(
+                      onEmojiSelected: (emoji, category) {
+                        valueEmoji = category.emoji;
+                        // Handle the selected emoji
+                        print('Selected emoji: $emoji');
+                        print('Selected emojiii: ${category.emoji}');
+
+                          var reaction = ReactionModel(
+                            userId: sessionManager.getUserId().toString(),
+                            profilePicUrl: sessionManager.getProfilePic().toString(),
+                            reactionIcon: valueEmoji,
+                            userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                          );
+
+                        addReaction(listMessag.documentId.toString(),reaction);
+                        Navigator.pop(context);
+                        // You can pass the selected emoji back to the parent widget or perform any other action here
+                      },
+                      // rows: 5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget calculateTopReactions(List<dynamic> listReactions) {
+
+   var reactions = listReactions?.map((dynamic item) {
+      return ReactionModel(
+        userName: item["userName"],
+        profilePicUrl: item["profilePicUrl"],
+        reactionIcon: item["reactionIcon"],
+        userId: item["userId"],
+      );
+    }).toList() ?? [];
+
+    // Count occurrences of each reaction
+    Map<String, int> reactionCounts = {};
+    reactions.forEach((reaction) {
+      reactionCounts[reaction.reactionIcon] = (reactionCounts[reaction.reactionIcon] ?? 0) + 1;
+    });
+
+    // Select top three distinct reactions
+    List<String> topThreeReactions = reactionCounts.keys.toList();
+    topThreeReactions.sort((a, b) => reactionCounts[b]!.compareTo(reactionCounts[a]!));
+    topThreeReactions = topThreeReactions.take(3).toList();
+
+    // Calculate total count of reactions
+    int totalCount = reactionCounts.values.fold(0, (sum, count) => sum + count);
+
+    // Display the results
+    print('Top three reactions: $topThreeReactions');
+    print('Total count of reactions: $totalCount');
+
+    return Text(totalCount > 3 ? topThreeReactions.join(" ") +" " + "+${totalCount - 3}" : topThreeReactions.join(" "));
+  }
 }

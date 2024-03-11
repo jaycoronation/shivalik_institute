@@ -99,8 +99,6 @@ String timeStampToDateTimeForMsg(Timestamp? myTimeStamp)
   if(myTimeStamp !=null)
   {
     DateTime myDateTime = myTimeStamp.toDate();
-
-
     var dateCon = DateFormat('yyyy-MM-dd HH:mm:ss').format(myDateTime);
     return universalDateConverter("yyyy-MM-dd HH:mm:ss", "hh:mm a", dateCon);
   }
