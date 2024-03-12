@@ -82,7 +82,7 @@ class _MediaScreenState extends BaseState<MediaScreen> {
               },
               child: getBackArrow(),
             ),
-            centerTitle: true,
+            centerTitle: false,
             title: Container(
               height: 38,
               decoration: BoxDecoration(

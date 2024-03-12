@@ -82,7 +82,7 @@ class _GroupProfileScreenState extends BaseState<GroupProfileScreen> {
               child: getBackArrow(),
             ),
             titleSpacing: 0,
-            centerTitle: true,
+            centerTitle: false,
             title: getTitle('Group Info'),
           ),
           body: Padding(

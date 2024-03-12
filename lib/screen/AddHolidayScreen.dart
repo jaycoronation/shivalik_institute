@@ -36,7 +36,6 @@ class _AddHolidayScreenState extends BaseState<AddHolidayScreen> {
             _dateController.text = (universalDateConverter("dd-MM-yyyy", "dd/MM/yyyy", getSet.holidayDate ?? ""));
           }
       }
-
     super.initState();
   }
 

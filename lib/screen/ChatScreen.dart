@@ -1662,7 +1662,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
               listDeviceTokens.add(dataResponse.deviceTokens?[i] ?? DeviceTokens());
             }
         }
-
     }
     else
     {
@@ -2027,10 +2026,10 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                           Container(height: 8,),
                           Center(
                             child: Container(
-                                height: 2,
-                                width: 40,
-                                color: black,
-                                margin: const EdgeInsets.only(bottom: 12)
+                              height: 2,
+                              width: 40,
+                              color: black,
+                              margin: const EdgeInsets.only(bottom: 12)
                             ),
                           ),
                           ListView.builder(
@@ -2073,17 +2072,17 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                              ),
                                          const Gap(12),
                                          Expanded(
-                                             child: Column(
-                                               mainAxisAlignment: MainAxisAlignment.start,
-                                               crossAxisAlignment: CrossAxisAlignment.start,
-                                             children: [
-                                               Text(listReaction[index].userName,style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                               Gap(2),
-                                               Visibility(
-                                                 visible: sessionManager.getUserId() == listReaction[index].userId,
-                                                   child: Text("Tap to remove",style: TextStyle(color: grayDarkNew,fontSize: 12,fontWeight: FontWeight.w400),)
-                                               ),
-                                             ],
+                                           child: Column(
+                                             mainAxisAlignment: MainAxisAlignment.start,
+                                             crossAxisAlignment: CrossAxisAlignment.start,
+                                           children: [
+                                             Text(listReaction[index].userName,style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                                             Gap(2),
+                                             Visibility(
+                                               visible: sessionManager.getUserId() == listReaction[index].userId,
+                                                 child: Text("Tap to remove",style: TextStyle(color: grayDarkNew,fontSize: 12,fontWeight: FontWeight.w400),)
+                                             ),
+                                           ],
                                          )),
                                          getIconImageSheet(listReaction[index].reactionIcon ?? ""),
                                          // Image.asset(getIconImageSheet(listReaction[index].reactionIcon ?? ""), width: 20, height: 20,),

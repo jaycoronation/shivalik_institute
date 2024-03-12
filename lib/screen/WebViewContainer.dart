@@ -84,7 +84,7 @@ class _WebViewContainerState extends State<WebViewContainer> {
         ),
         title: getTitle(widget.title),
         elevation: 0,
-        centerTitle: true,
+        centerTitle: false,
         titleSpacing: 0,
         backgroundColor: white,
         actions: [
