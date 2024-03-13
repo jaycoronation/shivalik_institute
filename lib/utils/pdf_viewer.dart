@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shivalik_institute/common_widget/common_widget.dart';
 import 'package:shivalik_institute/constant/colors.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../common_widget/loading.dart';
 import '../common_widget/no_data_new.dart';
 import '../constant/api_end_point.dart';
@@ -123,6 +124,20 @@ class _PdfViewer extends BaseState<PdfViewer> {
                   }
                 },
                 child: Image.asset('assets/images/ic_rotate.png',width: 24,height: 24),
+              ),
+            ),
+            const Gap(12),
+            Visibility(
+              visible: (!_isNoData) && (isPrivate == "0"),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () async {
+                  if (await canLaunchUrl(Uri.parse(pdfUrl)))
+                    {
+                      launchUrl(Uri.parse(pdfUrl),mode: LaunchMode.externalApplication);
+                    }
+                },
+                child: Image.asset('assets/images/ic_download.png',width: 24,height: 24),
               ),
             ),
             const Gap(12)

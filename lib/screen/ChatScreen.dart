@@ -34,7 +34,6 @@ import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../utils/full_screen_image.dart';
 import '../utils/pdf_viewer.dart';
-import 'EmojiBottomsheetScreen.dart';
 import 'GroupProfileScreen.dart';
 
 class ChatScreen extends StatefulWidget {

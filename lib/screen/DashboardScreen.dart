@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -19,7 +18,6 @@ import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/common_widget.dart';
-import 'package:shivalik_institute/model/CommonResponseModel.dart';
 import 'package:shivalik_institute/screen/CaseStudyScreen.dart';
 import 'package:shivalik_institute/screen/ChatScreen.dart';
 import 'package:shivalik_institute/screen/ConversationScreen.dart';
@@ -68,7 +66,6 @@ import 'MyProfileScreen.dart';
 import '../common_widget/no_data_new.dart';
 import 'ResourceCenterClassScreen.dart';
 import '../model/UserProfileResponseModel.dart';
-import 'EmojiBottomsheetScreen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});

@@ -35,10 +35,12 @@
 	<string>Shivalik Institute is Asking your photo permission for Better understanding of the app</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Shivalik Institute is Asking your photo permission for uploading the profile picture</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Shivalik Institute is Asking your Camera permission for uploading the profile picture</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-    <key>MinimumOSVersion</key>
-    <string>12.0</string>
+	<key>MinimumOSVersion</key>
+	<string>12.0</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
