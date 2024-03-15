@@ -37,6 +37,12 @@
 	<string>Shivalik Institute is Asking your photo permission for uploading the profile picture</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Shivalik Institute is Asking your Camera permission for uploading the profile picture</string>
+	<key>NSFileProviderDomainUsageDescription</key>
+	<string>Shivalik Institute is Asking your File Permission for downloading doc</string>
+    <key>NSDocumentsFolderUsageDescription</key>
+    <string>Shivalik Institute is Asking your File Permission for downloading doc</string>
+    <key>NSDownloadsFolderUsageDescription</key>
+    <string>Shivalik Institute is Asking your File Permission for downloading doc</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>MinimumOSVersion</key>

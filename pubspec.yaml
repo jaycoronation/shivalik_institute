@@ -90,12 +90,8 @@ dependencies:
   flutter_reaction_button: ^3.0.0+3
   emoji_picker_flutter:
   pull_down_button: ^0.9.3
-  agora_rtc_engine: ^6.3.0
   permission_handler: ^11.3.0
-
-
-
-
+  open_file: ^3.3.2
 
 dev_dependencies:
   flutter_test:

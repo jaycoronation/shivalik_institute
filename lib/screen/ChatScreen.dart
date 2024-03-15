@@ -97,7 +97,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
         .collection(batch)
         .doc(sessionManager.getBatchId() ?? '')
         .collection(messages)
-        .orderBy('timestamp', descending: false)
+        .orderBy('timestamp', descending: true)
         .snapshots();
 
     super.initState();
@@ -125,7 +125,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
             onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => GroupProfileScreen(listUser)));
             },
-            child: getTitle('SIRE Connect')
+            child: getTitle(sessionManager.getBatchName() ?? '')
         ),
         actions: [
           GestureDetector(
@@ -155,7 +155,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                   }
                 else
                   {
-                    // moveToBottom();
                     listMessages = [];
                     var messages = snapshot.data?.docs ?? [];
 
@@ -185,6 +184,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
                     return ListView.builder(
                       shrinkWrap: true,
+                      reverse: true,
                       controller: chatScrollController,
                       scrollDirection: Axis.vertical,
                       physics: const BouncingScrollPhysics(),

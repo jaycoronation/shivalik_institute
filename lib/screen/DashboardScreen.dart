@@ -121,11 +121,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     getCaseStudyList(true);
     getDeviceToken();
     getBlogList();
-    //getPendingFeedbacks();
+    getPendingFeedbacks();
     getBatchData();
 
     FirebaseMessaging.onMessage.listen((message) {
-
       var id = "";
       var contentType = "";
       var image = "";
@@ -168,7 +167,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         getPendingFeedbacks();
       }
     });
-
     super.initState();
   }
 
@@ -804,7 +802,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                   LinearPercentIndicator(
                                                     width: MediaQuery.of(context).size.width - 80,
                                                     lineHeight: 14.0,
-                                                    percent: double.parse(value.response.completedModule.toString()) * double.parse(value.response.totalModules.toString()) / 100 ,
+                                                    percent: getPercentData(value.response),
                                                     barRadius: const Radius.circular(4),
                                                     backgroundColor: grayNew,
                                                     progressColor: brandColor,
@@ -2097,6 +2095,11 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       // Handle any errors while checking for the user document
     });
 
+  }
+
+  getPercentData(DashboardResponseModel response) {
+    double percent = double.parse(response.completedModule.toString()) / double.parse(response.totalModules.toString());
+    return percent;
   }
 
 }

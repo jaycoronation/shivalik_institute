@@ -107,134 +107,93 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(top: 22,bottom: 22),
-                                child: Text(
-                                    'Leave your feedback of the ${getSet.moduleName} session by ${getSet.facultyName}',
-                                    style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w500,color: black,fontFamily: 'Colfax',),textAlign: TextAlign.start,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(top: 22,bottom: 22),
+                                  child: Text(
+                                      'Leave your feedback of the ${getSet.moduleName} session by ${getSet.facultyName}',
+                                      style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w500,color: black,fontFamily: 'Colfax',),textAlign: TextAlign.start,
+                                  ),
                                 ),
-                              ),
-                              MediaQuery.removePadding(
-                                context: context,
-                                removeBottom: true,
-                                removeTop: true,
-                                child: ListView.builder(
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: getSet.feedbackFormData?.questions?.length ?? 0,
-                                  itemBuilder: (context, index) {
-                                    var getSetInner = getSet.feedbackFormData?.questions?[index] ?? Questions();
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                          color: white,
-                                          borderRadius: BorderRadius.circular(16),
-                                          border: Border.all(color: grayLight,width: 1)
-                                      ),
-                                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-                                      margin: const EdgeInsets.only(bottom: 22),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          GestureDetector(
-                                            behavior: HitTestBehavior.opaque,
-                                            onTap: () {
-                                              setState(() {
-                                                for (var i=0; i < (getSet.feedbackFormData?.questions?.length ?? 0); i++)
-                                                {
-                                                  if (i == index)
+                                MediaQuery.removePadding(
+                                  context: context,
+                                  removeBottom: true,
+                                  removeTop: true,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.vertical,
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: getSet.feedbackFormData?.questions?.length ?? 0,
+                                    itemBuilder: (context, index) {
+                                      var getSetInner = getSet.feedbackFormData?.questions?[index] ?? Questions();
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                            color: white,
+                                            borderRadius: BorderRadius.circular(16),
+                                            border: Border.all(color: grayLight,width: 1)
+                                        ),
+                                        padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+                                        margin: const EdgeInsets.only(bottom: 22),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            GestureDetector(
+                                              behavior: HitTestBehavior.opaque,
+                                              onTap: () {
+                                                setState(() {
+                                                  for (var i=0; i < (getSet.feedbackFormData?.questions?.length ?? 0); i++)
                                                   {
-                                                    if (getSet.feedbackFormData?.questions?[i].isOpen ?? false)
+                                                    if (i == index)
                                                     {
-                                                      getSet.feedbackFormData?.questions?[i].animationController.reverse(from: 0.5);
+                                                      if (getSet.feedbackFormData?.questions?[i].isOpen ?? false)
+                                                      {
+                                                        getSet.feedbackFormData?.questions?[i].animationController.reverse(from: 0.5);
+                                                      }
+                                                      else
+                                                      {
+                                                        getSet.feedbackFormData?.questions?[i].animationController.forward(from: 0.0);
+                                                      }
+                                                      getSet.feedbackFormData?.questions?[i].isOpen = true;
+
                                                     }
                                                     else
                                                     {
-                                                      getSet.feedbackFormData?.questions?[i].animationController.forward(from: 0.0);
+                                                      getSet.feedbackFormData?.questions?[i].isOpen = false;
                                                     }
-                                                    getSet.feedbackFormData?.questions?[i].isOpen = true;
-
                                                   }
-                                                  else
-                                                  {
-                                                    getSet.feedbackFormData?.questions?[i].isOpen = false;
-                                                  }
-                                                }
-                                              });
-                                            },
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Expanded(
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text("${index+1}. ",style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16,fontFamily: 'Colfax'),),
-                                                      Expanded(child: Text(getSetInner.title ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16,fontFamily: 'Colfax',overflow: TextOverflow.clip),)),
-                                                    ],
+                                                });
+                                              },
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Expanded(
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text("${index+1}. ",style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16,fontFamily: 'Colfax'),),
+                                                        Expanded(child: Text(getSetInner.title ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 16,fontFamily: 'Colfax',overflow: TextOverflow.clip),)),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                                RotationTransition(
-                                                  turns: Tween(begin: 0.0, end: 1.0).animate(getSetInner.animationController),
-                                                  child: const Icon(Icons.expand_less),
-                                                )
-                                              ],
+                                                  RotationTransition(
+                                                    turns: Tween(begin: 0.0, end: 1.0).animate(getSetInner.animationController),
+                                                    child: const Icon(Icons.expand_less),
+                                                  )
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          Visibility(
-                                            visible: getSetInner.isOpen,
-                                            child: getSetInner.inputName == "checkbox"
-                                                ? ListView.builder(
-                                                  shrinkWrap: true,
-                                                  physics: const NeverScrollableScrollPhysics(),
-                                                  itemCount: getSetInner.options?.length ?? 0,
-                                                  itemBuilder: (context, indexInner) {
-                                                    var getSetInnerQuestion = getSetInner.options?[indexInner] ?? Options();
-                                                    return GestureDetector(
-                                                      behavior: HitTestBehavior.opaque,
-                                                      onTap: () {
-                                                        setState(() {
-                                                          getSetInnerQuestion.isSelected = !getSetInnerQuestion.isSelected;
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        padding: const EdgeInsets.all(8),
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.start,
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            Image.asset(
-                                                              getSetInnerQuestion.isSelected
-                                                                  ? "assets/images/ic_checked.png"
-                                                                  : "assets/images/ic_un_checked.png",
-                                                              width: 24,
-                                                              height: 24,
-                                                              color: getSetInnerQuestion.isSelected ? brandColor : black,
-                                                            ),
-                                                            const Gap(8),
-                                                            Text(
-                                                                getSetInnerQuestion.options ?? '',
-                                                                style: const TextStyle(fontSize: 14,color: black,fontWeight: FontWeight.w400,fontFamily: 'Colfax')
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                )
-                                                : getSetInner.inputName == "radio"
-                                                ? SizedBox(
-                                                  height: 60,
-                                                  child: ListView.builder(
+                                            Visibility(
+                                              visible: getSetInner.isOpen,
+                                              child: getSetInner.inputName == "checkbox"
+                                                  ? ListView.builder(
                                                     shrinkWrap: true,
-                                                    scrollDirection: Axis.horizontal,
                                                     physics: const NeverScrollableScrollPhysics(),
                                                     itemCount: getSetInner.options?.length ?? 0,
                                                     itemBuilder: (context, indexInner) {
@@ -243,31 +202,22 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
                                                         behavior: HitTestBehavior.opaque,
                                                         onTap: () {
                                                           setState(() {
-                                                            for (var i=0; i < (getSetInner.options?.length ?? 0); i++)
-                                                            {
-                                                              if (indexInner == i)
-                                                              {
-                                                                getSetInner.options?[i].isSelected = true;
-                                                              }
-                                                              else
-                                                              {
-                                                                getSetInner.options?[i].isSelected = false;
-                                                              }
-                                                            }
+                                                            getSetInnerQuestion.isSelected = !getSetInnerQuestion.isSelected;
                                                           });
                                                         },
                                                         child: Container(
                                                           padding: const EdgeInsets.all(8),
                                                           child: Row(
                                                             mainAxisAlignment: MainAxisAlignment.start,
-                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
                                                               Image.asset(
                                                                 getSetInnerQuestion.isSelected
-                                                                    ? "assets/images/ic_radio_selected.png"
-                                                                    : "assets/images/ic_radio_unselected.png",
+                                                                    ? "assets/images/ic_checked.png"
+                                                                    : "assets/images/ic_un_checked.png",
                                                                 width: 24,
                                                                 height: 24,
+                                                                color: getSetInnerQuestion.isSelected ? brandColor : black,
                                                               ),
                                                               const Gap(8),
                                                               Text(
@@ -279,66 +229,118 @@ class _FeedbackFormScreenNewState extends BaseState<FeedbackFormScreenNew> with 
                                                         ),
                                                       );
                                                     },
-                                                  ),
-                                                )
-                                                : getSetInner.inputName == "textarea"
-                                                ? Container(
-                                                  margin: const EdgeInsets.only(top: 6),
-                                                  child: TextField(
-                                                    cursorColor: black,
-                                                    textCapitalization: TextCapitalization.sentences,
-                                                    controller: getSetInner.controller,
-                                                    keyboardType: TextInputType.text,
-                                                    maxLines: 5,
-                                                    minLines: 3,
-                                                    style: getTextFiledStyle(),
-                                                    decoration: const InputDecoration(
-                                                        hintText: 'Answer',
-                                                        alignLabelWithHint: true,
-                                                        enabledBorder: OutlineInputBorder(
-                                                          borderSide: BorderSide(color: Colors.transparent, width: 0.0),
-                                                        ),
-                                                        border: OutlineInputBorder(
-                                                          borderSide: BorderSide(color: Colors.transparent, width: 0.0),
-                                                        ),
-                                                        focusedBorder: OutlineInputBorder(
-                                                          borderSide: BorderSide(color: Colors.transparent, width: 0.0),
-                                                        )
+                                                  )
+                                                  : getSetInner.inputName == "radio"
+                                                  ? SizedBox(
+                                                    height: 60,
+                                                    child: ListView.builder(
+                                                      shrinkWrap: true,
+                                                      scrollDirection: Axis.horizontal,
+                                                      physics: const NeverScrollableScrollPhysics(),
+                                                      itemCount: getSetInner.options?.length ?? 0,
+                                                      itemBuilder: (context, indexInner) {
+                                                        var getSetInnerQuestion = getSetInner.options?[indexInner] ?? Options();
+                                                        return GestureDetector(
+                                                          behavior: HitTestBehavior.opaque,
+                                                          onTap: () {
+                                                            setState(() {
+                                                              for (var i=0; i < (getSetInner.options?.length ?? 0); i++)
+                                                              {
+                                                                if (indexInner == i)
+                                                                {
+                                                                  getSetInner.options?[i].isSelected = true;
+                                                                }
+                                                                else
+                                                                {
+                                                                  getSetInner.options?[i].isSelected = false;
+                                                                }
+                                                              }
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                            padding: const EdgeInsets.all(8),
+                                                            child: Row(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                              children: [
+                                                                Image.asset(
+                                                                  getSetInnerQuestion.isSelected
+                                                                      ? "assets/images/ic_radio_selected.png"
+                                                                      : "assets/images/ic_radio_unselected.png",
+                                                                  width: 24,
+                                                                  height: 24,
+                                                                ),
+                                                                const Gap(8),
+                                                                Text(
+                                                                    getSetInnerQuestion.options ?? '',
+                                                                    style: const TextStyle(fontSize: 14,color: black,fontWeight: FontWeight.w400,fontFamily: 'Colfax')
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
                                                     ),
-                                                  ),
-                                                )
-                                                : getSetInner.inputName == "text"
-                                                ? Container(
-                                                  margin: const EdgeInsets.only(top: 12),
-                                                  child: TextField(
-                                                    cursorColor: black,
-                                                    textCapitalization: TextCapitalization.sentences,
-                                                    controller: getSetInner.controller,
-                                                    keyboardType: TextInputType.text,
-                                                    style: getTextFiledStyle(),
-                                                    decoration: const InputDecoration(
-                                                        hintText: 'Answer',
-                                                        enabledBorder: OutlineInputBorder(
-                                                          borderSide: BorderSide(color: Colors.transparent, width: 0.0),
-                                                        ),
-                                                        border: OutlineInputBorder(
-                                                          borderSide: BorderSide(color: Colors.transparent, width: 0.0),
-                                                        ),
-                                                        focusedBorder: OutlineInputBorder(
-                                                          borderSide: BorderSide(color: Colors.transparent, width: 0.0),
-                                                        )
+                                                  )
+                                                  : getSetInner.inputName == "textarea"
+                                                  ? Container(
+                                                    margin: const EdgeInsets.only(top: 6),
+                                                    child: TextField(
+                                                      cursorColor: black,
+                                                      textCapitalization: TextCapitalization.sentences,
+                                                      controller: getSetInner.controller,
+                                                      keyboardType: TextInputType.text,
+                                                      maxLines: 5,
+                                                      minLines: 3,
+                                                      style: getTextFiledStyle(),
+                                                      decoration: const InputDecoration(
+                                                          hintText: 'Answer',
+                                                          alignLabelWithHint: true,
+                                                          enabledBorder: OutlineInputBorder(
+                                                            borderSide: BorderSide(color: Colors.transparent, width: 0.0),
+                                                          ),
+                                                          border: OutlineInputBorder(
+                                                            borderSide: BorderSide(color: Colors.transparent, width: 0.0),
+                                                          ),
+                                                          focusedBorder: OutlineInputBorder(
+                                                            borderSide: BorderSide(color: Colors.transparent, width: 0.0),
+                                                          )
+                                                      ),
                                                     ),
-                                                  ),
-                                                )
-                                                : Container(),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  },
+                                                  )
+                                                  : getSetInner.inputName == "text"
+                                                  ? Container(
+                                                    margin: const EdgeInsets.only(top: 12),
+                                                    child: TextField(
+                                                      cursorColor: black,
+                                                      textCapitalization: TextCapitalization.sentences,
+                                                      controller: getSetInner.controller,
+                                                      keyboardType: TextInputType.text,
+                                                      style: getTextFiledStyle(),
+                                                      decoration: const InputDecoration(
+                                                          hintText: 'Answer',
+                                                          enabledBorder: OutlineInputBorder(
+                                                            borderSide: BorderSide(color: Colors.transparent, width: 0.0),
+                                                          ),
+                                                          border: OutlineInputBorder(
+                                                            borderSide: BorderSide(color: Colors.transparent, width: 0.0),
+                                                          ),
+                                                          focusedBorder: OutlineInputBorder(
+                                                            borderSide: BorderSide(color: Colors.transparent, width: 0.0),
+                                                          )
+                                                      ),
+                                                    ),
+                                                  )
+                                                  : Container(),
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         Container(

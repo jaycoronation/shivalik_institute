@@ -1,18 +1,18 @@
-import 'dart:convert';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
-import 'package:pretty_http_logger/pretty_http_logger.dart';
+import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:screen_protector/screen_protector.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shivalik_institute/common_widget/common_widget.dart';
 import 'package:shivalik_institute/constant/colors.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../common_widget/loading.dart';
 import '../common_widget/no_data_new.dart';
-import '../constant/api_end_point.dart';
 import 'app_utils.dart';
 import 'base_class.dart';
 
@@ -126,16 +126,17 @@ class _PdfViewer extends BaseState<PdfViewer> {
                 child: Image.asset('assets/images/ic_rotate.png',width: 24,height: 24),
               ),
             ),
-            const Gap(12),
+            const Gap(18),
             Visibility(
               visible: (!_isNoData) && (isPrivate == "0"),
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () async {
-                  if (await canLaunchUrl(Uri.parse(pdfUrl)))
+                  _getDownloadDirectory(context,pdfUrl);
+                  /*if (await canLaunchUrl(Uri.parse(pdfUrl)))
                     {
                       launchUrl(Uri.parse(pdfUrl),mode: LaunchMode.externalApplication);
-                    }
+                    }*/
                 },
                 child: Image.asset('assets/images/ic_download.png',width: 24,height: 24),
               ),
@@ -169,14 +170,67 @@ class _PdfViewer extends BaseState<PdfViewer> {
     );
   }
 
-  void _enableRotation() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+  Future<String> _getDownloadDirectory(BuildContext context, String fileUrlServer) async {
+    String? directory;
+    try {
+      directory = await FilePicker.platform.getDirectoryPath();
+      _downloadFile(directory ?? '',fileUrlServer);
+    } catch (e) {
+      print("Error while picking directory: $e");
+    }
+    if (directory == null) {
+      showSnackBar("No directory selected!", context);
+      return "";
+    }
+    return directory;
   }
 
-  /// blocks rotation; sets orientation to: portrait
+  Future<void> _downloadFile(String downloadPath, String fileUrlServer) async {
+    // Example using `http` package
+    String fileUrl = fileUrlServer;
+    String fileName = '${sessionManager.getBatchName()}_${DateTime.now().millisecondsSinceEpoch / 1000}.pdf';
+
+    print('fileName ==== $fileName');
+
+    if (Platform.isAndroid ? await Permission.manageExternalStorage.request().isGranted : await Permission.storage.request().isGranted)
+      {
+
+        print('Permission Status ==== ${Permission.manageExternalStorage.request().isGranted}');
+
+        HttpClient().getUrl(Uri.parse(fileUrl))
+            .then((HttpClientRequest request) => request.close())
+            .then((HttpClientResponse response) async {
+          File file = File('$downloadPath/$fileName');
+
+          await response.pipe(file.openWrite(mode: FileMode.write));
+
+          print('File Path ==== ${file.path}');
+
+          if (Platform.isAndroid)
+          {
+            final result = await OpenFile.open(file.path);
+            setState(() {
+              var openResult = "type=${result.type}  message=${result.message}";
+              print("openResult === $openResult");
+            });
+            Navigator.pop(context);
+          }
+          else
+          {
+            final result = await OpenFile.open(file.path);
+            var openResult = "type=${result.type}  message=${result.message}";
+            print("openResult === $openResult");
+          }
+        });
+      }
+    else
+      {
+        var value = await Permission.storage.request();
+        openAppSettings();
+      }
+
+  }
+
   void _portraitModeOnly() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

@@ -1,15 +1,12 @@
-import 'dart:convert';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:gap/gap.dart';
-import 'package:pretty_http_logger/pretty_http_logger.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:gap/gap.dart';
+
 import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
-import 'package:shivalik_institute/common_widget/placeholder.dart';
 import 'package:shivalik_institute/constant/global_context.dart';
 import 'package:shivalik_institute/model/EventResponseModel.dart';
 import 'package:shivalik_institute/utils/full_screen_image.dart';
@@ -272,7 +269,6 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
       isLoading = false;
     });
   }
-
 
   @override
   void castStatefulWidget() {
