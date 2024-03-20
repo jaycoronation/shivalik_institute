@@ -133,10 +133,6 @@ class _PdfViewer extends BaseState<PdfViewer> {
                 behavior: HitTestBehavior.opaque,
                 onTap: () async {
                   _getDownloadDirectory(context,pdfUrl);
-                  /*if (await canLaunchUrl(Uri.parse(pdfUrl)))
-                    {
-                      launchUrl(Uri.parse(pdfUrl),mode: LaunchMode.externalApplication);
-                    }*/
                 },
                 child: Image.asset('assets/images/ic_download.png',width: 24,height: 24),
               ),
@@ -192,42 +188,31 @@ class _PdfViewer extends BaseState<PdfViewer> {
 
     print('fileName ==== $fileName');
 
-    if (Platform.isAndroid ? await Permission.manageExternalStorage.request().isGranted : await Permission.storage.request().isGranted)
+    HttpClient().getUrl(Uri.parse(fileUrl))
+        .then((HttpClientRequest request) => request.close())
+        .then((HttpClientResponse response) async {
+      File file = File('$downloadPath/$fileName');
+
+      await response.pipe(file.openWrite(mode: FileMode.write));
+
+      print('File Path ==== ${file.path}');
+
+      if (Platform.isAndroid)
       {
-
-        print('Permission Status ==== ${Permission.manageExternalStorage.request().isGranted}');
-
-        HttpClient().getUrl(Uri.parse(fileUrl))
-            .then((HttpClientRequest request) => request.close())
-            .then((HttpClientResponse response) async {
-          File file = File('$downloadPath/$fileName');
-
-          await response.pipe(file.openWrite(mode: FileMode.write));
-
-          print('File Path ==== ${file.path}');
-
-          if (Platform.isAndroid)
-          {
-            final result = await OpenFile.open(file.path);
-            setState(() {
-              var openResult = "type=${result.type}  message=${result.message}";
-              print("openResult === $openResult");
-            });
-            Navigator.pop(context);
-          }
-          else
-          {
-            final result = await OpenFile.open(file.path);
-            var openResult = "type=${result.type}  message=${result.message}";
-            print("openResult === $openResult");
-          }
+        final result = await OpenFile.open(file.path);
+        setState(() {
+          var openResult = "type=${result.type}  message=${result.message}";
+          print("openResult === $openResult");
         });
+        //Navigator.pop(context);
       }
-    else
+      else
       {
-        var value = await Permission.storage.request();
-        openAppSettings();
+        final result = await OpenFile.open(file.path);
+        var openResult = "type=${result.type}  message=${result.message}";
+        print("openResult === $openResult");
       }
+    });
 
   }
 

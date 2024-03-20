@@ -26,6 +26,7 @@ import '../model/ModuleResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../utils/pdf_viewer.dart';
+import '../utils/pptxConvertScreen.dart';
 import '../viewmodels/CommonViewModel.dart';
 import 'package:http/http.dart' as http;
 import '../viewmodels/MultipartApiViewModel.dart';
@@ -303,7 +304,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                                   }
                                 else if (listDocument[index].fileType == "pptx")
                                   {
-                                    startActivity(context, WebViewContainer(listDocument[index]. fullPath?? "",'',listDocument[index].isPrivate ?? ''));
+                                    startActivity(context, WebViewContainer(listDocument[index].fullPath ?? "",'',listDocument[index].isPrivate ?? ''));
                                   }
                                 else
                                   {

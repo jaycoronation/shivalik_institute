@@ -2099,6 +2099,9 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
   getPercentData(DashboardResponseModel response) {
     double percent = double.parse(response.completedModule.toString()) / double.parse(response.totalModules.toString());
+
+    print(percent);
+
     return percent;
   }
 

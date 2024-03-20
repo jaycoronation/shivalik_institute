@@ -27,7 +27,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -50,8 +50,8 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 16
-        versionName "2.4"
+        versionCode 18
+        versionName "2.6"
     }
 
     buildTypes {
@@ -62,6 +62,8 @@ android {
             shrinkResources false
             //Close delete useless code
             minifyEnabled false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }

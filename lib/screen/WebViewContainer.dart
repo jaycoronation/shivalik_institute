@@ -31,6 +31,7 @@ class _WebViewContainerState extends State<WebViewContainer> {
     isPrivate = widget.isPrivate;
 
     print("isPrivate === $isPrivate");
+    print("URL === ${widget.url}");
 
     if (isPrivate == "1")
     {
@@ -53,6 +54,12 @@ class _WebViewContainerState extends State<WebViewContainer> {
                 isLoading = false;
               });
             }
+          },
+          onPageFinished: (url) {
+            print("url ==== $url");
+          },
+          onHttpAuthRequest: (request) {
+            print("request ==== ${request.host}");
           },
           onWebResourceError: (WebResourceError error) {
             print("description ==== ${error.description}");

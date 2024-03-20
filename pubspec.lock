@@ -41,6 +41,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.18"
+  barcode:
+    dependency: transitive
+    description:
+      name: barcode
+      sha256: "91b143666f7bb13636f716b6d4e412e372ab15ff7969799af8c9e30a382e9385"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.6"
+  bidi:
+    dependency: transitive
+    description:
+      name: bidi
+      sha256: "1a7d0c696324b2089f72e7671fd1f1f64fef44c980f3cebc84e803967c597b63"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.10"
   boolean_selector:
     dependency: transitive
     description:
@@ -688,6 +704,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  image:
+    dependency: "direct main"
+    description:
+      name: image
+      sha256: "4c68bfd5ae83e700b5204c1e74451e7bf3cf750e6843c6e158289cf56bda018e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.7"
   image_cropper:
     dependency: "direct main"
     description:
@@ -1008,6 +1032,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  pdf:
+    dependency: "direct main"
+    description:
+      name: pdf
+      sha256: "243f05342fc0bdf140eba5b069398985cdbdd3dbb1d776cf43d5ea29cc570ba6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.10.8"
   percent_indicator:
     dependency: "direct main"
     description:
@@ -1068,10 +1100,10 @@ packages:
     dependency: transitive
     description:
       name: petitparser
-      sha256: "49392a45ced973e8d94a85fdb21293fbb40ba805fc49f2965101ae748a3683b4"
+      sha256: c15605cd28af66339f8eb6fbe0e541bfe2d1b72d5825efc6598f3e0a31b9ad27
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.0"
+    version: "6.0.2"
   photo_view:
     dependency: "direct main"
     description:
@@ -1100,10 +1132,10 @@ packages:
     dependency: transitive
     description:
       name: plugin_platform_interface
-      sha256: "43798d895c929056255600343db8f049921cbec94d31ec87f1dc5c16c01935dd"
+      sha256: "4820fbfdb9478b1ebae27888254d445073732dae3d6ea81f0b7e06d5dedc3f02"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.5"
+    version: "2.1.8"
   pointycastle:
     dependency: transitive
     description:
@@ -1136,6 +1168,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.9.3"
+  qr:
+    dependency: transitive
+    description:
+      name: qr
+      sha256: "64957a3930367bf97cc211a5af99551d630f2f4625e38af10edd6b19131b64b3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
   readmore:
     dependency: "direct main"
     description:
@@ -1593,34 +1633,34 @@ packages:
     dependency: "direct main"
     description:
       name: webview_flutter
-      sha256: "71e1bfaef41016c8d5954291df5e9f8c6172f1f6ff3af01b5656456ddb11f94c"
+      sha256: "25e1b6e839e8cbfbd708abc6f85ed09d1727e24e08e08c6b8590d7c65c9a8932"
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.4"
+    version: "4.7.0"
   webview_flutter_android:
     dependency: transitive
     description:
       name: webview_flutter_android
-      sha256: "161af93c2abaf94ef2192bffb53a3658b2d721a3bf99b69aa1e47814ee18cc96"
+      sha256: f038ee2fae73b509dde1bc9d2c5a50ca92054282de17631a9a3d515883740934
       url: "https://pub.dev"
     source: hosted
-    version: "3.13.2"
+    version: "3.16.0"
   webview_flutter_platform_interface:
     dependency: transitive
     description:
       name: webview_flutter_platform_interface
-      sha256: dbe745ee459a16b6fec296f7565a8ef430d0d681001d8ae521898b9361854943
+      sha256: d937581d6e558908d7ae3dc1989c4f87b786891ab47bb9df7de548a151779d8d
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.0"
+    version: "2.10.0"
   webview_flutter_wkwebview:
     dependency: transitive
     description:
       name: webview_flutter_wkwebview
-      sha256: "02d8f3ebbc842704b2b662377b3ee11c0f8f1bbaa8eab6398262f40049819160"
+      sha256: f12f8d8a99784b863e8b85e4a9a5e3cf1839d6803d2c0c3e0533a8f3c5a992a7
       url: "https://pub.dev"
     source: hosted
-    version: "3.10.1"
+    version: "3.13.0"
   win32:
     dependency: transitive
     description:
@@ -1649,10 +1689,10 @@ packages:
     dependency: transitive
     description:
       name: xml
-      sha256: ac0e3f4bf00ba2708c33fbabbbe766300e509f8c82dbd4ab6525039813f7e2fb
+      sha256: b015a8ad1c488f66851d762d3090a21c600e479dc75e68328c52774040cf9226
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.0"
+    version: "6.5.0"
 sdks:
-  dart: ">=3.2.0 <4.0.0"
-  flutter: ">=3.16.0"
+  dart: ">=3.2.3 <4.0.0"
+  flutter: ">=3.16.6"
