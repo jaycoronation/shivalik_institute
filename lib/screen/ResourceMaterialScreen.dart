@@ -267,7 +267,7 @@ class _ResourceMaterialScreenState extends BaseState<ResourceMaterialScreen> {
                           onTap: () async {
                             if (getSet.fileType == "pdf")
                               {
-                                startActivity(context, PdfViewer(getSet.fullPath ?? "",getSet.isPrivate ?? ''));
+                                startActivity(context, PdfViewer(getSet.fullPath ?? "",getSet.isPrivate ?? '',getSet.file ?? ''));
                               }
                             else
                               {

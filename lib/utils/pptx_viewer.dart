@@ -16,30 +16,31 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../constant/colors.dart';
 import '../utils/app_utils.dart';
 
-class WebViewContainer extends StatefulWidget {
+class PPTXViewer extends StatefulWidget {
   final String url;
-  final String title;
   final String isPrivate;
+  final String fileName;
 
-  const WebViewContainer(this.url, this.title, this.isPrivate, {super.key});
+  const PPTXViewer(this.url, this.isPrivate, this.fileName, {super.key});
 
   @override
-  State<WebViewContainer> createState() => _WebViewContainerState();
+  State<PPTXViewer> createState() => _PPTXViewerState();
 }
 
-class _WebViewContainerState extends State<WebViewContainer> {
+class _PPTXViewerState extends State<PPTXViewer> {
   bool isLoading = false;
   late WebViewController controller;
   String isPrivate = '';
+  String fileName = '';
 
   @override
   void initState(){
     super.initState();
 
     isPrivate = widget.isPrivate;
+    fileName = widget.fileName;
 
     print("isPrivate === $isPrivate");
-    print("URL === ${widget.url}");
     print("URL === ${widget.url}");
 
     if (isPrivate == "1")
@@ -59,14 +60,7 @@ class _WebViewContainerState extends State<WebViewContainer> {
       }
     else
       {
-        if (widget.url.contains(".pptx") || widget.url.contains(".ppt"))
-          {
-            url = "https://docs.google.com/gview?embedded=true&url=${widget.url}";
-          }
-        else
-          {
-            url = widget.url;
-          }
+        url = "https://docs.google.com/gview?embedded=true&url=${widget.url}";
       }
 
     controller = WebViewController()
@@ -121,7 +115,6 @@ class _WebViewContainerState extends State<WebViewContainer> {
             child: getBackArrow(),
           ),
         ),
-        title: getTitle(widget.title),
         elevation: 0,
         centerTitle: false,
         titleSpacing: 0,
@@ -207,8 +200,6 @@ class _WebViewContainerState extends State<WebViewContainer> {
     SessionManager sessionManager = SessionManager();
 
     String fileUrl = fileUrlServer;
-
-    String fileName = '${sessionManager.getBatchName()}_${DateTime.now().millisecondsSinceEpoch / 1000}.pptx';
 
     print('fileName ==== $fileName');
 

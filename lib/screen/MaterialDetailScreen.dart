@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -26,7 +26,7 @@ import '../model/ModuleResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../utils/pdf_viewer.dart';
-import '../utils/pptxConvertScreen.dart';
+import '../utils/pptx_viewer.dart';
 import '../viewmodels/CommonViewModel.dart';
 import 'package:http/http.dart' as http;
 import '../viewmodels/MultipartApiViewModel.dart';
@@ -289,9 +289,12 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                             return GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: () async {
-                                if (listDocument[index].fileType == "pdf")
+
+                                openFileView(context, listDocument[index].fileType ?? '', listDocument[index].fullPath ?? "", listDocument[index].isPrivate ?? "", listDocument[index].file ?? "",);
+
+                                /*if (listDocument[index].fileType == "pdf")
                                   {
-                                    startActivity(context, PdfViewer(listDocument[index].fullPath ?? "",listDocument[index].isPrivate ?? ""));
+                                    startActivity(context, PdfViewer(listDocument[index].fullPath ?? "",listDocument[index].isPrivate ?? "",listDocument[index].file ?? "",));
                                   }
                                 else if ((listDocument[index].fileType == "xls") || (listDocument[index].fileType == "xlsx"))
                                   {
@@ -304,12 +307,12 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                                   }
                                 else if (listDocument[index].fileType == "pptx")
                                   {
-                                    startActivity(context, WebViewContainer(listDocument[index].fullPath ?? "",'',listDocument[index].isPrivate ?? ''));
+                                    startActivity(context, PPTXViewer(listDocument[index].fullPath ?? '', listDocument[index].isPrivate ?? '0',listDocument[index].file ?? ''));
                                   }
                                 else
                                   {
                                     startActivity(context, WebViewContainer(listDocument[index].fullPath ?? "",'',listDocument[index].isPrivate ?? ''));
-                                  }
+                                  }*/
                               },
                               child: Container(
                                 margin: const EdgeInsets.only(bottom: 12),
@@ -363,6 +366,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
       },
     );
   }
+
 
   @override
   void castStatefulWidget() {

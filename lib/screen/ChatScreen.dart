@@ -430,7 +430,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                             onTap: () async {
                                               if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
                                               {
-                                                startActivity(context, PdfViewer(listMessages[index].content ?? '', '0'));
+                                                startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
                                               }
                                               else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
                                               {
@@ -724,7 +724,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                               onTap: () async {
                                                 if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
                                                 {
-                                                  startActivity(context, PdfViewer(listMessages[index].content ?? '', '0'));
+                                                  startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
                                                 }
                                                 else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
                                                 {
@@ -1845,7 +1845,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       onTap: () async {
         if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
         {
-          startActivity(context, PdfViewer(listMessages[index].content ?? '', '0'));
+          startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
         }
         else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
         {

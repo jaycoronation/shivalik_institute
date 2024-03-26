@@ -120,7 +120,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                               Container(
                                 margin: const EdgeInsets.only(top: 12),
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(150),),
+                                    borderRadius: const BorderRadius.all(Radius.circular(150),),
                                     color: grayLight,
                                   border: Border.all(color: grayLight,width: 0.5)
                                 ),
@@ -449,7 +449,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                               behavior: HitTestBehavior.opaque,
                               onTap: (){
                                 logFirebase("invoice_profile", {});
-                                startActivity(context, PdfViewer(getSet.invoiceFile ?? '',"0"));
+                                startActivity(context, PdfViewer(getSet.invoiceFile ?? '',"0","Payment_Invoice.pdf"));
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
@@ -459,7 +459,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                   children: [
                                     Image.asset('assets/images/ic_download.png', width: 22,height: 22,),
                                     Container(width: 12),
-                                     Expanded(
+                                     const Expanded(
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -499,7 +499,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 children: [
                                   Image.asset('assets/images/ic_payment.png', width: 22,height: 22,),
                                   Container(width: 12),
-                                   Expanded(
+                                   const Expanded(
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -537,7 +537,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 children: [
                                   Image.asset('assets/images/ic_calendar.png', width: 22,height: 22,),
                                   Container(width: 12),
-                                   Expanded(
+                                   const Expanded(
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -575,7 +575,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 children: [
                                   Image.asset('assets/images/ic_notification.png', width: 22,height: 22,),
                                   Container(width: 12),
-                                   Expanded(
+                                   const Expanded(
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -612,7 +612,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 children: [
                                   Image.asset('assets/images/ic_logout.png', width: 22,height: 22,),
                                   Container(width: 12),
-                                   Expanded(
+                                   const Expanded(
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment: CrossAxisAlignment.start,

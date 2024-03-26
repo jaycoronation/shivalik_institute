@@ -6,9 +6,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shivalik_institute/utils/pdf_viewer.dart';
+import 'package:shivalik_institute/utils/pptx_viewer.dart';
 import 'package:shivalik_institute/utils/session_manager.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../common_widget/common_widget.dart';
 import '../constant/colors.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as tab;
+
+import '../screen/WebViewContainer.dart';
 
 
 RegExp htmlExp = RegExp(r"<[^>]*>",multiLine: true,caseSensitive: true);
@@ -101,6 +107,29 @@ checkValidString (String? value) {
   return value.trim();
 }
 
+openFileView(BuildContext context,String fileType, String fullPath,String isPrivate,String fileName) async {
+  if (fileType == "pdf")
+  {
+    startActivity(context, PdfViewer(fullPath ?? "",isPrivate ?? "",fileName ?? "",));
+  }
+  else if ((fileType == "xls") || (fileType == "xlsx"))
+  {
+    Uri fileUri = Uri.parse(fullPath?? "");
+
+    if (await canLaunchUrl(fileUri))
+      {
+      launchUrl(fileUri,mode: LaunchMode.externalApplication);
+      }
+  }
+  else if (fileType == "pptx")
+    {
+      startActivity(context, PPTXViewer(fullPath ?? '',isPrivate ?? '0',fileName));
+    }
+  else
+    {
+      startActivity(context, WebViewContainer(fullPath ?? "",'',isPrivate ?? ''));
+    }
+}
 
 String timeStampToDateTimeForMsg(Timestamp? myTimeStamp)
 {

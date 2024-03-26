@@ -182,7 +182,7 @@ class _PaymentHistoryScreenState extends BaseState<PaymentHistoryScreen> {
                                             child: GestureDetector(
                                                 behavior: HitTestBehavior.opaque,
                                                 onTap: () {
-                                                  startActivity(context, PdfViewer(getSet.receiptName ?? '',"0"));
+                                                  startActivity(context, PdfViewer(getSet.receiptName ?? '',"0","Payment_Receipt.pdf"));
                                                 },
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(6.0),

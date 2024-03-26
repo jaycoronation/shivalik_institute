@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screen_protector/screen_protector.dart';
 import 'package:shivalik_institute/common_widget/common_widget.dart';
@@ -19,8 +20,9 @@ import 'base_class.dart';
 class PdfViewer extends StatefulWidget {
   final String pdfUrl;
   final String isPrivate;
+  final String fileName;
 
-  const PdfViewer(this.pdfUrl,this.isPrivate,  {Key? key}) : super(key: key);
+  const PdfViewer(this.pdfUrl,this.isPrivate, this.fileName,  {Key? key}) : super(key: key);
 
   @override
   _PdfViewer createState() => _PdfViewer();
@@ -29,15 +31,17 @@ class PdfViewer extends StatefulWidget {
 class _PdfViewer extends BaseState<PdfViewer> {
   String pdfUrl = "";
   String isPrivate = "";
+  String fileName = "";
   bool isLoading = false;
   final bool _isNoData = false;
-  final PdfViewerController _pdfViewerController = PdfViewerController();
+    final PdfViewerController _pdfViewerController = PdfViewerController();
 
   @override
   void initState() {
 
     pdfUrl = (widget as PdfViewer).pdfUrl;
     isPrivate = (widget as PdfViewer).isPrivate;
+    fileName = (widget as PdfViewer).fileName;
 
     print(pdfUrl);
 
@@ -166,11 +170,23 @@ class _PdfViewer extends BaseState<PdfViewer> {
     );
   }
 
-  Future<String> _getDownloadDirectory(BuildContext context, String fileUrlServer) async {
+  _getDownloadDirectory(BuildContext context, String fileUrlServer) async {
     String? directory;
     try {
-      directory = await FilePicker.platform.getDirectoryPath();
+      //
+
+      if (Platform.isIOS)
+        {
+          var pathMain = await getApplicationDocumentsDirectory();
+          directory = pathMain.path;
+        }
+      else
+        {
+          directory = await FilePicker.platform.getDirectoryPath();
+        }
+
       _downloadFile(directory ?? '',fileUrlServer);
+
     } catch (e) {
       print("Error while picking directory: $e");
     }
@@ -178,15 +194,23 @@ class _PdfViewer extends BaseState<PdfViewer> {
       showSnackBar("No directory selected!", context);
       return "";
     }
-    return directory;
   }
 
   Future<void> _downloadFile(String downloadPath, String fileUrlServer) async {
     // Example using `http` package
     String fileUrl = fileUrlServer;
-    String fileName = '${sessionManager.getBatchName()}_${DateTime.now().millisecondsSinceEpoch / 1000}.pdf';
+    //String fileName = '${sessionManager.getBatchName()}_${DateTime.now().millisecondsSinceEpoch / 1000}.pdf';
 
     print('fileName ==== $fileName');
+
+    if (Platform.isIOS)
+      {
+        var permissionStatus = await Permission.storage.status;
+        if (permissionStatus.isDenied)
+          {
+            await Permission.storage.request();
+          }
+      }
 
     HttpClient().getUrl(Uri.parse(fileUrl))
         .then((HttpClientRequest request) => request.close())

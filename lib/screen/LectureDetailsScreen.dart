@@ -15,6 +15,7 @@ import 'package:shivalik_institute/screen/DashboardScreen.dart';
 import 'package:shivalik_institute/screen/FacultyProfileScreen.dart';
 import 'package:shivalik_institute/screen/WebViewContainer.dart';
 import 'package:shivalik_institute/utils/pdf_viewer.dart';
+import 'package:shivalik_institute/utils/pptx_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
@@ -327,11 +328,11 @@ class _LectureDetailsScreenState extends BaseState<LectureDetailsScreen> {
 
                                               if (getSet.fileType == "pdf")
                                                 {
-                                                  startActivity(context, PdfViewer(getSet.fullPath ?? '', getSet.isPrivate ?? '0'));
+                                                  startActivity(context, PdfViewer(getSet.fullPath ?? '', getSet.isPrivate ?? '0',getSet.file ?? ''));
                                                 }
                                               else if (getSet.fileType == "pptx")
                                                 {
-                                                  startActivity(context, WebViewContainer(getSet.fullPath ?? '', "" ,getSet.isPrivate ?? '0'));
+                                                  startActivity(context, PPTXViewer(getSet.fullPath ?? '', getSet.isPrivate ?? '0',getSet.file ?? ''));
                                                 }
                                               else
                                                 {
