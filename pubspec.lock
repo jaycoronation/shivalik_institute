@@ -73,6 +73,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  camerawesome:
+    dependency: "direct main"
+    description:
+      name: camerawesome
+      sha256: e017818d1d4c2229d09163cde89daf30a4ea407c485fdea9323986695f72a53d
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
+  carousel_slider:
+    dependency: transitive
+    description:
+      name: carousel_slider
+      sha256: "9c695cc963bf1d04a47bd6021f68befce8970bcd61d24938e1fb0918cf5d9c42"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.1"
   characters:
     dependency: transitive
     description:
@@ -137,6 +153,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  colorfilter_generator:
+    dependency: transitive
+    description:
+      name: colorfilter_generator
+      sha256: ccc2995e440b1d828d55d99150e7cad64624f3cb4a1e235000de3f93cf10d35c
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.8"
   connectivity_plus:
     dependency: "direct main"
     description:
@@ -173,10 +197,10 @@ packages:
     dependency: transitive
     description:
       name: cross_file
-      sha256: "0b0036e8cccbfbe0555fd83c1d31a6f30b77a96b598b35a5d36dd41f718695e9"
+      sha256: fedaadfa3a6996f75211d835aaeb8fede285dae94262485698afd832371b9a5e
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.3+4"
+    version: "0.3.3+8"
   crypto:
     dependency: transitive
     description:
@@ -688,6 +712,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  image:
+    dependency: transitive
+    description:
+      name: image
+      sha256: "4c68bfd5ae83e700b5204c1e74451e7bf3cf750e6843c6e158289cf56bda018e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.7"
   image_cropper:
     dependency: "direct main"
     description:
@@ -840,6 +872,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  linkwell:
+    dependency: "direct main"
+    description:
+      name: linkwell
+      sha256: "10b8453666a9b2f7a112af4b4cc832b3f82788a7867e114469402aa8614bf159"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.6"
   lints:
     dependency: transitive
     description:
@@ -880,6 +920,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.0"
+  matrix2d:
+    dependency: transitive
+    description:
+      name: matrix2d
+      sha256: "188718dd3bc2a31e372cfd0791b0f77f4f13ea76164147342cc378d9132949e7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   meta:
     dependency: transitive
     description:

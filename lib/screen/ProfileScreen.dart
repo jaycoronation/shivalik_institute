@@ -121,8 +121,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     _stateId = getSet.state ?? '';
     _cityId = getSet.city ?? '';
     _batchId = getSet.batchId ?? '';
-
-     _courseId = getSet.courseId ?? '';
+    _courseId = getSet.courseId ?? '';
 
      print("_courseId === $_courseId");
 
@@ -150,7 +149,6 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
         child: Scaffold(
           appBar: AppBar(

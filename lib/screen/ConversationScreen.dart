@@ -207,7 +207,6 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
                                                 children: [
                                                   const Text("You: ", style: TextStyle(fontSize: 12,fontWeight: FontWeight.w600,color: graySemiDark),),
                                                   getMessageContent(listData[index].lastMessage ?? LastMessage()),
-                                                  
                                                 ],
                                               )
                                               : Row(

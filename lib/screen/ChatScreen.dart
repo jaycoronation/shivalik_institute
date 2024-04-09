@@ -9,6 +9,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_expanded_tile/flutter_expanded_tile.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
@@ -16,6 +17,7 @@ import 'package:gap/gap.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:linkwell/linkwell.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 import 'package:shivalik_institute/model/MessageSchema.dart';
@@ -285,7 +287,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: '👍',
-                                                iconWidget:  Text('👍',),
+                                                iconWidget:  const Text('👍',),
                                               ),
                                               PullDownMenuItem(
                                                 onTap: () {
@@ -303,7 +305,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: '❤️',
-                                                iconWidget: Text('❤️',),
+                                                iconWidget: const Text('❤️',),
                                               ),
                                               PullDownMenuItem(
                                                 onTap: () {
@@ -321,30 +323,15 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: '😂',
-                                                iconWidget: Text('😂',),
+                                                iconWidget: const Text('😂',),
                                               ),
                                               PullDownMenuItem(
                                                 onTap: () {
-                                                  // setState(() {
-                                                  //   valueEmoji = '4';
-                                                  // });
-                                                  // var reaction = ReactionModel(
-                                                  //   userId: sessionManager.getUserId().toString(),
-                                                  //   profilePicUrl: sessionManager.getProfilePic().toString(),
-                                                  //   reactionIcon: valueEmoji,
-                                                  //   userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
-                                                  //
-                                                  // );
-
-                                                  // addReaction(listMessages[index].documentId.toString(),reaction);
-
                                                   openEmojiBottomSheet(listMessages[index]);
-
                                                 },
                                                 title: 'Edit',
                                                 iconWidget: Image.asset('assets/images/ic_add.png', width: 20, height: 20, color: grayDarkNew,),
                                               ),
-
                                             ]
                                         ),
                                         PullDownMenuItem(
@@ -356,8 +343,18 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
                                         ),
                                         PullDownMenuItem(
+                                          title: 'Copy',
+                                          itemTheme: const PullDownMenuItemTheme(textStyle: TextStyle(color: Colors.black)),
+                                          iconColor: Colors.black,
+                                          icon: Icons.copy,
+                                          onTap: () async {
+                                            await Clipboard.setData(ClipboardData(text: listMessages[index].content ?? ''));
+                                            showSnackBar("Copied to Clipboard", context);
+                                          },
+                                        ),
+                                        PullDownMenuItem(
                                           title: 'Delete',
-                                          itemTheme: PullDownMenuItemTheme(textStyle: TextStyle(color: Colors.red)),
+                                          itemTheme: const PullDownMenuItemTheme(textStyle: TextStyle(color: Colors.red)),
                                           iconColor: Colors.red,
                                           icon: Icons.delete_outline_rounded,
                                           onTap: () {
@@ -370,60 +367,62 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                           onLongPress: showMenu,
                                           child: listMessages[index].type == "media"
                                               ? Container(
-                                            margin: EdgeInsets.only(top: 4, bottom: 4, left: sessionManager.getUserId() == listMessages[index].senderId  ? 50 : 12 , right: sessionManager.getUserId() == listMessages[index].senderId ? 12 : 50),
-                                            decoration: BoxDecoration(color: white, border: Border.all(color: white), borderRadius: BorderRadius.circular(8)),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                List<String> listImage = [];
-                                                listImage.add(listMessages[index].content.toString());
-
-                                                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                  return FullScreenImage("", listImage, index);
-                                                }));
-                                              },
-                                              child: Container(
-                                                margin: const EdgeInsets.all(5),
+                                                margin: EdgeInsets.only(top: 4, bottom: 4,
+                                                    left: sessionManager.getUserId() == listMessages[index].senderId  ? 50 : 12 ,
+                                                    right: sessionManager.getUserId() == listMessages[index].senderId ? 12 : 50),
                                                 decoration: BoxDecoration(color: white, border: Border.all(color: white), borderRadius: BorderRadius.circular(8)),
-                                                width: MediaQuery.of(context).size.width,
-                                                padding: EdgeInsets.zero,
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Visibility(
-                                                      visible: listMessages[index].senderId != sessionManager.getUserId(),
-                                                      child: Text(
-                                                        listMessages[index].sender ?? '',
-                                                        style: const TextStyle(
-                                                            color: graySemiDark,
-                                                            fontSize: 12,
-                                                            fontWeight: FontWeight.w500
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    List<String> listImage = [];
+                                                    listImage.add(listMessages[index].content.toString());
+
+                                                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                      return FullScreenImage("", listImage, index);
+                                                    }));
+                                                  },
+                                                  child: Container(
+                                                    margin: const EdgeInsets.all(5),
+                                                    decoration: BoxDecoration(color: white, border: Border.all(color: white), borderRadius: BorderRadius.circular(8)),
+                                                    width: MediaQuery.of(context).size.width,
+                                                    padding: EdgeInsets.zero,
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Visibility(
+                                                          visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                          child: Text(
+                                                            listMessages[index].sender ?? '',
+                                                            style: const TextStyle(
+                                                                color: graySemiDark,
+                                                                fontSize: 12,
+                                                                fontWeight: FontWeight.w500
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+                                                        const Gap(6),
+                                                        listMessages[index].content?.isNotEmpty ?? false
+                                                            ? listMessages[index].content?.startsWith("https") ?? false
+                                                            ? FadeInImage.assetNetwork(
+                                                          image: listMessages[index].content.toString().trim(),
+                                                          fit: BoxFit.cover,
+                                                          placeholder: 'assets/images/cover_thumb.jpg',
+                                                          height: 140,
+                                                          width: MediaQuery.of(context).size.width,
+                                                        )
+                                                            : Image.file(File(listMessages[index].content ?? ''), fit: BoxFit.cover,height: 140,width: MediaQuery.of(context).size.width,)
+                                                            : Image.asset('assets/images/cover_thumb.jpg', fit: BoxFit.fill,height: 140,width: MediaQuery.of(context).size.width,),
+                                                        const Gap(6),
+                                                        Text(
+                                                          timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                          textAlign: TextAlign.end,
+                                                          style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                        )
+                                                      ],
                                                     ),
-                                                    const Gap(6),
-                                                    listMessages[index].content?.isNotEmpty ?? false
-                                                        ? listMessages[index].content?.startsWith("https") ?? false
-                                                        ? FadeInImage.assetNetwork(
-                                                      image: listMessages[index].content.toString().trim(),
-                                                      fit: BoxFit.cover,
-                                                      placeholder: 'assets/images/cover_thumb.jpg',
-                                                      height: 140,
-                                                      width: MediaQuery.of(context).size.width,
-                                                    )
-                                                        : Image.file(File(listMessages[index].content ?? ''), fit: BoxFit.cover,height: 140,width: MediaQuery.of(context).size.width,)
-                                                        : Image.asset('assets/images/cover_thumb.jpg', fit: BoxFit.fill,height: 140,width: MediaQuery.of(context).size.width,),
-                                                    const Gap(6),
-                                                    Text(
-                                                      timeStampToDateTimeForMsg(listMessages[index].timestamp),
-                                                      textAlign: TextAlign.end,
-                                                      style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-                                                    )
-                                                  ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
-                                          )
+                                              )
                                               : listMessages[index].type == "document"
                                               ? GestureDetector(
                                             behavior: HitTestBehavior.opaque,
@@ -510,75 +509,78 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                             ),
                                           )
                                               : Container(
-                                            margin: EdgeInsets.only(
-                                                left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
-                                                right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
-                                                bottom: 6
-                                            ),
-                                            padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(6),
-                                            ),
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Visibility(
-                                                  visible: listMessages[index].senderId != sessionManager.getUserId(),
-                                                  child: Text(
-                                                    listMessages[index].sender ?? '',
-                                                    style: const TextStyle(
-                                                        color: graySemiDark,
-                                                        fontSize: 12,
-                                                        fontWeight: FontWeight.w500
-                                                    ),
-                                                  ),
+                                                margin: EdgeInsets.only(
+                                                    left: listMessages[index].senderId != sessionManager.getUserId() ? 16 : 80,
+                                                    right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 16,
+                                                    bottom: 6
                                                 ),
-                                                Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
-                                                Text(
-                                                  listMessages[index].content ?? '',
-                                                  style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w500
-                                                  ),
+                                                padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(6),
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.end,
-                                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                                  mainAxisSize: MainAxisSize.min,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     Visibility(
-                                                      visible: listMessages[index].isEdited ?? false,
-                                                      child: Row(
-                                                        children: [
-                                                          const Text(
-                                                            "Edited",
-                                                            textAlign: TextAlign.end,
-                                                            style: TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-                                                          ),
-                                                          const Gap(4),
-                                                          Container(
-                                                            decoration: const BoxDecoration(shape: BoxShape.circle, color: graySemiDark),
-                                                            width: 4,
-                                                            height: 4,
-                                                          ),
-                                                          const Gap(4),
-                                                        ],
+                                                      visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                      child: Text(
+                                                        listMessages[index].sender ?? '',
+                                                        style: const TextStyle(
+                                                            color: graySemiDark,
+                                                            fontSize: 12,
+                                                            fontWeight: FontWeight.w500
+                                                        ),
                                                       ),
                                                     ),
-                                                    Text(
-                                                      timeStampToDateTimeForMsg(listMessages[index].timestamp),
-                                                      textAlign: TextAlign.end,
-                                                      style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                    Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
+                                                    LinkWell(listMessages[index].content ?? '',
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w500
                                                     ),
+                                                      linkStyle: const TextStyle(
+                                                        color: brandColor,
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w500
+                                                    ),),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Visibility(
+                                                          visible: listMessages[index].isEdited ?? false,
+                                                          child: Row(
+                                                            children: [
+                                                              const Text(
+                                                                "Edited",
+                                                                textAlign: TextAlign.end,
+                                                                style: TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                              ),
+                                                              const Gap(4),
+                                                              Container(
+                                                                decoration: const BoxDecoration(shape: BoxShape.circle, color: graySemiDark),
+                                                                width: 4,
+                                                                height: 4,
+                                                              ),
+                                                              const Gap(4),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                          textAlign: TextAlign.end,
+                                                          style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                        ),
 
+                                                      ],
+                                                    )
                                                   ],
-                                                )
-                                              ],
-                                            ),
-                                          ),
+                                                ),
+                                              ),
                                         );
                                       },
                                     )
@@ -602,7 +604,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: '👍',
-                                                iconWidget: Text('👍',),
+                                                iconWidget: const Text('👍',),
                                               ),
                                               PullDownMenuItem(
                                                 onTap: () {
@@ -619,7 +621,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: '❤️',
-                                                iconWidget: Text('❤️',),
+                                                iconWidget: const Text('❤️',),
                                               ),
                                               PullDownMenuItem(
                                                 onTap: () {
@@ -636,7 +638,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
                                                 },
                                                 title: '😂',
-                                                iconWidget: Text('😂'),
+                                                iconWidget: const Text('😂'),
                                               ),
                                               PullDownMenuItem(
                                                 onTap: () {
@@ -657,6 +659,16 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                 iconWidget: Image.asset('assets/images/ic_add.png', width: 20, height: 20,color: grayDarkNew,),
                                               ),
                                             ]
+                                        ),
+                                        PullDownMenuItem(
+                                          title: 'Copy',
+                                          itemTheme: const PullDownMenuItemTheme(textStyle: TextStyle(color: Colors.black)),
+                                          iconColor: Colors.black,
+                                          icon: Icons.copy,
+                                          onTap: () async {
+                                            await Clipboard.setData(ClipboardData(text: listMessages[index].content ?? ''));
+                                            showSnackBar("Copied to Clipboard", context);
+                                          },
                                         ),
                                       ],
                                       buttonBuilder: (context, showMenu) {
@@ -805,8 +817,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                         )
                                             : Container(
                                               margin: EdgeInsets.only(
-                                                  left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
-                                                  right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
+                                                  left: listMessages[index].senderId != sessionManager.getUserId() ? 16 : 80,
+                                                  right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 16,
                                                   bottom: 6
                                               ),
                                               padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
@@ -830,10 +842,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                     ),
                                                   ),
                                                   Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
-                                                  Text(
-                                                    listMessages[index].content ?? '',
+                                                  LinkWell(listMessages[index].content ?? '',
                                                     style: const TextStyle(
                                                         color: Colors.black,
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w500
+                                                    ),
+                                                    linkStyle: const TextStyle(
+                                                        color: brandColor,
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.w500
                                                     ),
@@ -1020,15 +1036,10 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       {
         // Access the value of the new field if it exists
         var fieldValue = document.data()['reactions'];
-
-
-        print('IS CONTENT FILED ==== ${fieldValue}');
-
         // Your logic here using the fieldValue
       }
       else
       {
-        print('IS CONTENT IS NOT AVAILABLE');
       }
     }
   }
@@ -1237,89 +1248,121 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
                   color: chatBoxBg),
               padding: const EdgeInsets.only(top: 22, left: 40, right: 40, bottom: 22),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              child: Column(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      pickImageFromGallery();
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          height: 58,
-                          width: 58,
-                          decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
-                          margin: const EdgeInsets.only(bottom: 5,right: 5),
-                          child: const Center(child: Icon(Icons.photo_size_select_actual, color:white)),
-                        ),
-                        Container(
-                            margin: const EdgeInsets.only(top: 5, bottom: 10),
-                            child: const Text('Photos',
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
-                        ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          pickImageFromGallery();
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              height: 58,
+                              width: 58,
+                              decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
+                              margin: const EdgeInsets.only(bottom: 5,right: 5),
+                              child: const Center(child: Icon(Icons.photo_size_select_actual, color:white)),
+                            ),
+                            Container(
+                                margin: const EdgeInsets.only(top: 5, bottom: 10),
+                                child: const Text('Photos',
+                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
+                            ),
 
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      pickImageFromCamera();
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          height: 58,
-                          width: 58,
-                          decoration: BoxDecoration(color:brandColor , border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
-                          margin: const EdgeInsets.only(bottom: 5,right: 5),
-                          child: const Center(child: Icon(Icons.camera_alt, color: white,)),
+                          ],
                         ),
-                        Container(
-                            margin: const EdgeInsets.only(top: 5, bottom: 10),
-                            child: const Text('Camera',
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
-                        ),
-
-                      ],
-                    ),
-                  ),
-                  Visibility(
-                    // visible: !isFileUploading,
-                    child: GestureDetector(
-                      onTap: () {
-                        // _sendDataToFireStore(selectedMedia);
-                        // selectAndUploadImage(context, conversationData.conversationId);
-
-                        _pickFile();
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            height: 58,
-                            width: 58,
-                            decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
-                            margin: const EdgeInsets.only(bottom: 5,right: 5),
-                            child: const Center(child: Icon(Icons.file_copy, color: white,)),
-                          ),
-                          Container(
-                              margin: const EdgeInsets.only(top: 5, bottom: 10),
-                              child: const Text('Document',
-                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
-                          ),
-
-                        ],
                       ),
-                    ),
-                  ),
+                      GestureDetector(
+                        onTap: () {
+                          pickImageFromCamera();
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              height: 58,
+                              width: 58,
+                              decoration: BoxDecoration(color:brandColor , border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
+                              margin: const EdgeInsets.only(bottom: 5,right: 5),
+                              child: const Center(child: Icon(Icons.camera_alt, color: white,)),
+                            ),
+                            Container(
+                                margin: const EdgeInsets.only(top: 5, bottom: 10),
+                                child: const Text('Camera',
+                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
+                            ),
 
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        // visible: !isFileUploading,
+                        child: GestureDetector(
+                          onTap: () {
+                            // _sendDataToFireStore(selectedMedia);
+                            // selectAndUploadImage(context, conversationData.conversationId);
+
+                            _pickFile();
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                height: 58,
+                                width: 58,
+                                decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
+                                margin: const EdgeInsets.only(bottom: 5,right: 5),
+                                child: const Center(child: Icon(Icons.file_copy, color: white,)),
+                              ),
+                              Container(
+                                  margin: const EdgeInsets.only(top: 5, bottom: 10),
+                                  child: const Text('Document',
+                                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
+                              ),
+
+                            ],
+                          ),
+                        ),
+                      ),
+
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          pickVideoFromGallery();
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              height: 58,
+                              width: 58,
+                              decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
+                              margin: const EdgeInsets.only(bottom: 5,right: 5),
+                              child: const Center(child: Icon(Icons.video_camera_back_outlined, color:white)),
+                            ),
+                            Container(
+                                margin: const EdgeInsets.only(top: 5, bottom: 10),
+                                child: const Text('Videos',
+                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
@@ -1357,6 +1400,21 @@ class _ChatScreenState extends BaseState<ChatScreen> {
         _cropImage(filePath);
 
       }else{
+        print("No image is selected.");
+      }
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> pickVideoFromGallery() async {
+    try {
+      var pickedFiles = await ImagePicker().pickVideo(source: ImageSource.gallery);
+      if (pickedFiles != null) {
+        final filePath = pickedFiles.path;
+        _cropImage(filePath);
+
+      } else {
         print("No image is selected.");
       }
     } on Exception catch (e) {
@@ -1559,13 +1617,20 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
   sendNotificationToUser(String msg) async {
     var token = List<String>.empty(growable: true);
+
+    print("listDeviceTokens ====== ${listDeviceTokens.length}");
+
     for(int i=0; i < listDeviceTokens.length; i++)
     {
+      print("userId ====== ${listDeviceTokens[i].userId}");
       if (listDeviceTokens[i].userId != sessionManager.getUserId().toString())
         {
+
           token.add(checkValidString(listDeviceTokens[i].deviceToken));
         }
     }
+
+    print("token ====== ${token.length}");
 
     String constructFCMPayload(List<String> token) {
       return jsonEncode(
@@ -1656,7 +1721,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
       for (var i=0; i < (dataResponse.deviceTokens?.length ?? 0); i++)
         {
-          if (sessionManager.getUserId() == dataResponse.deviceTokens?[i].userId)
+          if (sessionManager.getUserId() != dataResponse.deviceTokens?[i].userId)
             {
               listDeviceTokens.add(dataResponse.deviceTokens?[i] ?? DeviceTokens());
             }
@@ -1726,19 +1791,19 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
     if (valueEmoji == '1')
     {
-      emoji = Text('👍',);
+      emoji = const Text('👍',);
     }
     else if (valueEmoji == '2')
     {
-      emoji = Text('❤️',);
+      emoji = const Text('❤️',);
     }
     else if (valueEmoji == '3')
     {
-      emoji = Text('😂');
+      emoji = const Text('😂');
     }
     else if (valueEmoji == '4')
     {
-      emoji = Text('');
+      emoji = const Text('');
     }
     else if (valueEmoji == '5')
     {
@@ -1757,15 +1822,15 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
     if (valueEmoji == '1')
     {
-      emoji = Text('👍',);
+      emoji = const Text('👍',);
     }
     else if (valueEmoji == '2')
     {
-      emoji = Text('❤️',);
+      emoji = const Text('❤️',);
     }
     else if (valueEmoji == '3')
     {
-      emoji = Text('😂');
+      emoji = const Text('😂');
     }
     else if (valueEmoji == '4')
     {
@@ -2075,11 +2140,11 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                              mainAxisAlignment: MainAxisAlignment.start,
                                              crossAxisAlignment: CrossAxisAlignment.start,
                                            children: [
-                                             Text(listReaction[index].userName,style: TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
-                                             Gap(2),
+                                             Text(listReaction[index].userName,style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),),
+                                             const Gap(2),
                                              Visibility(
                                                visible: sessionManager.getUserId() == listReaction[index].userId,
-                                                 child: Text("Tap to remove",style: TextStyle(color: grayDarkNew,fontSize: 12,fontWeight: FontWeight.w400),)
+                                                 child: const Text("Tap to remove",style: TextStyle(color: grayDarkNew,fontSize: 12,fontWeight: FontWeight.w400),)
                                              ),
                                            ],
                                          )),
@@ -2127,7 +2192,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
           child: Container(
             height: MediaQuery.of(context).size.height * 0.7, // Adjust height as needed
             child: Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -2199,9 +2264,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     int totalCount = reactionCounts.values.fold(0, (sum, count) => sum + count);
 
     // Display the results
-    print('Top three reactions: $topThreeReactions');
-    print('Total count of reactions: $totalCount');
-
     return Text(totalCount > 3 ? topThreeReactions.join(" ") +" " + "+${totalCount - 3}" : topThreeReactions.join(" "));
   }
 }
