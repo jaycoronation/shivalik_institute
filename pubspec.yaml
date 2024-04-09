@@ -95,6 +95,8 @@ dependencies:
   path_provider: ^2.1.2
   linkwell: ^2.0.6
   camerawesome: ^2.0.1
+  video_thumbnail: ^0.5.3
+
 
 dev_dependencies:
   flutter_test:

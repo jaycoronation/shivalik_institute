@@ -23,7 +23,7 @@ import 'package:pull_down_button/pull_down_button.dart';
 import 'package:shivalik_institute/model/MessageSchema.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:video_thumbnail/video_thumbnail.dart';
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
 import '../constant/api_end_point.dart';
@@ -36,6 +36,7 @@ import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../utils/full_screen_image.dart';
 import '../utils/pdf_viewer.dart';
+import 'CameraScreen.dart';
 import 'GroupProfileScreen.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -265,7 +266,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                   ),
                                 )
                               else
-
                                 sessionManager.getUserId() == listMessages[index].senderId
                                     ? PullDownButton(
                                       itemBuilder: (context) => [
@@ -508,6 +508,43 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                               ),
                                             ),
                                           )
+                                              : listMessages[index].type == "video"
+                                              ? GestureDetector(
+                                                  behavior: HitTestBehavior.opaque,
+                                                  onTap: () async {
+                                                    if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
+                                                    {
+                                                      startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
+                                                    }
+                                                    else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
+                                                    {
+                                                      if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                      {
+                                                        launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                      }
+                                                    }
+                                                    else
+                                                    {
+                                                      if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                      {
+                                                        launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                      }
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                      left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
+                                                      right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
+                                                      bottom: 6
+                                                    ),
+                                                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black,
+                                                      borderRadius: BorderRadius.circular(6),
+                                                    ),
+                                                    child: Image.memory(videoThumbnail(listMessages[index].content ?? "")),
+                                                  ),
+                                                )
                                               : Container(
                                                 margin: EdgeInsets.only(
                                                     left: listMessages[index].senderId != sessionManager.getUserId() ? 16 : 80,
@@ -794,13 +831,15 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                     children: [
                                                       Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
                                                       const Gap(8),
-                                                      Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
-                                                          Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
-                                                        ],
+                                                      Expanded(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
+                                                            Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
+                                                          ],
+                                                        ),
                                                       )
                                                     ],
                                                   ),
@@ -815,7 +854,44 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                             ),
                                           ),
                                         )
-                                            : Container(
+                                        : listMessages[index].type == "video"
+                                          ? GestureDetector(
+                                            behavior: HitTestBehavior.opaque,
+                                            onTap: () async {
+                                              if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
+                                              {
+                                                startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
+                                              }
+                                              else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
+                                              {
+                                                if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                {
+                                                  launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                }
+                                              }
+                                              else
+                                              {
+                                                if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                {
+                                                  launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                }
+                                              }
+                                            },
+                                            child: Container(
+                                              margin: EdgeInsets.only(
+                                                  left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
+                                                  right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
+                                                  bottom: 6
+                                              ),
+                                              padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                              decoration: BoxDecoration(
+                                                color: Colors.black,
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: Image.memory(videoThumbnail(listMessages[index].content ?? "")),
+                                            ),
+                                          )
+                                              : Container(
                                               margin: EdgeInsets.only(
                                                   left: listMessages[index].senderId != sessionManager.getUserId() ? 16 : 80,
                                                   right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 16,
@@ -892,36 +968,36 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                         );
                                       },
                                     ),
-                              listMessages[index].reactions?.isNotEmpty ?? false
-                                  ? GestureDetector(
-                                      behavior: HitTestBehavior.opaque,
-                                      onTap: (){
-                                        print("message lstttt${listMessages[index].reactions}");
+                                  listMessages[index].reactions?.isNotEmpty ?? false
+                                      ? GestureDetector(
+                                          behavior: HitTestBehavior.opaque,
+                                          onTap: (){
+                                            print("message lstttt${listMessages[index].reactions}");
 
-                                        listReaction = listMessages[index].reactions?.map((dynamic item) {
-                                          return ReactionModel(
-                                            userName: item["userName"],
-                                            profilePicUrl: item["profilePicUrl"],
-                                            reactionIcon: item["reactionIcon"],
-                                            userId: item["userId"],
-                                          );
-                                        }).toList() ?? [];
+                                            listReaction = listMessages[index].reactions?.map((dynamic item) {
+                                              return ReactionModel(
+                                                userName: item["userName"],
+                                                profilePicUrl: item["profilePicUrl"],
+                                                reactionIcon: item["reactionIcon"],
+                                                userId: item["userId"],
+                                              );
+                                            }).toList() ?? [];
 
-                                        openReactionBottomSheet(listMessages[index].documentId ?? "");
-                                      },
-                                    child: Container(
-                                        padding: const EdgeInsets.all(6),
-                                        margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
-                                        decoration: BoxDecoration(
-                                            color: grayLight,
-                                            shape: BoxShape.rectangle,
-                                          borderRadius: BorderRadius.circular(4)
+                                            openReactionBottomSheet(listMessages[index].documentId ?? "");
+                                          },
+                                        child: Container(
+                                            padding: const EdgeInsets.all(6),
+                                            margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                                            decoration: BoxDecoration(
+                                                color: grayLight,
+                                                shape: BoxShape.rectangle,
+                                              borderRadius: BorderRadius.circular(4)
+                                            ),
+                                            child: calculateTopReactions(listMessages[index].reactions ?? []),
                                         ),
-                                        child: calculateTopReactions(listMessages[index].reactions ?? []),
-                                    ),
-                                  )
-                                  : Container(
-                                    color: Colors.transparent,
+                                      )
+                                      : Container(
+                                        color: Colors.transparent,
                               ),
                             ],
                           ),
@@ -1029,6 +1105,16 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     );
   }
 
+
+  videoThumbnail(String path) async {
+    final uint8list = await VideoThumbnail.thumbnailData(
+      video: path,
+      imageFormat: ImageFormat.JPEG,
+      maxWidth: 128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+      quality: 25,
+    );
+    return uint8list;
+  }
   void checkReactions(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
     // Assuming you're fetching documents and iterating over them
     for (var document in (snapshot.data?.docs ?? [])) {
@@ -1249,11 +1335,60 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                   color: chatBoxBg),
               padding: const EdgeInsets.only(top: 22, left: 40, right: 40, bottom: 22),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      GestureDetector(
+                        onTap: () {
+                          pickImageFromCamera();
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) => const CameraPage()));
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              height: 58,
+                              width: 58,
+                              decoration: BoxDecoration(color:brandColor , border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
+                              margin: const EdgeInsets.only(bottom: 5,right: 5),
+                              child: const Center(child: Icon(Icons.camera_alt, color: white,)),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 5, bottom: 10),
+                              child: const Text('Camera',
+                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          getVideo();
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              height: 58,
+                              width: 58,
+                              decoration: BoxDecoration(color:brandColor , border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
+                              margin: const EdgeInsets.only(bottom: 5,right: 5),
+                              child: const Center(child: Icon(Icons.camera_alt, color: white,)),
+                            ),
+                            Container(
+                                margin: const EdgeInsets.only(top: 5, bottom: 10),
+                                child: const Text('Video Recording',
+                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
+                            ),
+                          ],
+                        ),
+                      ),
                       GestureDetector(
                         onTap: () {
                           pickImageFromGallery();
@@ -1278,30 +1413,39 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                           ],
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          pickImageFromCamera();
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              height: 58,
-                              width: 58,
-                              decoration: BoxDecoration(color:brandColor , border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
-                              margin: const EdgeInsets.only(bottom: 5,right: 5),
-                              child: const Center(child: Icon(Icons.camera_alt, color: white,)),
-                            ),
-                            Container(
-                                margin: const EdgeInsets.only(top: 5, bottom: 10),
-                                child: const Text('Camera',
-                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
-                            ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              pickVideoFromGallery();
+                            },
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  height: 58,
+                                  width: 58,
+                                  decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
+                                  margin: const EdgeInsets.only(bottom: 5,right: 5),
+                                  child: const Center(child: Icon(Icons.video_camera_back_outlined, color:white)),
+                                ),
+                                Container(
+                                    margin: const EdgeInsets.only(top: 5, bottom: 10),
+                                    child: const Text('Videos',
+                                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
+                                ),
 
-                          ],
-                        ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
+                      Gap(62),
                       Visibility(
                         // visible: !isFileUploading,
                         child: GestureDetector(
@@ -1312,8 +1456,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                             _pickFile();
                           },
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Container(
                                 height: 58,
@@ -1332,42 +1476,34 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                           ),
                         ),
                       ),
-
                     ],
                   ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          pickVideoFromGallery();
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              height: 58,
-                              width: 58,
-                              decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
-                              margin: const EdgeInsets.only(bottom: 5,right: 5),
-                              child: const Center(child: Icon(Icons.video_camera_back_outlined, color:white)),
-                            ),
-                            Container(
-                                margin: const EdgeInsets.only(top: 5, bottom: 10),
-                                child: const Text('Videos',
-                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
-                            ),
-
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
                 ],
               ),
             ),
           ],
         );
+      },
+    );
+  }
+
+  File? galleryFile;
+  final picker = ImagePicker();
+
+  Future getVideo() async {
+    final pickedFile = await picker.pickVideo(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.front,
+        maxDuration: const Duration(minutes: 10));
+    XFile? xfilePick = pickedFile;
+    setState(() {
+        if (xfilePick != null) {
+          galleryFile = File(pickedFile!.path);
+          _uploadDoc(galleryFile!, pickedFile.name, pickedFile.path.toString(),'video');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(// is this context <<<
+              const SnackBar(content: Text('Nothing is selected')));
+        }
       },
     );
   }
@@ -1462,22 +1598,34 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       Reference reference = FirebaseStorage.instance.ref();
 
       if (type == "media")
-        {
-          reference = FirebaseStorage.instance.ref().child('SIRE/${sessionManager.getBatchId() ?? ''}/Media/$fileName');
-        }
+      {
+        reference = FirebaseStorage.instance.ref().child('SIRE/${sessionManager.getBatchId() ?? ''}/Media/$fileName');
+      }
       else if (type == "document")
-        {
-          reference = FirebaseStorage.instance.ref().child('SIRE/${sessionManager.getBatchId() ?? ''}/Document/$fileName');
-        }
+      {
+        reference = FirebaseStorage.instance.ref().child('SIRE/${sessionManager.getBatchId() ?? ''}/Document/$fileName');
+      }
+      else if (type == "video")
+      {
+        reference = FirebaseStorage.instance.ref().child('SIRE/${sessionManager.getBatchId() ?? ''}/Video/$fileName');
+      }
 
       UploadTask uploadTask = reference.putFile(file);
       TaskSnapshot snapshot = await uploadTask;
       var imageUrl = await snapshot.ref.getDownloadURL();
-      print("<><> : UPLOAD FILE :: $imageUrl");
+      print("<><> : UPLOAD FILE :: $imageUrl")               ;
       setState(() {
         //isFileUploading = false;
       });
-      await _sendDataToFireStore(imageUrl, type,fileName);
+
+     if (type == "video")
+      {
+        await _sendDataToFireStore(imageUrl, type,fileName);
+      }
+     else
+       {
+         await _sendDataToFireStore(imageUrl, type,fileName);
+       }
     } on Exception catch (e) {
       print(e);
     }
@@ -1735,6 +1883,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   _getPeoplesList() async {
 
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
 
@@ -1788,7 +1937,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
             valueEmoji = listReactions[i]['reactionIcon'];
           }
       }
-
     if (valueEmoji == '1')
     {
       emoji = const Text('👍',);
@@ -1968,13 +2116,15 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                 children: [
                   Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
                   const Gap(8),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
-                      Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
-                    ],
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
+                        Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
+                      ],
+                    ),
                   )
                 ],
               ),
