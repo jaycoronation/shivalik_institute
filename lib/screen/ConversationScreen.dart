@@ -282,6 +282,18 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
           ],
         );
       }
+    else if (lastMessage.type == "video")
+      {
+        dataWidget =  Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset('assets/images/ic_video.png',width: 22,height: 22,color: grayLight,),
+            const Gap(6),
+            const Text('Video', style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: black),)
+          ],
+        );
+      }
 
     return dataWidget;
   }

@@ -85,8 +85,15 @@ Future<void> main() async {
         }
       else if (NavigationService.notif_type == "user_chat")
         {
+          int userCount = SessionManager().getMessageCount() ?? 0;
+          SessionManager().setMessageCount(userCount+1);
           SessionManager().setBatchId(initialMessage.data['content_id']);
+
+          print("USER CHAT ===== ${SessionManager().getMessageCount()}");
+
         }
+
+      print("USER CHAT OUT ===== ${SessionManager().getMessageCount()}");
     }
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((value) => runApp(
@@ -128,14 +135,32 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   NavigationService.notif_type = message.data['operation'];
   NavigationService.notif_id = message.data['content_id'];
 
+  SessionManagerMethods.init();
+
+  SessionManager sessionManager = SessionManager();
+
   if (NavigationService.notif_type == "lecture_complete")
     {
       SessionManager().setClassId(message.data['content_id']);
     }
   else if (NavigationService.notif_type == "user_chat")
-    {
-      SessionManager().setBatchId(message.data['content_id']);
-    }
+  {
+    int userCount = sessionManager.getMessageCount() ?? 0;
+
+    print("USER CHAT BEFORE ADD ===== $userCount");
+
+    userCount = userCount + 1;
+
+    print("USER CHAT BEFORE ===== $userCount");
+
+
+    sessionManager.setBatchId(message.data['content_id']);
+    sessionManager.setMessageCount(userCount);
+    print("USER CHAT ===== ${sessionManager.getMessageCount()}");
+
+  }
+
+  print("USER CHAT OUT ===== ${sessionManager.getMessageCount()}");
 
 }
 

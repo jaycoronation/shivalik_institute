@@ -21,6 +21,8 @@ import '../utils/app_utils.dart';
 import '../utils/session_manager.dart';
 import 'package:http/http.dart' as http;
 
+import '../utils/session_manager_methods.dart';
+
 // ignore: slash_for_doc_comments
 /**
  * Documents added by Alaa, enjoy ^-^:
@@ -95,9 +97,24 @@ class PushNotificationService {
 
       NavigationService.notif_id = id;
 
+      SessionManagerMethods.init();
+
       if (contentType == "lecture_complete")
         {
            SessionManager().setClassId(id);
+        }
+      else if (contentType == "user_chat")
+        {
+          int userCount = SessionManager().getMessageCount() ?? 0;
+
+          userCount = userCount + 1;
+
+          print("USER CHAT BEFORE ===== $userCount");
+
+          SessionManager().setMessageCount(userCount);
+          SessionManager().setBatchId(message.data['content_id']);
+
+          print("USER CHAT ===== ${SessionManager().getMessageCount()}");
         }
 
       openPage(contentType);
@@ -139,6 +156,19 @@ class PushNotificationService {
           print('<><> onMessage contentType--->$contentType');
           print("<><> onMessage Image URL : $image <><>");
           print("<><> onMessage Payload : $payload <><>");
+
+          SessionManagerMethods.init();
+
+          int userCount = SessionManager().getMessageCount() ?? 0;
+
+          userCount = userCount + 1;
+
+          print("USER CHAT BEFORE ===== $userCount");
+
+          SessionManager().setMessageCount(userCount);
+
+          print("USER CHAT ===== ${SessionManager().getMessageCount()}");
+
           const DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails(presentSound: true, presentAlert: true);
 
           flutterLocalNotificationsPlugin.show(
@@ -147,14 +177,16 @@ class PushNotificationService {
             messageData,
             payload: contentType,
             NotificationDetails(
-                android: AndroidNotificationDetails('SIRE', 'SIRE',
-                    channelDescription: channel.description,
-                    icon: payload,
-                    playSound: true,
-                    importance: Importance.max,
-                    styleInformation: BigTextStyleInformation(messageData),
-                    priority: Priority.high),
-                iOS: iOSPlatformChannelSpecifics),
+              android: AndroidNotificationDetails('SIRE', 'SIRE',
+                channelDescription: channel.description,
+                icon: payload,
+                playSound: true,
+                importance: Importance.max,
+                styleInformation: BigTextStyleInformation(messageData),
+                priority: Priority.high
+              ),
+              iOS: iOSPlatformChannelSpecifics
+            ),
           );
         }
         else
@@ -171,11 +203,25 @@ class PushNotificationService {
       // Get.toNamed(NOTIFICATIOINS_ROUTE);
       try {
         var contentType = payload.toString();
-
         print(payload.notificationResponseType.name);
         print(payload.notificationResponseType.index);
         print(payload.actionId);
         print(payload.payload);
+
+        SessionManagerMethods.init();
+
+      if (contentType == "user_chat")
+        {
+          int userCount = SessionManager().getMessageCount() ?? 0;
+
+          userCount = userCount + 1;
+
+          print("USER CHAT BEFORE ===== $userCount");
+
+          SessionManager().setMessageCount(userCount);
+
+          print("USER CHAT ===== ${SessionManager().getMessageCount()}");
+        }
 
         openPage(payload.payload ?? '');
       } catch (e) {
@@ -229,6 +275,8 @@ class PushNotificationService {
 
           NavigationService.notif_id = id;
 
+          SessionManagerMethods.init();
+
           if (contentType == "lecture_complete")
             {
               SessionManager().setClassId(id);
@@ -237,6 +285,17 @@ class PushNotificationService {
           if (contentType == "user_chat")
             {
               SessionManager().setBatchId(id);
+
+              int userCount = SessionManager().getMessageCount() ?? 0;
+
+              userCount = userCount + 1;
+
+              print("USER CHAT BEFORE ===== $userCount");
+
+              SessionManager().setMessageCount(userCount);
+
+              print("USER CHAT ===== ${SessionManager().getMessageCount()}");
+
             }
 
           const DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails(
@@ -248,14 +307,16 @@ class PushNotificationService {
             messageData,
             payload: contentType,
             NotificationDetails(
-                android: AndroidNotificationDetails('SIRE', 'SIRE',
-                    channelDescription: channel.description,
-                    icon: android?.smallIcon,
-                    playSound: true,
-                    importance: Importance.max,
-                    styleInformation: BigTextStyleInformation(messageData),
-                    priority: Priority.high),
-                iOS: iOSPlatformChannelSpecifics),
+              android: AndroidNotificationDetails('SIRE', 'SIRE',
+                channelDescription: channel.description,
+                icon: android?.smallIcon,
+                playSound: true,
+                importance: Importance.max,
+                styleInformation: BigTextStyleInformation(messageData),
+                priority: Priority.high
+              ),
+              iOS: iOSPlatformChannelSpecifics
+            ),
           );
         }
       else
@@ -282,15 +343,14 @@ class PushNotificationService {
   }
 
   androidNotificationChannel() => const AndroidNotificationChannel(
-        'high_importance_channel', // id
-        'High Importance Notifications', // title
-        description: 'This channel is used for important notifications.', // description
-        importance: Importance.max,
-        playSound: true,
-      );
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    description: 'This channel is used for important notifications.', // description
+    importance: Importance.max,
+    playSound: true,
+  );
 
   void openPage(String contentId) {
-
 
     NavigationService.notif_type = contentId;
     if (contentId == "event_scheduled")

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shivalik_institute/model/ReactionModel.dart';
+import 'package:video_player/video_player.dart';
 /// sender : "Jay Mistry"
 /// sender_id : "96"
 /// content : "Hi this is jay mistry"
@@ -91,6 +92,9 @@ MessageSchema copyWith({  String? sender,
   bool? get isDelete => _isDelete;
   List<dynamic>? get reactions => _reactions;
   Timestamp? get timestamp => _timestamp;
+
+  late VideoPlayerController controller;
+  late Future<void> initializeVideoPlayerFuture;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

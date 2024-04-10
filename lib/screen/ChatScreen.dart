@@ -9,6 +9,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_expanded_tile/flutter_expanded_tile.dart';
@@ -23,7 +24,8 @@ import 'package:pull_down_button/pull_down_button.dart';
 import 'package:shivalik_institute/model/MessageSchema.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
-import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:video_player/video_player.dart';
+
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
 import '../constant/api_end_point.dart';
@@ -36,8 +38,8 @@ import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../utils/full_screen_image.dart';
 import '../utils/pdf_viewer.dart';
-import 'CameraScreen.dart';
 import 'GroupProfileScreen.dart';
+import 'VideoPlayerPage.dart';
 
 class ChatScreen extends StatefulWidget {
   final bool isFormConvList;
@@ -102,6 +104,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
         .collection(messages)
         .orderBy('timestamp', descending: true)
         .snapshots();
+
+    sessionManager.setMessageCount(0);
 
     super.initState();
   }
@@ -205,6 +209,17 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                           );
                         }).toList() ?? [];
 
+                        if (listMessages[index].type == "video")
+                        {
+                          listMessages[index].controller = VideoPlayerController.networkUrl(
+                            Uri.parse(
+                              listMessages[index].content ?? '',
+                            ),
+                          );
+
+                          listMessages[index].initializeVideoPlayerFuture = listMessages[index].controller.initialize();
+                        }
+
                         return GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onLongPress: () {
@@ -266,6 +281,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                   ),
                                 )
                               else
+
                                 sessionManager.getUserId() == listMessages[index].senderId
                                     ? PullDownButton(
                                       itemBuilder: (context) => [
@@ -281,7 +297,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                     userId: sessionManager.getUserId().toString(),
                                                     profilePicUrl: sessionManager.getProfilePic().toString(),
                                                     reactionIcon: valueEmoji,
-                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                                                    userName: "${sessionManager.getName()} ${sessionManager.getLastName()}",
                                                   );
 
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
@@ -298,7 +314,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                     userId: sessionManager.getUserId().toString(),
                                                     profilePicUrl: sessionManager.getProfilePic().toString(),
                                                     reactionIcon: valueEmoji,
-                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                                                    userName: "${sessionManager.getName()} ${sessionManager.getLastName()}",
 
                                                   );
 
@@ -316,7 +332,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                     userId: sessionManager.getUserId().toString(),
                                                     profilePicUrl: sessionManager.getProfilePic().toString(),
                                                     reactionIcon: valueEmoji,
-                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                                                    userName: "${sessionManager.getName()} ${sessionManager.getLastName()}",
 
                                                   );
 
@@ -425,126 +441,158 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                               )
                                               : listMessages[index].type == "document"
                                               ? GestureDetector(
-                                            behavior: HitTestBehavior.opaque,
-                                            onTap: () async {
-                                              if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
-                                              {
-                                                startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
-                                              }
-                                              else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
-                                              {
-                                                if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
-                                                {
-                                                  launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
-                                                }
-                                              }
-                                              else
-                                              {
-                                                if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
-                                                {
-                                                  launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
-                                                }
-                                              }
-                                            },
-                                            child: Container(
-                                              margin: EdgeInsets.only(
-                                                  left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
-                                                  right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
-                                                  bottom: 6
-                                              ),
-                                              padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(6),
-                                              ),
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Visibility(
-                                                    visible: listMessages[index].senderId != sessionManager.getUserId(),
-                                                    child: Text(
-                                                      listMessages[index].sender ?? '',
-                                                      style: const TextStyle(
-                                                          color: graySemiDark,
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const Gap(6),
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      color: grayGradient,
-                                                      borderRadius: BorderRadius.circular(6),
-                                                    ),
-                                                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      children: [
-                                                        Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
-                                                        const Gap(8),
-                                                        Column(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
-                                                            Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const Gap(6),
-                                                  Text(
-                                                    timeStampToDateTimeForMsg(listMessages[index].timestamp),
-                                                    textAlign: TextAlign.end,
-                                                    style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                              : listMessages[index].type == "video"
-                                              ? GestureDetector(
-                                                  behavior: HitTestBehavior.opaque,
-                                                  onTap: () async {
-                                                    if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
+                                                behavior: HitTestBehavior.opaque,
+                                                onTap: () async {
+                                                  if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
+                                                  {
+                                                    startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
+                                                  }
+                                                  else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
+                                                  {
+                                                    if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
                                                     {
-                                                      startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
+                                                      launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
                                                     }
-                                                    else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
+                                                  }
+                                                  else
+                                                  {
+                                                    if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
                                                     {
-                                                      if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
-                                                      {
-                                                        launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
-                                                      }
+                                                      launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
                                                     }
-                                                    else
-                                                    {
-                                                      if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
-                                                      {
-                                                        launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
-                                                      }
-                                                    }
-                                                  },
-                                                  child: Container(
-                                                    margin: EdgeInsets.only(
+                                                  }
+                                                },
+                                                child: Container(
+                                                  margin: EdgeInsets.only(
                                                       left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
                                                       right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
                                                       bottom: 6
-                                                    ),
-                                                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.black,
-                                                      borderRadius: BorderRadius.circular(6),
-                                                    ),
-                                                    child: Image.memory(videoThumbnail(listMessages[index].content ?? "")),
                                                   ),
-                                                )
+                                                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(6),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Visibility(
+                                                        visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                        child: Text(
+                                                          listMessages[index].sender ?? '',
+                                                          style: const TextStyle(
+                                                              color: graySemiDark,
+                                                              fontSize: 12,
+                                                              fontWeight: FontWeight.w500
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const Gap(6),
+                                                      Container(
+                                                        decoration: BoxDecoration(
+                                                          color: grayGradient,
+                                                          borderRadius: BorderRadius.circular(6),
+                                                        ),
+                                                        padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          children: [
+                                                            Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
+                                                            const Gap(8),
+                                                            Column(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
+                                                                Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
+                                                              ],
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      const Gap(6),
+                                                      Text(
+                                                        timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                        textAlign: TextAlign.end,
+                                                        style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                              : listMessages[index].type == "video"
+                                              ? GestureDetector(
+                                                behavior: HitTestBehavior.opaque,
+                                                onTap: (){
+                                                  startActivity(context, VideoPlayerPage(true,listMessages[index].content ?? "","" ));
+                                                },
+                                                child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: listMessages[index].senderId != sessionManager.getUserId() ? 18 : 80,
+                                                      right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 18,
+                                                      bottom: 6
+                                                  ),
+                                                  padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
+                                                  decoration: BoxDecoration(
+                                                    color: white,
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                    children: [
+                                                      Visibility(
+                                                        visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.fromLTRB(18.0,6, 18,6),
+                                                          child: Text(
+                                                            listMessages[index].sender ?? '',
+                                                            style: const TextStyle(
+                                                                color: graySemiDark,
+                                                                fontSize: 12,
+                                                                fontWeight: FontWeight.w500
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        alignment: Alignment.center,
+                                                        height: 200,
+                                                        width: MediaQuery.of(context).size.width,
+                                                        child: Stack(
+                                                          alignment: Alignment.center,
+                                                          children: [
+                                                            VideoPlayer(listMessages[index].controller),
+                                                            Container(
+                                                                width: 42,
+                                                                height: 42,
+                                                              decoration: BoxDecoration(
+                                                                color: white.withOpacity(0.4),
+                                                                shape: BoxShape.circle
+                                                              ),
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.all(8.0),
+                                                                  child: Image.asset('assets/images/ic_play.png', color: black,width: 22,height: 22,),
+                                                                )
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(top: 12),
+                                                        child: Text(
+                                                          timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                          style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
                                               : Container(
                                                 margin: EdgeInsets.only(
                                                     left: listMessages[index].senderId != sessionManager.getUserId() ? 16 : 80,
@@ -634,7 +682,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                     userId: sessionManager.getUserId().toString(),
                                                     profilePicUrl: sessionManager.getProfilePic().toString(),
                                                     reactionIcon: valueEmoji,
-                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                                                    userName: "${sessionManager.getName()} ${sessionManager.getLastName()}",
 
                                                   );
 
@@ -652,7 +700,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                     userId: sessionManager.getUserId().toString(),
                                                     profilePicUrl: sessionManager.getProfilePic().toString(),
                                                     reactionIcon: valueEmoji,
-                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                                                    userName: "${sessionManager.getName()} ${sessionManager.getLastName()}",
                                                   );
 
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
@@ -669,7 +717,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                     userId: sessionManager.getUserId().toString(),
                                                     profilePicUrl: sessionManager.getProfilePic().toString(),
                                                     reactionIcon: valueEmoji,
-                                                    userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                                                    userName: "${sessionManager.getName()} ${sessionManager.getLastName()}",
                                                   );
 
                                                   addReaction(listMessages[index].documentId.toString(),reaction);
@@ -767,116 +815,29 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                               ),
                                             ),
                                           )
-                                            : listMessages[index].type == "document"
-                                            ? GestureDetector(
-                                              behavior: HitTestBehavior.opaque,
-                                              onTap: () async {
-                                                if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
-                                                {
-                                                  startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
-                                                }
-                                                else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
-                                                {
-                                                  if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                              : listMessages[index].type == "document"
+                                              ? GestureDetector(
+                                                behavior: HitTestBehavior.opaque,
+                                                onTap: () async {
+                                                  if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
                                                   {
-                                                    launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                    startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
                                                   }
-                                                }
-                                                else
-                                                {
-                                                  if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                  else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
                                                   {
-                                                    launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                    if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                    {
+                                                      launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                    }
                                                   }
-                                                }
-                                              },
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                                left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
-                                                right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
-                                                bottom: 6
-                                            ),
-                                            padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(6),
-                                            ),
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Visibility(
-                                                  visible: listMessages[index].senderId != sessionManager.getUserId(),
-                                                  child: Text(
-                                                    listMessages[index].sender ?? '',
-                                                    style: const TextStyle(
-                                                        color: graySemiDark,
-                                                        fontSize: 12,
-                                                        fontWeight: FontWeight.w500
-                                                    ),
-                                                  ),
-                                                ),
-                                                const Gap(6),
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    color: grayGradient,
-                                                    borderRadius: BorderRadius.circular(6),
-                                                  ),
-                                                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
-                                                      const Gap(8),
-                                                      Expanded(
-                                                        child: Column(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
-                                                            Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                const Gap(6),
-                                                Text(
-                                                  timeStampToDateTimeForMsg(listMessages[index].timestamp),
-                                                  textAlign: TextAlign.end,
-                                                  style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                        : listMessages[index].type == "video"
-                                          ? GestureDetector(
-                                            behavior: HitTestBehavior.opaque,
-                                            onTap: () async {
-                                              if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
-                                              {
-                                                startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
-                                              }
-                                              else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
-                                              {
-                                                if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
-                                                {
-                                                  launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
-                                                }
-                                              }
-                                              else
-                                              {
-                                                if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
-                                                {
-                                                  launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
-                                                }
-                                              }
-                                            },
+                                                  else
+                                                  {
+                                                    if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+                                                    {
+                                                      launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+                                                    }
+                                                  }
+                                                },
                                             child: Container(
                                               margin: EdgeInsets.only(
                                                   left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
@@ -885,12 +846,130 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                               ),
                                               padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
                                               decoration: BoxDecoration(
-                                                color: Colors.black,
+                                                color: Colors.white,
                                                 borderRadius: BorderRadius.circular(6),
                                               ),
-                                              child: Image.memory(videoThumbnail(listMessages[index].content ?? "")),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Visibility(
+                                                    visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                    child: Text(
+                                                      listMessages[index].sender ?? '',
+                                                      style: const TextStyle(
+                                                          color: graySemiDark,
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.w500
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const Gap(6),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: grayGradient,
+                                                      borderRadius: BorderRadius.circular(6),
+                                                    ),
+                                                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
+                                                        const Gap(8),
+                                                        Expanded(
+                                                          child: Column(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
+                                                              Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  const Gap(6),
+                                                  Text(
+                                                    timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                    textAlign: TextAlign.end,
+                                                    style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                  )
+                                                ],
+                                              ),
                                             ),
                                           )
+                                              : listMessages[index].type == "video"
+                                              ? GestureDetector(
+                                                behavior: HitTestBehavior.opaque,
+                                                onTap: (){
+                                                  startActivity(context, VideoPlayerPage(true,listMessages[index].content ?? "","" ));
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  width: MediaQuery.of(context).size.width,
+                                                  margin: EdgeInsets.only(
+                                                      left: listMessages[index].senderId != sessionManager.getUserId() ? 18 : 80,
+                                                      right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 18,
+                                                      bottom: 6
+                                                  ),
+                                                  padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
+                                                  decoration: BoxDecoration(
+                                                    color: white,
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Visibility(
+                                                        visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                        child: Text(
+                                                          listMessages[index].sender ?? '',
+                                                          style: const TextStyle(
+                                                              color: graySemiDark,
+                                                              fontSize: 12,
+                                                              fontWeight: FontWeight.w500
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Gap(8),
+                                                      SizedBox(
+                                                        height: 200,
+                                                        width: MediaQuery.of(context).size.width,
+                                                        child: Stack(
+                                                          alignment: Alignment.center,
+                                                          children: [
+                                                            VideoPlayer(listMessages[index].controller),
+                                                            Container(
+                                                                width: 42,
+                                                                height: 42,
+                                                                decoration: BoxDecoration(
+                                                                    color: white.withOpacity(0.4),
+                                                                    shape: BoxShape.circle
+                                                                ),
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.all(8.0),
+                                                                  child: Image.asset('assets/images/ic_play.png', color: black,width: 22,height: 22,),
+                                                                )
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(top: 8,bottom: 8),
+                                                        child: Text(
+                                                          timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                          style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
                                               : Container(
                                               margin: EdgeInsets.only(
                                                   left: listMessages[index].senderId != sessionManager.getUserId() ? 16 : 80,
@@ -968,36 +1047,36 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                         );
                                       },
                                     ),
-                                  listMessages[index].reactions?.isNotEmpty ?? false
-                                      ? GestureDetector(
-                                          behavior: HitTestBehavior.opaque,
-                                          onTap: (){
-                                            print("message lstttt${listMessages[index].reactions}");
+                              listMessages[index].reactions?.isNotEmpty ?? false
+                                  ? GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: (){
+                                        print("message lstttt${listMessages[index].reactions}");
 
-                                            listReaction = listMessages[index].reactions?.map((dynamic item) {
-                                              return ReactionModel(
-                                                userName: item["userName"],
-                                                profilePicUrl: item["profilePicUrl"],
-                                                reactionIcon: item["reactionIcon"],
-                                                userId: item["userId"],
-                                              );
-                                            }).toList() ?? [];
+                                        listReaction = listMessages[index].reactions?.map((dynamic item) {
+                                          return ReactionModel(
+                                            userName: item["userName"],
+                                            profilePicUrl: item["profilePicUrl"],
+                                            reactionIcon: item["reactionIcon"],
+                                            userId: item["userId"],
+                                          );
+                                        }).toList() ?? [];
 
-                                            openReactionBottomSheet(listMessages[index].documentId ?? "");
-                                          },
-                                        child: Container(
-                                            padding: const EdgeInsets.all(6),
-                                            margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
-                                            decoration: BoxDecoration(
-                                                color: grayLight,
-                                                shape: BoxShape.rectangle,
-                                              borderRadius: BorderRadius.circular(4)
-                                            ),
-                                            child: calculateTopReactions(listMessages[index].reactions ?? []),
+                                        openReactionBottomSheet(listMessages[index].documentId ?? "");
+                                      },
+                                    child: Container(
+                                        padding: const EdgeInsets.all(6),
+                                        margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                                        decoration: BoxDecoration(
+                                            color: grayLight,
+                                            shape: BoxShape.rectangle,
+                                          borderRadius: BorderRadius.circular(4)
                                         ),
-                                      )
-                                      : Container(
-                                        color: Colors.transparent,
+                                        child: calculateTopReactions(listMessages[index].reactions ?? []),
+                                    ),
+                                  )
+                                  : Container(
+                                    color: Colors.transparent,
                               ),
                             ],
                           ),
@@ -1105,16 +1184,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     );
   }
 
-
-  videoThumbnail(String path) async {
-    final uint8list = await VideoThumbnail.thumbnailData(
-      video: path,
-      imageFormat: ImageFormat.JPEG,
-      maxWidth: 128, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
-      quality: 25,
-    );
-    return uint8list;
-  }
   void checkReactions(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
     // Assuming you're fetching documents and iterating over them
     for (var document in (snapshot.data?.docs ?? [])) {
@@ -1344,8 +1413,31 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
+                          pickImageFromGallery();
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              height: 58,
+                              width: 58,
+                              decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
+                              margin: const EdgeInsets.only(bottom: 5,right: 5),
+                              child: const Center(child: Icon(Icons.photo_size_select_actual, color:white)),
+                            ),
+                            Container(
+                                margin: const EdgeInsets.only(top: 5, bottom: 10),
+                                child: const Text('Photos',
+                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
+                            ),
+
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
                           pickImageFromCamera();
-                          // Navigator.push(context, MaterialPageRoute(builder: (context) => const CameraPage()));
                         },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -1359,10 +1451,68 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                               child: const Center(child: Icon(Icons.camera_alt, color: white,)),
                             ),
                             Container(
-                              margin: const EdgeInsets.only(top: 5, bottom: 10),
-                              child: const Text('Camera',
-                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
+                                margin: const EdgeInsets.only(top: 5, bottom: 10),
+                                child: const Text('Camera',
+                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
                             ),
+
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        child: GestureDetector(
+                          onTap: () {
+                            _pickFile();
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                height: 58,
+                                width: 58,
+                                decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
+                                margin: const EdgeInsets.only(bottom: 5,right: 5),
+                                child: const Center(child: Icon(Icons.file_copy, color: white,)),
+                              ),
+                              Container(
+                                  margin: const EdgeInsets.only(top: 5, bottom: 10),
+                                  child: const Text('Document',
+                                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
+                              ),
+
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          pickVideoFromGallery();
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              height: 58,
+                              width: 58,
+                              decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
+                              margin: const EdgeInsets.only(bottom: 5,right: 5),
+                              child: const Center(child: Icon(Icons.photo_size_select_actual, color:white)),
+                            ),
+                            Container(
+                                margin: const EdgeInsets.only(top: 5, bottom: 10),
+                                child: const Text('Video',
+                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
+                            ),
+
                           ],
                         ),
                       ),
@@ -1386,89 +1536,26 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                 child: const Text('Video Recording',
                                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
                             ),
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          pickImageFromGallery();
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              height: 58,
-                              width: 58,
-                              decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
-                              margin: const EdgeInsets.only(bottom: 5,right: 5),
-                              child: const Center(child: Icon(Icons.photo_size_select_actual, color:white)),
-                            ),
-                            Container(
-                                margin: const EdgeInsets.only(top: 5, bottom: 10),
-                                child: const Text('Photos',
-                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
-                            ),
 
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              pickVideoFromGallery();
-                            },
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  height: 58,
-                                  width: 58,
-                                  decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
-                                  margin: const EdgeInsets.only(bottom: 5,right: 5),
-                                  child: const Center(child: Icon(Icons.video_camera_back_outlined, color:white)),
-                                ),
-                                Container(
-                                    margin: const EdgeInsets.only(top: 5, bottom: 10),
-                                    child: const Text('Videos',
-                                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
-                                ),
-
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Gap(62),
                       Visibility(
-                        // visible: !isFileUploading,
                         child: GestureDetector(
                           onTap: () {
-                            // _sendDataToFireStore(selectedMedia);
-                            // selectAndUploadImage(context, conversationData.conversationId);
-
-                            _pickFile();
                           },
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Container(
                                 height: 58,
                                 width: 58,
-                                decoration: BoxDecoration(color: brandColor, border: Border.all(color: brandColor,width: 0.8), borderRadius: BorderRadius.circular(32.0)),
                                 margin: const EdgeInsets.only(bottom: 5,right: 5),
-                                child: const Center(child: Icon(Icons.file_copy, color: white,)),
                               ),
                               Container(
                                   margin: const EdgeInsets.only(top: 5, bottom: 10),
-                                  child: const Text('Document',
+                                  child: const Text('',
                                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: black))
                               ),
 
@@ -1488,22 +1575,28 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   }
 
   File? galleryFile;
-  final picker = ImagePicker();
 
   Future getVideo() async {
-    final pickedFile = await picker.pickVideo(
+    final pickedFile = await ImagePicker().pickVideo(
         source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.front,
-        maxDuration: const Duration(minutes: 10));
-    XFile? xfilePick = pickedFile;
+        preferredCameraDevice: CameraDevice.rear,
+        maxDuration: const Duration(minutes: 10),
+    );
+
+    XFile? xFilePick = pickedFile;
+
     setState(() {
-        if (xfilePick != null) {
-          galleryFile = File(pickedFile!.path);
-          _uploadDoc(galleryFile!, pickedFile.name, pickedFile.path.toString(),'video');
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(// is this context <<<
-              const SnackBar(content: Text('Nothing is selected')));
-        }
+        if (xFilePick != null)
+          {
+            galleryFile = File(pickedFile!.path);
+            _uploadDoc(galleryFile!, pickedFile.name, pickedFile.path.toString(),'video');
+          }
+        else
+          {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Nothing is selected'))
+            );
+          }
       },
     );
   }
@@ -1545,10 +1638,12 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
   Future<void> pickVideoFromGallery() async {
     try {
-      var pickedFiles = await ImagePicker().pickVideo(source: ImageSource.gallery);
+      var pickedFiles = await ImagePicker().pickVideo(
+        source: ImageSource.gallery,
+      );
       if (pickedFiles != null) {
         final filePath = pickedFiles.path;
-        _cropImage(filePath);
+        _uploadDoc(File(pickedFiles.path), getFileNameWithExtension(pickedFiles.path), getFileExtension(pickedFiles.path),'video');
 
       } else {
         print("No image is selected.");
@@ -1598,9 +1693,9 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       Reference reference = FirebaseStorage.instance.ref();
 
       if (type == "media")
-      {
-        reference = FirebaseStorage.instance.ref().child('SIRE/${sessionManager.getBatchId() ?? ''}/Media/$fileName');
-      }
+        {
+          reference = FirebaseStorage.instance.ref().child('SIRE/${sessionManager.getBatchId() ?? ''}/Media/$fileName');
+        }
       else if (type == "document")
       {
         reference = FirebaseStorage.instance.ref().child('SIRE/${sessionManager.getBatchId() ?? ''}/Document/$fileName');
@@ -1613,19 +1708,11 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       UploadTask uploadTask = reference.putFile(file);
       TaskSnapshot snapshot = await uploadTask;
       var imageUrl = await snapshot.ref.getDownloadURL();
-      print("<><> : UPLOAD FILE :: $imageUrl")               ;
+      print("<><> : UPLOAD FILE :: $imageUrl");
       setState(() {
         //isFileUploading = false;
       });
-
-     if (type == "video")
-      {
-        await _sendDataToFireStore(imageUrl, type,fileName);
-      }
-     else
-       {
-         await _sendDataToFireStore(imageUrl, type,fileName);
-       }
+      await _sendDataToFireStore(imageUrl, type,fileName);
     } on Exception catch (e) {
       print(e);
     }
@@ -1883,7 +1970,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   _getPeoplesList() async {
 
     HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
-
       HttpLogger(logLevel: LogLevel.BODY),
     ]);
 
@@ -1937,6 +2023,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
             valueEmoji = listReactions[i]['reactionIcon'];
           }
       }
+
     if (valueEmoji == '1')
     {
       emoji = const Text('👍',);
@@ -2116,15 +2203,13 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                 children: [
                   Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
                   const Gap(8),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
-                        Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
-                      ],
-                    ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
+                      Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
+                    ],
                   )
                 ],
               ),
@@ -2339,7 +2424,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
           onTap: () {
             Navigator.pop(context);
           },
-          child: Container(
+          child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.7, // Adjust height as needed
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -2369,7 +2454,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                             userId: sessionManager.getUserId().toString(),
                             profilePicUrl: sessionManager.getProfilePic().toString(),
                             reactionIcon: valueEmoji,
-                            userName: sessionManager.getName().toString() + " " + sessionManager.getLastName().toString(),
+                            userName: "${sessionManager.getName()} ${sessionManager.getLastName()}",
                           );
 
                         addReaction(listMessag.documentId.toString(),reaction);
@@ -2414,6 +2499,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     int totalCount = reactionCounts.values.fold(0, (sum, count) => sum + count);
 
     // Display the results
-    return Text(totalCount > 3 ? topThreeReactions.join(" ") +" " + "+${totalCount - 3}" : topThreeReactions.join(" "));
+    return Text(totalCount > 3 ? "${topThreeReactions.join(" ")} +${totalCount - 3}" : topThreeReactions.join(" "));
   }
 }

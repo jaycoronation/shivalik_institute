@@ -26,6 +26,7 @@ class SessionManager {
   final String batchId = "batchId";
   final String batchIdMain = "batchIdMain";
   final String isBatchAdmin = "is_batch_admin";
+  final String messageCount = "messageCount";
 
 
   //set data into shared preferences...
@@ -54,6 +55,20 @@ class SessionManager {
   Future<void> setMainBatchId(String apiMainBatchId)
   async {
     await SessionManagerMethods.setString(batchIdMain, apiMainBatchId);
+  }
+
+  int? getMessageCount() {
+    return SessionManagerMethods.getInt(messageCount);
+  }
+
+  Future<void> setMessageCount(int apiMainBatchId)
+  async {
+
+    print("object === $apiMainBatchId");
+
+    var value = await SessionManagerMethods.setInt(messageCount, apiMainBatchId);
+    print("object === ${SessionManagerMethods.setInt(messageCount, apiMainBatchId)}");
+    print("Value === ${value}");
   }
 
   String? getBatchId() {

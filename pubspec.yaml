@@ -90,12 +90,14 @@ dependencies:
   flutter_reaction_button: ^3.0.0+3
   emoji_picker_flutter:
   pull_down_button: ^0.9.3
-  permission_handler: ^11.3.0
+  permission_handler: ^10.2.0
   open_file: ^3.3.2
   path_provider: ^2.1.2
   linkwell: ^2.0.6
   camerawesome: ^2.0.1
   video_thumbnail: ^0.5.3
+  auto_orientation: ^2.3.1
+
 
 
 dev_dependencies:

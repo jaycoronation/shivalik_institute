@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -94,7 +95,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
   List<TestimonialsList> listTestimonials = [];
   List<MediaList> mediaList = [];
   List<BatchList> listBatches = [];
-
   Details getSet = Details();
   List<HolidaysList> listUpcomingHolidays = [];
   List<UpcomingClasses> listUpcomingLectures = [];
@@ -228,7 +228,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                 onTap: (){
                   logFirebase('notification_enter',{});
                   startActivity(context, const NotificationListScreen());
-                },
+                  },
                 customBorder: const CircleBorder(),
                 child: Container(
                   padding: const EdgeInsets.all(4),
@@ -1340,25 +1340,33 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
             },
           ),
           floatingActionButton: FloatingActionButton(
-              onPressed: () {
+              onPressed: () async {
                 logFirebase("sire_connect", {"batch_name" : sessionManager.getBatchName()});
                 if (sessionManager.getIsBatchAdmin() == "1")
                 {
-                  startActivity(context, ConversationScreen(listBatches));
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => ConversationScreen(listBatches)));
+                  setState(() {});
                 }
                 else
                 {
-                  startActivity(context, const ChatScreen(false));
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatScreen(false)));
+                  setState(() {});
                 }
-              },
-            child: Container(
-                padding: const EdgeInsets.all(4),
-                height: 34,
-                width: 34,
-                child: Image.asset('assets/images/ic_chat.png',color: white,width: 26,height: 26)
-            ),
-            backgroundColor: black,
 
+              },
+            backgroundColor: black,
+            child: Stack(
+              alignment: Alignment.topRight,
+              children: [
+                Container(
+                    padding: const EdgeInsets.all(4),
+                    height: 34,
+                    width: 34,
+                    child: Image.asset('assets/images/ic_chat.png',color: white,width: 26,height: 26)
+                ),
+                Visibility(visible: (sessionManager.getMessageCount() ?? 0) > 0, child: Container(width: 12,height: 12,decoration: BoxDecoration(color: brandColor,shape: BoxShape.circle),))
+              ],
+            ),
           ),
         ),
         onWillPop: (){
