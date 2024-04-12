@@ -93,12 +93,8 @@ dependencies:
   permission_handler: ^10.2.0
   open_file: ^3.3.2
   path_provider: ^2.1.2
-  linkwell: ^2.0.6
-  camerawesome: ^2.0.1
-  video_thumbnail: ^0.5.3
+  flutter_linkify: ^6.0.0
   auto_orientation: ^2.3.1
-
-
 
 dev_dependencies:
   flutter_test:

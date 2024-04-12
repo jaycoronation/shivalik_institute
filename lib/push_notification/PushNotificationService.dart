@@ -99,22 +99,24 @@ class PushNotificationService {
 
       SessionManagerMethods.init();
 
+      SessionManager sessionManager = SessionManager();
+
       if (contentType == "lecture_complete")
         {
-           SessionManager().setClassId(id);
+          sessionManager.setClassId(id);
         }
       else if (contentType == "user_chat")
         {
-          int userCount = SessionManager().getMessageCount() ?? 0;
+          int userCount = sessionManager.getMessageCount() ?? 0;
 
           userCount = userCount + 1;
 
           print("USER CHAT BEFORE ===== $userCount");
 
-          SessionManager().setMessageCount(userCount);
-          SessionManager().setBatchId(message.data['content_id']);
+          sessionManager.setMessageCount(userCount);
+          sessionManager.setBatchId(message.data['content_id']);
 
-          print("USER CHAT ===== ${SessionManager().getMessageCount()}");
+          print("USER CHAT ===== ${sessionManager.getMessageCount()}");
         }
 
       openPage(contentType);
@@ -138,6 +140,7 @@ class PushNotificationService {
       defaultPresentBadge: true,
       defaultPresentSound: true,
       onDidReceiveLocalNotification: (id, title, body, payload) async {
+        SessionManagerMethods.init();
         SessionManager sessionManager = SessionManager();
         var isLoggedIn = sessionManager.checkIsLoggedIn() ?? false;
         if (title != null && isLoggedIn)
@@ -159,15 +162,15 @@ class PushNotificationService {
 
           SessionManagerMethods.init();
 
-          int userCount = SessionManager().getMessageCount() ?? 0;
+          int userCount = sessionManager.getMessageCount() ?? 0;
 
           userCount = userCount + 1;
 
           print("USER CHAT BEFORE ===== $userCount");
 
-          SessionManager().setMessageCount(userCount);
+          sessionManager.setMessageCount(userCount);
 
-          print("USER CHAT ===== ${SessionManager().getMessageCount()}");
+          print("USER CHAT ===== ${sessionManager.getMessageCount()}");
 
           const DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails(presentSound: true, presentAlert: true);
 
@@ -351,6 +354,8 @@ class PushNotificationService {
   );
 
   void openPage(String contentId) {
+
+    SessionManagerMethods.init();
 
     NavigationService.notif_type = contentId;
     if (contentId == "event_scheduled")

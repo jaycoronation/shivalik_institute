@@ -73,29 +73,6 @@ Future<void> main() async {
   RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
   //FOR NOTIFICATION//
-  if (initialMessage != null)
-    {
-      print("@@@@@@@@ Main Dart @@@@@@@@ ${initialMessage.data}");
-      NavigationService.notif_type = initialMessage.data['operation'];
-      NavigationService.notif_id = initialMessage.data['content_id'];
-
-      if (NavigationService.notif_type == "lecture_complete")
-        {
-          SessionManager().setClassId(initialMessage.data['content_id']);
-        }
-      else if (NavigationService.notif_type == "user_chat")
-        {
-          int userCount = SessionManager().getMessageCount() ?? 0;
-          SessionManager().setMessageCount(userCount+1);
-          SessionManager().setBatchId(initialMessage.data['content_id']);
-
-          print("USER CHAT ===== ${SessionManager().getMessageCount()}");
-
-        }
-
-      print("USER CHAT OUT ===== ${SessionManager().getMessageCount()}");
-    }
-
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((value) => runApp(
     MultiProvider(
       providers: [
@@ -141,10 +118,11 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   if (NavigationService.notif_type == "lecture_complete")
     {
-      SessionManager().setClassId(message.data['content_id']);
+      sessionManager.setClassId(message.data['content_id']);
     }
   else if (NavigationService.notif_type == "user_chat")
   {
+
     int userCount = sessionManager.getMessageCount() ?? 0;
 
     print("USER CHAT BEFORE ADD ===== $userCount");
@@ -153,11 +131,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
     print("USER CHAT BEFORE ===== $userCount");
 
-
     sessionManager.setBatchId(message.data['content_id']);
     sessionManager.setMessageCount(userCount);
     print("USER CHAT ===== ${sessionManager.getMessageCount()}");
-
   }
 
   print("USER CHAT OUT ===== ${sessionManager.getMessageCount()}");
@@ -220,7 +196,8 @@ class MyApp extends StatelessWidget {
           ),
           fontFamily: 'Colfax',
           textSelectionTheme: TextSelectionThemeData(selectionColor: black.withOpacity(0.3)),
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: createMaterialColor(white)).copyWith(secondary: white)
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: createMaterialColor(white)).copyWith(secondary: white),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       navigatorKey: NavigationService.navigatorKey,
       navigatorObservers: [

@@ -90,17 +90,33 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Visibility(
-                            visible: getSet.eventType == "Master Class",
-                            child: Container(
-                              margin: const EdgeInsets.only(top: 12),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4),
-                                color: brandColor
+                          Row(
+                            children: [
+                              Visibility(
+                                visible: getSet.eventType == "Master Class",
+                                child: Container(
+                                  margin: const EdgeInsets.only(top: 12),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                    color: brandColor
+                                  ),
+                                  padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+                                  child: Text(getSet.eventType ?? '',style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
+                                ),
                               ),
-                              padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
-                              child: Text(getSet.eventType ?? '',style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
-                            ),
+                              Visibility(
+                                visible: getSet.type == "upcoming",
+                                child: Container(
+                                  margin: const EdgeInsets.only(top: 12,left: 12),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      color: brandColor
+                                  ),
+                                  padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+                                  child: Text('Upcoming',style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
+                                ),
+                              ),
+                            ],
                           )
                         ],
                       ),

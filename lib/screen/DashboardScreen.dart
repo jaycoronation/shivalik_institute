@@ -9,6 +9,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_calendar_week/flutter_calendar_week.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -31,6 +32,7 @@ import 'package:shivalik_institute/screen/ModuleListScreen.dart';
 import 'package:shivalik_institute/screen/NotificationListScreen.dart';
 import 'package:shivalik_institute/screen/ResourceCenterScreen.dart';
 import 'package:shivalik_institute/utils/app_utils.dart';
+import 'package:shivalik_institute/utils/session_manager.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -55,6 +57,7 @@ import '../utils/session_manager_methods.dart';
 import '../viewmodels/BatchViewModel.dart';
 import '../viewmodels/CaseStudyViewModel.dart';
 import '../viewmodels/DashboardViewModel.dart';
+import '../viewmodels/EventViewModel.dart';
 import '../viewmodels/ModuleViewModel.dart';
 import '../viewmodels/TestimonialsViewModel.dart';
 import '../viewmodels/UserViewModel.dart';
@@ -75,7 +78,7 @@ class DashboardScreen extends StatefulWidget {
   BaseState<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends BaseState<DashboardScreen> {
+class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindingObserver  {
   int _pageIndex = 1;
   final int _pageResult = 10;
   String fromDateApi = "";
@@ -112,8 +115,13 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
 
   bool hasAttendLecture = false;
 
+  int _userCount = 0;
+
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    getCountUser();
+    getEventsList(true);
     _deviceDetails();
     getDashboardData();
     getUserData();
@@ -151,23 +159,56 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
         if (key == "message") {
           messageData = value;
         }
+
+        print("USER key ===== $key");
+
+
       });
 
-     /* print('<><>Dashboard onMessage id--->$id');
+      print('<><>Dashboard onMessage id--->$id');
       print('<><>Dashboard onMessage contentType--->$contentType');
       print('<><>Dashboard onMessage title--->$title');
       print('<><>Dashboard onMessage messageData--->$messageData');
-      print("<><>Dashboard onMessage Image URL : $image <><>");*/
+      print("<><>Dashboard onMessage Image URL : $image <><>");
 
       NavigationService.notif_id = id;
 
       if (contentType == "lecture_complete")
-      {
-        sessionManager.setClassId(id);
-        getPendingFeedbacks();
-      }
+        {
+          sessionManager.setClassId(id);
+          getPendingFeedbacks();
+        }
+      else if (contentType == "user_chat")
+        {
+          int userCount = sessionManager.getMessageCount() ?? 0;
+
+          print("USER CHAT BEFORE ADD ===== $userCount");
+
+          userCount = userCount + 1;
+
+          print("USER CHAT BEFORE ===== $userCount");
+
+          sessionManager.setBatchId(message.data['content_id']);
+          sessionManager.setMessageCount(userCount);
+          print("USER CHAT ===== ${sessionManager.getMessageCount()}");
+          setState(() {
+
+          });
+        }
+
     });
+
     super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    SessionManagerMethods.init();
+    SessionManager sessionManager = SessionManager();
+    print("Is Calling didChangeAppLifecycleState");
+    print("Is Calling ${sessionManager.getMessageCount()}");
+    getCountUser();
+    setState(() {});
   }
 
   @override
@@ -516,12 +557,74 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-
+                                Bounceable(
+                                  duration: const Duration(milliseconds: 200),
+                                  onTap: () {
+                                    logFirebase("module_list", {});
+                                    startActivity(context, const  ModuleListScreen("all"));
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(top: 22,bottom: 22),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(15.0),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  LinearPercentIndicator(
+                                                    width: MediaQuery.of(context).size.width - 80,
+                                                    lineHeight: 14.0,
+                                                    percent: getPercentData(value.response),
+                                                    barRadius: const Radius.circular(4),
+                                                    backgroundColor: grayNew,
+                                                    progressColor: brandColor,
+                                                  ),
+                                                  const Gap(8),
+                                                  Image.asset("assets/images/ic_medal.png",width: 38,height: 38,)
+                                                ],
+                                              ),
+                                              const Gap(12),
+                                              Text(
+                                                "${value.response.completedModule} / ${value.response.totalModules ?? "0"} Modules Completed",
+                                                style: const TextStyle(fontSize: 16,color: black,fontWeight: FontWeight.w500),
+                                                textAlign: TextAlign.center,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Visibility(
+                                          visible: false,
+                                          child: Center(
+                                            child: SimpleCircularProgressBar(
+                                              size: 170,
+                                              onGetText: (p0) {
+                                                return Text(
+                                                  "${p0.toStringAsFixed(0)} / ${value.response.totalModules ?? "0"}\n Modules",
+                                                  style: const TextStyle(fontSize: 18,color: black,fontWeight: FontWeight.w500),
+                                                  textAlign: TextAlign.center,
+                                                );
+                                              },
+                                              backStrokeWidth: 22,
+                                              valueNotifier: valueNotifier,
+                                              progressColors: [brandColor,brandColor.withOpacity(0.6)],
+                                              backColor: grayNew,
+                                              mergeMode: true,
+                                              maxValue: double.parse(value.response.totalModules ?? "0"),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                                 Visibility(
                                   visible: value.response.upcomingClasses?.isNotEmpty ?? false,
                                   child: Container(
-                                    margin: const EdgeInsets.only(top: 26),
-                                    padding: const EdgeInsets.only(top: 12,bottom: 12),
+                                    padding: const EdgeInsets.only(top: 12,bottom: 22),
                                     child: Column(
                                       children: [
                                         Row(
@@ -781,70 +884,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                     ),
                                   ),
                                 ),
-                                Bounceable(
-                                  duration: const Duration(milliseconds: 200),
-                                  onTap: () {
-                                    logFirebase("module_list", {});
-                                    startActivity(context, const  ModuleListScreen("all"));
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(top: 22,bottom: 22),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(15.0),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  LinearPercentIndicator(
-                                                    width: MediaQuery.of(context).size.width - 80,
-                                                    lineHeight: 14.0,
-                                                    percent: getPercentData(value.response),
-                                                    barRadius: const Radius.circular(4),
-                                                    backgroundColor: grayNew,
-                                                    progressColor: brandColor,
-                                                  ),
-                                                  const Gap(8),
-                                                  Image.asset("assets/images/ic_medal.png",width: 38,height: 38,)
-                                                ],
-                                              ),
-                                              const Gap(12),
-                                              Text(
-                                                "${value.response.completedModule} / ${value.response.totalModules ?? "0"} Modules Completed",
-                                                style: const TextStyle(fontSize: 16,color: black,fontWeight: FontWeight.w500),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        Visibility(
-                                          visible: false,
-                                          child: Center(
-                                            child: SimpleCircularProgressBar(
-                                              size: 170,
-                                              onGetText: (p0) {
-                                                return Text(
-                                                  "${p0.toStringAsFixed(0)} / ${value.response.totalModules ?? "0"}\n Modules",
-                                                  style: const TextStyle(fontSize: 18,color: black,fontWeight: FontWeight.w500),
-                                                  textAlign: TextAlign.center,
-                                                );
-                                              },
-                                              backStrokeWidth: 22,
-                                              valueNotifier: valueNotifier,
-                                              progressColors: [brandColor,brandColor.withOpacity(0.6)],
-                                              backColor: grayNew,
-                                              mergeMode: true,
-                                              maxValue: double.parse(value.response.totalModules ?? "0"),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+
                                 Visibility(
                                   visible: listMaterial.isNotEmpty,
                                   child: GestureDetector(
@@ -854,7 +894,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                       startActivity(context, const ResourceCenterScreen(false));
                                     },
                                     child: Card(
-                                      margin: const EdgeInsets.only(left: 18, right: 18),
+                                      margin: const EdgeInsets.only(left: 18, right: 18,),
                                       elevation: 2,
                                       color: white,
                                       shape: RoundedRectangleBorder(
@@ -1037,7 +1077,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                   ),
                                 ),
                                 Visibility(
-                                  visible: value.response.upcomingEvents?.isNotEmpty ?? false,
+                                  visible: listEvent.isNotEmpty ?? false,
                                   child: Column(
                                     children: [
                                       Container(height: 22,),
@@ -1048,7 +1088,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                           Container(
                                             padding: const EdgeInsets.only(left: 18, right: 18),
                                             alignment: Alignment.centerLeft,
-                                            child: const Text("Upcoming Events",
+                                            child: const Text("Events",
                                               style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w800),),
                                           ),
                                           Container(
@@ -1069,14 +1109,14 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                   ),
                                 ),
                                 Visibility(
-                                  visible: value.response.upcomingEvents?.isNotEmpty ?? false,
+                                  visible: listEvent?.isNotEmpty ?? false,
                                   child: Container(
                                     margin: const EdgeInsets.only(top: 12,),
                                     padding: const EdgeInsets.only(left: 18),
                                     height: 300,
                                     child: AnimationLimiter(
                                       child: PageView.builder(
-                                        itemCount: value.response.upcomingEvents?.length,
+                                        itemCount: listEvent.length,
                                         scrollDirection: Axis.horizontal,
                                         physics: const BouncingScrollPhysics(),
                                         itemBuilder: ( context, index) {
@@ -1090,7 +1130,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                   behavior: HitTestBehavior.opaque,
                                                   onTap: () {
 
-                                                    var storeData = value.response.upcomingEvents?[index] ?? UpcomingEvents();
+                                                    var storeData = listEvent[index] ?? EventList();
 
                                                     logFirebase("event_details", {'event_title' : storeData.title, 'event_id' : storeData.id});
 
@@ -1098,7 +1138,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                         date: universalDateConverter("dd-MM-yyyy hh:mm a", "yyyy-MM-dd", storeData.date.toString()), bannerImage: storeData.bannerImage, createdAt: storeData.createdAt,
                                                         day: "",  isActive: "", monthyear: "",eventGallery: storeData.eventGallery ?? []);
 
-                                                    startActivity(context, EventsDetailsScreen(getSet));
+                                                    startActivity(context, EventsDetailsScreen(storeData));
                                                   },
                                                   child: Container(
                                                     height: 300,
@@ -1114,7 +1154,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                         ClipRRect(
                                                           borderRadius: BorderRadius.circular(8),
                                                           child: CachedNetworkImage(
-                                                              imageUrl: "${value.response.upcomingEvents?[index].bannerImage}&h=500&zc=2",
+                                                              imageUrl: "${listEvent[index].bannerImage}&h=500&zc=2",
                                                               fit: BoxFit.cover,
                                                               width : MediaQuery.of(context).size.width,
                                                               height: 300,
@@ -1151,14 +1191,31 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                         Positioned(
                                                           top: 12,
                                                           right: 12,
-                                                          child: Container(
-                                                            height: 30,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(4),
-                                                                color: brandColor
-                                                            ),
-                                                            padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
-                                                            child: Text(value.response.upcomingEvents?[index].eventType ?? '',style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
+                                                          child: Row(
+                                                            children: [
+                                                              Container(
+                                                                height: 30,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.circular(4),
+                                                                    color: brandColor
+                                                                ),
+                                                                padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+                                                                child: Text(listEvent[index].eventType ?? '',style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
+                                                              ),
+                                                              Visibility(
+                                                                visible: listEvent[index].type == "upcoming",
+                                                                child: Container(
+                                                                  height: 30,
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius: BorderRadius.circular(4),
+                                                                      color: brandColor
+                                                                  ),
+                                                                  margin: EdgeInsets.only(left: 8),
+                                                                  padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+                                                                  child: Text("Upcoming",style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                         Padding(
@@ -1168,10 +1225,10 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
                                                               Container(height: 6,),
-                                                              Text(value.response.upcomingEvents?[index].title ?? "",
+                                                              Text(listEvent[index].title ?? "",
                                                                 style: const TextStyle(fontSize: 16, color: white,fontWeight: FontWeight.w500),),
                                                               Container(height: 6,),
-                                                              Text(universalDateConverter("dd-MM-yyyy hh:mm a", "dd MMM, yyyy hh:mm a", value.response.upcomingEvents?[index].date ?? ""),
+                                                              Text(universalDateConverter("dd-MM-yyyy hh:mm a", "dd MMM, yyyy hh:mm a", listEvent[index].date ?? ""),
                                                                 style: const TextStyle(fontSize: 14, color: white,fontWeight: FontWeight.w400),),
                                                             ],
                                                           ),
@@ -1340,20 +1397,21 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
             },
           ),
           floatingActionButton: FloatingActionButton(
-              onPressed: () async {
-                logFirebase("sire_connect", {"batch_name" : sessionManager.getBatchName()});
-                if (sessionManager.getIsBatchAdmin() == "1")
-                {
-                  await Navigator.push(context, MaterialPageRoute(builder: (context) => ConversationScreen(listBatches)));
-                  setState(() {});
-                }
-                else
-                {
-                  await Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatScreen(false)));
-                  setState(() {});
-                }
+            onPressed: () async {
+              logFirebase("sire_connect", {"batch_name" : sessionManager.getBatchName()});
+              if (sessionManager.getIsBatchAdmin() == "1")
+              {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => ConversationScreen(listBatches)));
+                getCountUser();
+              }
+              else
+              {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatScreen(false)));
+                getCountUser();
+              }
 
-              },
+
+            },
             backgroundColor: black,
             child: Stack(
               alignment: Alignment.topRight,
@@ -1364,7 +1422,11 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
                     width: 34,
                     child: Image.asset('assets/images/ic_chat.png',color: white,width: 26,height: 26)
                 ),
-                Visibility(visible: (sessionManager.getMessageCount() ?? 0) > 0, child: Container(width: 12,height: 12,decoration: BoxDecoration(color: brandColor,shape: BoxShape.circle),))
+                Visibility(
+                    visible: (_userCount ?? 0) > 0,
+                    child: Container(width: 12,height: 12,decoration: const BoxDecoration(color: brandColor,shape: BoxShape.circle),)
+                )
+
               ],
             ),
           ),
@@ -1710,6 +1772,19 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
       sessionManager.setBatchId(getSet.batchId ?? '');
       sessionManager.setMainBatchId(getSet.batchId ?? '');
       sessionManager.setIsBatchAdmin(getSet.isBatchAdmin ?? '');
+
+      sessionManager.createLoginSession(
+          getSet.id ?? "",
+          getSet.firstName ?? "",
+          getSet.lastName ?? "",
+          getSet.userType ?? "",
+          sessionManager.getaccessToken() ?? '',
+          getSet.profilePic ?? "",
+          getSet.isAlumini ?? '',
+          getSet.isBatchAdmin ?? ''
+      );
+
+
       if (NavigationService.isForPendingFees)
       {
         if (await canLaunchUrl(Uri.parse(getSet.paymentLink ?? '')))
@@ -1839,6 +1914,49 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     else  if (userViewModel.response.success == '0')
       {
       }
+  }
+
+  Future<void> getEventsList(bool isFirstTime) async {
+    if (isFirstTime) {
+      setState(() {
+        _pageIndex = 1;
+      });
+    }
+
+    Map<String, String> jsonBody = {
+      'filter': "",
+      'filter_by': "",
+      'limit': '10',
+      'page': _pageIndex.toString(),
+      'search': '',
+      'status': "1",
+      'from_app' : FROM_APP
+    };
+    var eventViewModel = Provider.of<EventViewModel>(context,listen: false);
+    await eventViewModel.getEventsList(jsonBody);
+
+    if (eventViewModel.response.success == "1")
+    {
+      if (isFirstTime)
+      {
+        listEvent = [];
+      }
+      List<EventList>? _tempList = [];
+      _tempList = eventViewModel.response.eventList;
+      listEvent.addAll(_tempList!);
+
+      print(listEvent.length);
+
+      if (_tempList.isNotEmpty) {
+        _pageIndex += 1;
+        if (_tempList.isEmpty || _tempList.length % _pageResult != 0 ) {
+        }
+      }
+
+    }
+
+
+    setState(() {});
   }
 
   void _animateToIndex(int index) {
@@ -2111,6 +2229,36 @@ class _DashboardScreenState extends BaseState<DashboardScreen> {
     print(percent);
 
     return percent;
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  Future<void> getCountUser() async {
+
+    print("is Calling counter");
+
+    Stream<DocumentSnapshot> userCount = firestoreInstance.collection(usersCount).doc(sessionManager.getUserId()).snapshots();
+
+    userCount.listen((snapshot) {
+      print("snapshot.data()");
+      print(snapshot.data());
+      if (snapshot.exists) {
+        setState(() {
+          _userCount = snapshot['count'] ?? 0;
+        });
+
+        print("user count === ${_userCount}");
+      }
+      else
+        {
+          print("user count === ${_userCount}");
+        }
+    });
+
   }
 
 }

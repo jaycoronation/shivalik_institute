@@ -8,3 +8,4 @@ final firestoreInstance = FirebaseFirestore.instance;
 
 String batch = "Batch";
 String messages = "Message";
+String usersCount = "UsersCount";

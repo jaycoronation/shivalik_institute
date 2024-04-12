@@ -209,7 +209,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                     child: Row(
                                       children: [
                                         Text(selectedFaculty.isNotEmpty ? selectedFaculty : "Select Faculty", textAlign: TextAlign.start,
-                                          style: const TextStyle(fontSize: 16, color: black, fontWeight: FontWeight.w600),
+                                          style: const TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w600),
                                         ),
                                         const Gap(5),
                                         Image.asset('assets/images/ic_arrow_down.png', width: 18, height: 18, color: black,),
@@ -221,7 +221,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                               Visibility(
                                 visible: fromDateApi.isNotEmpty,
                                 child: Container(
-                                  margin: const EdgeInsets.only(bottom: 5,left: 12),
+                                  margin: const EdgeInsets.only(bottom: 5,left: 8),
                                   decoration: BoxDecoration(
                                     border: Border.all(color: black),
                                     borderRadius: BorderRadius.circular(6),
@@ -832,7 +832,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
                                 DateTimeRange? result = await showDateRangePicker(
                                     context: context,
                                     firstDate: DateTime(2022, 1, 1),
-                                    lastDate: DateTime.now().add(const Duration(hours: 1)),
+                                    lastDate: DateTime.now().add(const Duration(days: 365)),
                                     initialEntryMode: DatePickerEntryMode.calendar,
                                     currentDate: DateTime.now(),
                                     saveText: 'Done',

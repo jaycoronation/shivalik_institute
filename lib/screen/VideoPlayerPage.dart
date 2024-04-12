@@ -6,7 +6,6 @@ import 'package:shivalik_institute/common_widget/common_widget.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 import '../constant/colors.dart';
-import '../utils/app_utils.dart';
 
 class VideoPlayerPage extends StatefulWidget {
   final bool play;
@@ -90,27 +89,35 @@ class _VideoWidgetState extends State<VideoPlayerPage>
   Widget build(BuildContext context) {
     return WillPopScope(
         child:  Scaffold(
-          backgroundColor: white,
+          backgroundColor: black,
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
               toolbarHeight: 55,
               automaticallyImplyLeading: false,
-              backgroundColor: white,
+              backgroundColor: black,
               elevation: 0,
               centerTitle: false,
               titleSpacing: 0,
               leading: GestureDetector(
+                behavior: HitTestBehavior.opaque,
                   onTap: () {
                     Navigator.pop(context);
                   },
-                  child: getBackArrow(),
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    margin: const EdgeInsets.only(left: 4,right: 4,top: 4,bottom: 4),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Image.asset('assets/images/ic_back_button.png', width: 48, height: 48,color: white,),
+                    ),
+                  ),
               ),
               title: Container(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   widget.title,
                   maxLines: 1,
-                  style: TextStyle(fontWeight: FontWeight.w600, color: black, fontSize: 18),
+                  style: const TextStyle(fontWeight: FontWeight.w600, color: black, fontSize: 18),
                 ),
               )
           ),

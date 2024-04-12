@@ -155,7 +155,7 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                   if (value.response.success == "1")
                     {
                       return Padding(
-                        padding: const EdgeInsets.fromLTRB(18, 0, 18, 12),
+                        padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,14 +327,30 @@ class _EventsScreenState extends BaseState<EventsScreen> {
                                           Positioned(
                                             top: 12,
                                             right: 12,
-                                            child: Container(
-                                              height: 30,
-                                              decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(4),
-                                                  color: brandColor
-                                              ),
-                                              padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
-                                              child: Text(listEvent[index].eventType ?? '',style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  height: 30,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(4),
+                                                      color: brandColor
+                                                  ),
+                                                  padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+                                                  child: Text(listEvent[index].eventType ?? '',style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
+                                                ),
+                                                Visibility(
+                                                  visible: listEvent[index].type == "upcoming",
+                                                  child: Container(
+                                                    margin: const EdgeInsets.only(left: 12),
+                                                    decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(4),
+                                                        color: brandColor
+                                                    ),
+                                                    padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+                                                    child: Text('Upcoming',style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                           Padding(

@@ -127,7 +127,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 width: 100,
                                 height: 100,
                                 child:  ClipOval(
-                                    child:getSet.profilePic.toString().isEmpty
+                                    child: getSet.profilePic.toString().isEmpty
                                         ? Image.asset('assets/images/ic_user_placeholder.png', fit: BoxFit.cover,)
                                         : Image.network(getSet.profilePic.toString(), fit: BoxFit.cover)
                                 ),

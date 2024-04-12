@@ -46,9 +46,9 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
 
 
         if (listBatches[i].name == 'JRE10')
-        {
-          listBatchIds.add(listBatches[i].id ?? '');
-        }
+          {
+            listBatchIds.add(listBatches[i].id ?? '');
+          }
 
       }
 
@@ -264,7 +264,7 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset('assets/images/ic_file.png',width: 22,height: 22,color: grayLight,),
+            Image.asset('assets/images/ic_file.png',width: 22,height: 22,color: black,),
             const Gap(6),
             const Text('Document', style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: black),)
           ],
@@ -276,7 +276,7 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset('assets/images/ic_camera_chat.png',width: 22,height: 22,color: grayLight,),
+            Image.asset('assets/images/ic_camera_chat.png',width: 22,height: 22,color: black,),
             const Gap(6),
             const Text('Media', style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: black),)
           ],
@@ -288,7 +288,7 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset('assets/images/ic_video.png',width: 22,height: 22,color: grayLight,),
+            Image.asset('assets/images/ic_video.png',width: 22,height: 22,color: black,),
             const Gap(6),
             const Text('Video', style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: black),)
           ],

@@ -125,6 +125,18 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
 
      print("_courseId === $_courseId");
 
+
+    sessionManager.createLoginSession(
+        getSet.id ?? "",
+        getSet.firstName ?? "",
+        getSet.lastName ?? "",
+        getSet.userType ?? "",
+        sessionManager.getaccessToken() ?? '',
+        getSet.profilePic ?? "",
+        getSet.isAlumini ?? '',
+        getSet.isBatchAdmin ?? ''
+    );
+
     for (var element in listBatches) {
       if (element.id == _batchId)
       {

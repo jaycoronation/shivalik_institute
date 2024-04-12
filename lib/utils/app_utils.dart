@@ -176,7 +176,7 @@ String convertToDay(String dateTime) {
     return 'Yesterday';
   } else {
     //return universalDateConverter("yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy", dateTime);
-    return universalDateConverter("yyyy-MM-dd HH:mm:ss", "EEE dd,MMM", dateTime);
+    return universalDateConverter("yyyy-MM-dd HH:mm:ss", "dd,MMM HH:mm:ss", dateTime);
   }
 }
 
@@ -311,20 +311,12 @@ noInterNet(BuildContext? context) {
 
 void launchCustomTab(BuildContext context,String url) async {
   try {
-    await tab.launch(
-      url,
-      customTabsOption:  tab.CustomTabsOption(
-        toolbarColor: black,
-        animation: tab.CustomTabsSystemAnimation.slideIn(),
-        enableDefaultShare: true,
-        enableUrlBarHiding: true,
-        showPageTitle: true,
-        extraCustomTabs: const <String>[
-          'org.mozilla.firefox',
-          'com.microsoft.emmx',
-        ],
+    await tab.launchUrl(
+      Uri.parse(url),
+      customTabsOptions:  tab.CustomTabsOptions(
+        animations: tab.CustomTabsSystemAnimations.slideIn(),
       ),
-      safariVCOption: const tab.SafariViewControllerOption(
+      safariVCOptions: const tab.SafariViewControllerOptions(
         preferredBarTintColor: black,
         preferredControlTintColor: white,
         barCollapsingEnabled: true,

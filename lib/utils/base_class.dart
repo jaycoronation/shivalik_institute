@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shivalik_institute/utils/session_manager_methods.dart';
 import 'session_manager.dart';
 
 /// a base class for any statful widget for checking internet connectivity
@@ -19,6 +20,7 @@ abstract class BaseState<T extends StatefulWidget> extends State {
   /// initialize connectivity checking
   /// Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initConnectivity() async {
+    SessionManagerMethods.init();
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       await _connectivity.checkConnectivity();

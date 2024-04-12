@@ -63,12 +63,7 @@ class SessionManager {
 
   Future<void> setMessageCount(int apiMainBatchId)
   async {
-
-    print("object === $apiMainBatchId");
-
     var value = await SessionManagerMethods.setInt(messageCount, apiMainBatchId);
-    print("object === ${SessionManagerMethods.setInt(messageCount, apiMainBatchId)}");
-    print("Value === ${value}");
   }
 
   String? getBatchId() {

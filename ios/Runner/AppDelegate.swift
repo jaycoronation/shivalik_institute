@@ -53,6 +53,8 @@ import Firebase
     }
     
     override func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+//        Messaging.messaging().apnsToken = deviceToken
+
         print("didReceiveRemoteNotification Response Info :\(userInfo)")
     }
     

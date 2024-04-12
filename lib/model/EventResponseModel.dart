@@ -86,6 +86,7 @@ class EventList {
       String? shortDescription,
       String? createdAt,
       String? isActive, 
+      String? type,
       List<EventGallery>? eventGallery,}){
     _id = id;
     _title = title;
@@ -98,6 +99,7 @@ class EventList {
     _shortDescription = shortDescription;
     _createdAt = createdAt;
     _isActive = isActive;
+    _type = type;
     _eventGallery = eventGallery;
 }
 
@@ -113,6 +115,7 @@ class EventList {
     _shortDescription = json['short_description'];
     _createdAt = json['created_at'];
     _isActive = json['is_active'];
+    _type = json['type'];
     if (json['event_gallery'] != null) {
       _eventGallery = [];
       json['event_gallery'].forEach((v) {
@@ -130,6 +133,7 @@ class EventList {
   String? _description;
   String? _shortDescription;
   String? _createdAt;
+  String? _type;
   String? _isActive;
   List<EventGallery>? _eventGallery;
 EventList copyWith({  String? id,
@@ -143,6 +147,7 @@ EventList copyWith({  String? id,
   String? shortDescription,
   String? createdAt,
   String? isActive,
+  String? type,
   List<EventGallery>? eventGallery,
 }) => EventList(  id: id ?? _id,
   title: title ?? _title,
@@ -155,6 +160,7 @@ EventList copyWith({  String? id,
   description: description ?? _description,
   createdAt: createdAt ?? _createdAt,
   isActive: isActive ?? _isActive,
+  type: type ?? _type,
   eventGallery: eventGallery ?? _eventGallery,
 );
   String? get id => _id;
@@ -168,6 +174,7 @@ EventList copyWith({  String? id,
   String? get shortDescription => _shortDescription;
   String? get createdAt => _createdAt;
   String? get isActive => _isActive;
+  String? get type => _type;
   List<EventGallery>? get eventGallery => _eventGallery;
 
   Map<String, dynamic> toJson() {

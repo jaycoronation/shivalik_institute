@@ -9,22 +9,21 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_expanded_tile/flutter_expanded_tile.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:gap/gap.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:linkwell/linkwell.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 import 'package:shivalik_institute/model/MessageSchema.dart';
+import 'package:shivalik_institute/screen/DashboardScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
-import 'package:video_player/video_player.dart';
 
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading.dart';
@@ -63,12 +62,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   bool _isLoading = false;
   bool isDarkTheme = false;
   String valueEmoji = '';
+  String searchParam = '';
 
   List<UserList> listUser = [];
 
   bool isFormConvList = false;
 
   ScrollController chatScrollController = ScrollController();
+  TextEditingController searchController = TextEditingController();
 
   final List<Reaction<String>?> _reactions = [
     Reaction(
@@ -93,6 +94,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     ),
   ];
 
+  bool _isSearchHideShow = false;
+
   @override
   void initState(){
     _getPeoplesList();
@@ -106,7 +109,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
         .snapshots();
 
     sessionManager.setMessageCount(0);
-
+    deleteUserCount();
     super.initState();
   }
   
@@ -121,7 +124,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
         leading: InkWell(
           borderRadius: BorderRadius.circular(52),
           onTap: () {
-            Navigator.pop(context);
+            if (Navigator.canPop(context))
+              {
+                Navigator.pop(context);
+              }
+            else
+              {
+                closeAndStartActivity(context, DashboardScreen());
+              }
           },
           child: getBackArrow(),
         ),
@@ -135,6 +145,16 @@ class _ChatScreenState extends BaseState<ChatScreen> {
             child: getTitle(sessionManager.getBatchName() ?? '')
         ),
         actions: [
+          /*GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                setState(() {
+                  _isSearchHideShow = !_isSearchHideShow;
+                });
+              },
+              child: Image.asset('assets/images/ic_search.png',width: 22,height: 22,)
+          ),
+          const Gap(8),*/
           GestureDetector(
             behavior: HitTestBehavior.opaque,
               onTap: () {
@@ -147,6 +167,117 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       ),
       body: Column(
         children: [
+          Visibility(
+            visible: _isSearchHideShow,
+            child: Stack(
+              alignment: Alignment.centerRight,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 12),
+                  height: 50,
+                  child: TextField(
+                    cursorColor: black,
+                    controller: searchController,
+                    keyboardType: TextInputType.text,
+                    textCapitalization: TextCapitalization.words,
+                    textInputAction: TextInputAction.search,
+                    onSubmitted: (text) {
+                      if (text.isNotEmpty)
+                      {
+                        setState(() {
+                          searchParam = text;
+                        });
+                        messagesStream = firestoreInstance
+                            .collection(batch)
+                            .doc(sessionManager.getBatchId() ?? '')
+                            .collection(messages)
+                            .where('content', isEqualTo: searchParam)
+                            .snapshots();
+                      }
+                    },
+                    onChanged: (value) {
+                      setState(() {
+                        searchParam = value;
+                      });
+                    },
+                    cursorHeight: 20,
+                    style: const TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16, height: 1.3),
+                    maxLines: 1,
+                    decoration: InputDecoration(
+                      alignLabelWithHint: true,
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: lableHint,
+                      ),
+                      hintText: 'Search...',
+                      contentPadding: EdgeInsets.zero,
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(kBorderRadius),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(kBorderRadius),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(kBorderRadius),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(kBorderRadius),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(kBorderRadius),
+                      ),
+                      floatingLabelAlignment: FloatingLabelAlignment.center,
+                      filled: true,
+                      fillColor: searchColor,
+                      hintStyle: const TextStyle(fontWeight: FontWeight.w400, color: lableHint, fontSize: 16, height: 25 / 15),
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: searchParam.isNotEmpty,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                      setState(() {
+                        searchController.clear();
+                        searchParam = "";
+                        listMessages = [];
+                      });
+                      messagesStream = firestoreInstance
+                          .collection(batch)
+                          .doc(sessionManager.getBatchId() ?? '')
+                          .collection(messages)
+                          .orderBy('timestamp', descending: true)
+                          .snapshots();
+                    },
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      margin: const EdgeInsets.only(right: 12),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: grayDark,
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Icon(
+                          Icons.close,
+                          size: 12,
+                          color: white,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
           const Gap(12),
           Expanded (
             child: StreamBuilder<QuerySnapshot>(
@@ -183,7 +314,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                         documentId: message['document_id'] != null ? message['document_id'] ?? '' : '',
                         isEdited: message['is_edited'],
                         isDelete: message['is_delete'],
-                        timestamp: Timestamp.now(),
+                        timestamp: message['timestamp'],
+                        passedDateFormate: message['passed_date_formate'],
                         reactions: isReactionAvailable == true ? message['reactions'] : []
                       );
                       listMessages.add(getSet);
@@ -209,17 +341,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                           );
                         }).toList() ?? [];
 
-                        if (listMessages[index].type == "video")
-                        {
-                          listMessages[index].controller = VideoPlayerController.networkUrl(
-                            Uri.parse(
-                              listMessages[index].content ?? '',
-                            ),
-                          );
-
-                          listMessages[index].initializeVideoPlayerFuture = listMessages[index].controller.initialize();
-                        }
-
                         return GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onLongPress: () {
@@ -235,8 +356,9 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                             crossAxisAlignment: sessionManager.getUserId() == listMessages[index].senderId ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                             children: [
                               Visibility(
-                                visible: isDifferentDateNew,
+                                visible: false,
                                 child: Container(
+                                  alignment: Alignment.center,
                                   margin: const EdgeInsets.only(top: 4, bottom: 4),
                                   padding: const EdgeInsets.only(left: 8, right: 8, bottom: 5, top: 5),
                                   decoration: BoxDecoration(color: white, border: Border.all(color: white), borderRadius: BorderRadius.circular(8)),
@@ -281,7 +403,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                   ),
                                 )
                               else
-
                                 sessionManager.getUserId() == listMessages[index].senderId
                                     ? PullDownButton(
                                       itemBuilder: (context) => [
@@ -430,7 +551,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                             : Image.asset('assets/images/cover_thumb.jpg', fit: BoxFit.fill,height: 140,width: MediaQuery.of(context).size.width,),
                                                         const Gap(6),
                                                         Text(
-                                                          timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                          listMessages[index].passedDateFormate?.isNotEmpty ?? false ? convertToDay(listMessages[index].passedDateFormate ?? '') : timeStampToDateTimeForMsg(listMessages[index].timestamp),
                                                           textAlign: TextAlign.end,
                                                           style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
                                                         )
@@ -516,7 +637,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                       ),
                                                       const Gap(6),
                                                       Text(
-                                                        timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                        listMessages[index].passedDateFormate?.isNotEmpty ?? false ? convertToDay(listMessages[index].passedDateFormate ?? '') : timeStampToDateTimeForMsg(listMessages[index].timestamp),
                                                         textAlign: TextAlign.end,
                                                         style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
                                                       )
@@ -527,68 +648,68 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                               : listMessages[index].type == "video"
                                               ? GestureDetector(
                                                 behavior: HitTestBehavior.opaque,
-                                                onTap: (){
-                                                  startActivity(context, VideoPlayerPage(true,listMessages[index].content ?? "","" ));
+                                                onTap: () async {
+                                                  startActivity(context, VideoPlayerPage(true,  listMessages[index].content ?? '', ''));
                                                 },
                                                 child: Container(
                                                   margin: EdgeInsets.only(
-                                                      left: listMessages[index].senderId != sessionManager.getUserId() ? 18 : 80,
-                                                      right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 18,
+                                                      left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
+                                                      right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
                                                       bottom: 6
                                                   ),
-                                                  padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
+                                                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
                                                   decoration: BoxDecoration(
-                                                    color: white,
-                                                    borderRadius: BorderRadius.circular(8),
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(6),
                                                   ),
                                                   child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.end,
-                                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    mainAxisSize: MainAxisSize.min,
                                                     children: [
                                                       Visibility(
                                                         visible: listMessages[index].senderId != sessionManager.getUserId(),
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.fromLTRB(18.0,6, 18,6),
-                                                          child: Text(
-                                                            listMessages[index].sender ?? '',
-                                                            style: const TextStyle(
-                                                                color: graySemiDark,
-                                                                fontSize: 12,
-                                                                fontWeight: FontWeight.w500
-                                                            ),
+                                                        child: Text(
+                                                          listMessages[index].sender ?? '',
+                                                          style: const TextStyle(
+                                                              color: graySemiDark,
+                                                              fontSize: 12,
+                                                              fontWeight: FontWeight.w500
                                                           ),
                                                         ),
                                                       ),
+                                                      const Gap(6),
                                                       Container(
-                                                        alignment: Alignment.center,
-                                                        height: 200,
-                                                        width: MediaQuery.of(context).size.width,
-                                                        child: Stack(
-                                                          alignment: Alignment.center,
+                                                        decoration: BoxDecoration(
+                                                          color: grayGradient,
+                                                          borderRadius: BorderRadius.circular(6),
+                                                        ),
+                                                        padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                          mainAxisSize: MainAxisSize.min,
                                                           children: [
-                                                            VideoPlayer(listMessages[index].controller),
-                                                            Container(
-                                                                width: 42,
-                                                                height: 42,
-                                                              decoration: BoxDecoration(
-                                                                color: white.withOpacity(0.4),
-                                                                shape: BoxShape.circle
+                                                            Image.asset('assets/images/ic_video_new.png',width: 36,height: 36,),
+                                                            const Gap(8),
+                                                            Expanded(
+                                                              child: Column(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),overflow: TextOverflow.clip,),
+                                                                ],
                                                               ),
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets.all(8.0),
-                                                                  child: Image.asset('assets/images/ic_play.png', color: black,width: 22,height: 22,),
-                                                                )
-                                                            ),
+                                                            )
                                                           ],
                                                         ),
                                                       ),
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(top: 12),
-                                                        child: Text(
-                                                          timeStampToDateTimeForMsg(listMessages[index].timestamp),
-                                                          style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-                                                        ),
-                                                      ),
+                                                      const Gap(6),
+                                                      Text(
+                                                        listMessages[index].passedDateFormate?.isNotEmpty ?? false ? convertToDay(listMessages[index].passedDateFormate ?? '') : timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                        textAlign: TextAlign.end,
+                                                        style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                      )
                                                     ],
                                                   ),
                                                 ),
@@ -620,7 +741,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                       ),
                                                     ),
                                                     Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
-                                                    LinkWell(listMessages[index].content ?? '',
+                                                    SelectableLinkify(text : listMessages[index].content ?? '',
                                                       style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 14,
@@ -656,7 +777,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                           ),
                                                         ),
                                                         Text(
-                                                          timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                          listMessages[index].passedDateFormate?.isNotEmpty ?? false ? convertToDay(listMessages[index].passedDateFormate ?? '') : timeStampToDateTimeForMsg(listMessages[index].timestamp),
                                                           textAlign: TextAlign.end,
                                                           style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
                                                         ),
@@ -806,7 +927,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                         : Image.asset('assets/images/cover_thumb.jpg', fit: BoxFit.fill,height: 140,width: MediaQuery.of(context).size.width,),
                                                     const Gap(6),
                                                     Text(
-                                                      timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                      listMessages[index].passedDateFormate?.isNotEmpty ?? false ? convertToDay(listMessages[index].passedDateFormate ?? '') : timeStampToDateTimeForMsg(listMessages[index].timestamp),
                                                       textAlign: TextAlign.end,
                                                       style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
                                                     )
@@ -838,92 +959,21 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                     }
                                                   }
                                                 },
-                                            child: Container(
-                                              margin: EdgeInsets.only(
-                                                  left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
-                                                  right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
-                                                  bottom: 6
-                                              ),
-                                              padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(6),
-                                              ),
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Visibility(
-                                                    visible: listMessages[index].senderId != sessionManager.getUserId(),
-                                                    child: Text(
-                                                      listMessages[index].sender ?? '',
-                                                      style: const TextStyle(
-                                                          color: graySemiDark,
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const Gap(6),
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      color: grayGradient,
-                                                      borderRadius: BorderRadius.circular(6),
-                                                    ),
-                                                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      children: [
-                                                        Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
-                                                        const Gap(8),
-                                                        Expanded(
-                                                          child: Column(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                              Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
-                                                              Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
-                                                            ],
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const Gap(6),
-                                                  Text(
-                                                    timeStampToDateTimeForMsg(listMessages[index].timestamp),
-                                                    textAlign: TextAlign.end,
-                                                    style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                              : listMessages[index].type == "video"
-                                              ? GestureDetector(
-                                                behavior: HitTestBehavior.opaque,
-                                                onTap: (){
-                                                  startActivity(context, VideoPlayerPage(true,listMessages[index].content ?? "","" ));
-                                                },
                                                 child: Container(
-                                                  alignment: Alignment.center,
-                                                  width: MediaQuery.of(context).size.width,
                                                   margin: EdgeInsets.only(
-                                                      left: listMessages[index].senderId != sessionManager.getUserId() ? 18 : 80,
-                                                      right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 18,
+                                                      left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
+                                                      right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
                                                       bottom: 6
                                                   ),
-                                                  padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
+                                                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
                                                   decoration: BoxDecoration(
-                                                    color: white,
-                                                    borderRadius: BorderRadius.circular(8),
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(6),
                                                   ),
                                                   child: Column(
                                                     mainAxisAlignment: MainAxisAlignment.start,
                                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                                    mainAxisSize: MainAxisSize.min,
                                                     children: [
                                                       Visibility(
                                                         visible: listMessages[index].senderId != sessionManager.getUserId(),
@@ -936,114 +986,190 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                           ),
                                                         ),
                                                       ),
-                                                      Gap(8),
-                                                      SizedBox(
-                                                        height: 200,
-                                                        width: MediaQuery.of(context).size.width,
-                                                        child: Stack(
-                                                          alignment: Alignment.center,
+                                                      const Gap(6),
+                                                      Container(
+                                                        decoration: BoxDecoration(
+                                                          color: grayGradient,
+                                                          borderRadius: BorderRadius.circular(6),
+                                                        ),
+                                                        padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisSize: MainAxisSize.min,
                                                           children: [
-                                                            VideoPlayer(listMessages[index].controller),
-                                                            Container(
-                                                                width: 42,
-                                                                height: 42,
-                                                                decoration: BoxDecoration(
-                                                                    color: white.withOpacity(0.4),
-                                                                    shape: BoxShape.circle
-                                                                ),
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets.all(8.0),
-                                                                  child: Image.asset('assets/images/ic_play.png', color: black,width: 22,height: 22,),
-                                                                )
-                                                            ),
+                                                            Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
+                                                            const Gap(8),
+                                                            Expanded(
+                                                              child: Column(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
+                                                                  //Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
+                                                                ],
+                                                              ),
+                                                            )
                                                           ],
                                                         ),
                                                       ),
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(top: 8,bottom: 8),
+                                                      const Gap(6),
+                                                      Text(
+                                                        listMessages[index].passedDateFormate?.isNotEmpty ?? false ? convertToDay(listMessages[index].passedDateFormate ?? '') : timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                        textAlign: TextAlign.end,
+                                                        style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                              : listMessages[index].type == "video"
+                                              ? GestureDetector(
+                                                behavior: HitTestBehavior.opaque,
+                                                onTap: (){
+                                                  startActivity(context, VideoPlayerPage(true,listMessages[index].content ?? "","" ));
+                                                },
+                                                child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
+                                                      right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
+                                                      bottom: 6
+                                                  ),
+                                                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(6),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Visibility(
+                                                        visible: listMessages[index].senderId != sessionManager.getUserId(),
                                                         child: Text(
-                                                          timeStampToDateTimeForMsg(listMessages[index].timestamp),
-                                                          style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                          listMessages[index].sender ?? '',
+                                                          style: const TextStyle(
+                                                              color: graySemiDark,
+                                                              fontSize: 12,
+                                                              fontWeight: FontWeight.w500
+                                                          ),
                                                         ),
                                                       ),
+                                                      const Gap(6),
+                                                      Container(
+                                                        decoration: BoxDecoration(
+                                                          color: grayGradient,
+                                                          borderRadius: BorderRadius.circular(6),
+                                                        ),
+                                                        padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          children: [
+                                                            Image.asset('assets/images/ic_video_new.png',width: 36,height: 36,),
+                                                            const Gap(8),
+                                                            Expanded(
+                                                              child: Column(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Text(
+                                                                    listMessages[index].fileName ?? '',
+                                                                    style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),
+                                                                    overflow: TextOverflow.clip,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      const Gap(6),
+                                                      Text(
+                                                        listMessages[index].passedDateFormate?.isNotEmpty ?? false ? convertToDay(listMessages[index].passedDateFormate ?? '') : timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                        textAlign: TextAlign.end,
+                                                        style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                      )
                                                     ],
                                                   ),
                                                 ),
                                               )
                                               : Container(
-                                              margin: EdgeInsets.only(
-                                                  left: listMessages[index].senderId != sessionManager.getUserId() ? 16 : 80,
-                                                  right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 16,
-                                                  bottom: 6
-                                              ),
-                                              padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(6),
-                                              ),
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Visibility(
-                                                    visible: listMessages[index].senderId != sessionManager.getUserId(),
-                                                    child: Text(
-                                                      listMessages[index].sender ?? '',
-                                                      style: const TextStyle(
-                                                          color: graySemiDark,
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500
-                                                      ),
+                                                    margin: EdgeInsets.only(
+                                                        left: listMessages[index].senderId != sessionManager.getUserId() ? 16 : 80,
+                                                        right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 16,
+                                                        bottom: 6
                                                     ),
-                                                  ),
-                                                  Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
-                                                  LinkWell(listMessages[index].content ?? '',
-                                                    style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.w500
+                                                    padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.circular(6),
                                                     ),
-                                                    linkStyle: const TextStyle(
-                                                        color: brandColor,
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.w500
-                                                    ),
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.end,
-                                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Visibility(
-                                                        visible: listMessages[index].isEdited ?? false,
-                                                        child: Row(
-                                                          children: [
-                                                            const Text(
-                                                              "Edited",
-                                                              textAlign: TextAlign.end,
-                                                              style: TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Visibility(
+                                                          visible: listMessages[index].senderId != sessionManager.getUserId(),
+                                                          child: Text(
+                                                            listMessages[index].sender ?? '',
+                                                            style: const TextStyle(
+                                                                color: graySemiDark,
+                                                                fontSize: 12,
+                                                                fontWeight: FontWeight.w500
                                                             ),
-                                                            const Gap(4),
-                                                            Container(
-                                                              decoration: const BoxDecoration(shape: BoxShape.circle, color: graySemiDark),
-                                                              width: 4,
-                                                              height: 4,
-                                                            ),
-                                                            const Gap(4),
-                                                          ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                      Text(
-                                                        timeStampToDateTimeForMsg(listMessages[index].timestamp),
-                                                        textAlign: TextAlign.end,
-                                                        style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-                                                      ),
+                                                        Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
+                                                        SelectableLinkify(text : listMessages[index].content ?? '',
+                                                          style: const TextStyle(
+                                                              color: Colors.black,
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.w500
+                                                          ),
+                                                          linkStyle: const TextStyle(
+                                                              color: brandColor,
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.w500
+                                                          ),
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.end,
+                                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          children: [
+                                                            Visibility(
+                                                              visible: listMessages[index].isEdited ?? false,
+                                                              child: Row(
+                                                                children: [
+                                                                  const Text(
+                                                                    "Edited",
+                                                                    textAlign: TextAlign.end,
+                                                                    style: TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                                  ),
+                                                                  const Gap(4),
+                                                                  Container(
+                                                                    decoration: const BoxDecoration(shape: BoxShape.circle, color: graySemiDark),
+                                                                    width: 4,
+                                                                    height: 4,
+                                                                  ),
+                                                                  const Gap(4),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              listMessages[index].passedDateFormate?.isNotEmpty ?? false ? convertToDay(listMessages[index].passedDateFormate ?? '') : timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                                                              textAlign: TextAlign.end,
+                                                              style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                                                            ),
 
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                        )
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ),
+                                              )
                                         );
                                       },
                                     ),
@@ -1734,6 +1860,19 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       isEdited: false
     );
 
+    for(int i=0; i < listDeviceTokens.length; i++)
+    {
+      print("Condition Running ===== ${listDeviceTokens[i].userId != sessionManager.getUserId().toString()}");
+      print("Condition Running ===== ${sessionManager.getUserId().toString()}");
+      print("Condition Running ===== ${listDeviceTokens[i].userId}");
+      if (listDeviceTokens[i].userId != sessionManager.getUserId().toString())
+      {
+        final userCountRef = firestoreInstance.collection(usersCount).doc(listDeviceTokens[i].userId);
+        userCountRef.set({'count' : FieldValue.increment(1)}).then((value) => print("Doneeee"));
+      }
+
+    }
+
     if(listDeviceTokens.isNotEmpty)
     {
       if (type == "text")
@@ -1744,8 +1883,9 @@ class _ChatScreenState extends BaseState<ChatScreen> {
         {
           await sendNotificationToUser("${sessionManager.getName()} ${sessionManager.getLastName()} has uploaded a document");
         }
-
     }
+
+
 
     var messageSendQuery = await firestoreInstance.collection(batch).doc(sessionManager.getBatchId()).collection(messages).add(messageData.toJson());
     print('<><><><><><><>');
@@ -1860,7 +2000,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       print("userId ====== ${listDeviceTokens[i].userId}");
       if (listDeviceTokens[i].userId != sessionManager.getUserId().toString())
         {
-
           token.add(checkValidString(listDeviceTokens[i].deviceToken));
         }
     }
@@ -1956,10 +2095,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
       for (var i=0; i < (dataResponse.deviceTokens?.length ?? 0); i++)
         {
-          if (sessionManager.getUserId() != dataResponse.deviceTokens?[i].userId)
-            {
-              listDeviceTokens.add(dataResponse.deviceTokens?[i] ?? DeviceTokens());
-            }
+          listDeviceTokens.add(dataResponse.deviceTokens?[i] ?? DeviceTokens());
+          print("listDeviceTokens === ${listDeviceTokens.length}");
         }
     }
     else
@@ -2082,25 +2219,159 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     return emoji;
   }
 
-  messageView(index){
+  /*messageView(index){
     listMessages[index].type == "media"
         ? Container(
-      margin: EdgeInsets.only(top: 4, bottom: 4, left: sessionManager.getUserId() == listMessages[index].senderId  ? 50 : 12 , right: sessionManager.getUserId() == listMessages[index].senderId ? 12 : 50),
-      decoration: BoxDecoration(color: white, border: Border.all(color: white), borderRadius: BorderRadius.circular(8)),
-      child: GestureDetector(
-        onTap: () {
-          List<String> listImage = [];
-          listImage.add(listMessages[index].content.toString());
-
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return FullScreenImage("", listImage, index);
-          }));
-        },
-        child: Container(
-          margin: const EdgeInsets.all(5),
+          margin: EdgeInsets.only(top: 4, bottom: 4, left: sessionManager.getUserId() == listMessages[index].senderId  ? 50 : 12 , right: sessionManager.getUserId() == listMessages[index].senderId ? 12 : 50),
           decoration: BoxDecoration(color: white, border: Border.all(color: white), borderRadius: BorderRadius.circular(8)),
-          width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.zero,
+          child: GestureDetector(
+            onTap: () {
+              List<String> listImage = [];
+              listImage.add(listMessages[index].content.toString());
+
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return FullScreenImage("", listImage, index);
+              }));
+            },
+            child: Container(
+              margin: const EdgeInsets.all(5),
+              decoration: BoxDecoration(color: white, border: Border.all(color: white), borderRadius: BorderRadius.circular(8)),
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.zero,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Visibility(
+                    visible: listMessages[index].senderId != sessionManager.getUserId(),
+                    child: Text(
+                      listMessages[index].sender ?? '',
+                      style: const TextStyle(
+                          color: graySemiDark,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500
+                      ),
+                    ),
+                  ),
+                  const Gap(6),
+                  listMessages[index].content?.isNotEmpty ?? false
+                      ? listMessages[index].content?.startsWith("https") ?? false
+                      ? FadeInImage.assetNetwork(
+                    image: listMessages[index].content.toString().trim(),
+                    fit: BoxFit.cover,
+                    placeholder: 'assets/images/cover_thumb.jpg',
+                    height: 140,
+                    width: MediaQuery.of(context).size.width,
+                  )
+                      : Image.file(File(listMessages[index].content ?? ''), fit: BoxFit.cover,height: 140,width: MediaQuery.of(context).size.width,)
+                      : Image.asset('assets/images/cover_thumb.jpg', fit: BoxFit.fill,height: 140,width: MediaQuery.of(context).size.width,),
+                  const Gap(6),
+                  Text(
+                    convertToDay(listMessages[index].passedDateFormate ?? ''),
+                    textAlign: TextAlign.end,
+                    style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                  )
+                ],
+              ),
+            ),
+          ),
+        )
+        : listMessages[index].type == "document"
+        ? GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () async {
+            if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
+            {
+              startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
+            }
+            else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
+            {
+              if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+              {
+                launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+              }
+            }
+            else
+            {
+              if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
+              {
+                launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
+              }
+            }
+          },
+          child: Container(
+            margin: EdgeInsets.only(
+                left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
+                right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
+                bottom: 6
+            ),
+            padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Visibility(
+                  visible: listMessages[index].senderId != sessionManager.getUserId(),
+                  child: Text(
+                    listMessages[index].sender ?? '',
+                    style: const TextStyle(
+                        color: graySemiDark,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500
+                    ),
+                  ),
+                ),
+                const Gap(6),
+                Container(
+                  decoration: BoxDecoration(
+                    color: grayGradient,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
+                      const Gap(8),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
+                          //Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                const Gap(6),
+                Text(
+                  convertToDay(listMessages[index].passedDateFormate ?? ''),
+                  textAlign: TextAlign.end,
+                  style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                )
+              ],
+            ),
+          ),
+        )
+        : Container(
+          margin: EdgeInsets.only(
+              left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
+              right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
+              bottom: 6
+          ),
+          padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(6),
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2116,185 +2387,51 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                   ),
                 ),
               ),
-              const Gap(6),
-              listMessages[index].content?.isNotEmpty ?? false
-                  ? listMessages[index].content?.startsWith("https") ?? false
-                  ? FadeInImage.assetNetwork(
-                image: listMessages[index].content.toString().trim(),
-                fit: BoxFit.cover,
-                placeholder: 'assets/images/cover_thumb.jpg',
-                height: 140,
-                width: MediaQuery.of(context).size.width,
-              )
-                  : Image.file(File(listMessages[index].content ?? ''), fit: BoxFit.cover,height: 140,width: MediaQuery.of(context).size.width,)
-                  : Image.asset('assets/images/cover_thumb.jpg', fit: BoxFit.fill,height: 140,width: MediaQuery.of(context).size.width,),
-              const Gap(6),
+              Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
               Text(
-                timeStampToDateTimeForMsg(listMessages[index].timestamp),
-                textAlign: TextAlign.end,
-                style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-              )
-            ],
-          ),
-        ),
-      ),
-    )
-        : listMessages[index].type == "document"
-        ? GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () async {
-        if (getFileExtension(listMessages[index].fileName ?? '') == ".pdf")
-        {
-          startActivity(context, PdfViewer(listMessages[index].content ?? '', '0',listMessages[index].fileName ?? ''));
-        }
-        else if (getFileExtension(listMessages[index].fileName ?? '') == ".xlsx")
-        {
-          if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
-          {
-            launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
-          }
-        }
-        else
-        {
-          if (await canLaunchUrl(Uri.parse(listMessages[index].content ?? '')))
-          {
-            launchUrl(Uri.parse(listMessages[index].content ?? ''),mode: LaunchMode.externalApplication);
-          }
-        }
-      },
-      child: Container(
-        margin: EdgeInsets.only(
-            left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
-            right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
-            bottom: 6
-        ),
-        padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Visibility(
-              visible: listMessages[index].senderId != sessionManager.getUserId(),
-              child: Text(
-                listMessages[index].sender ?? '',
+                listMessages[index].content ?? '',
                 style: const TextStyle(
-                    color: graySemiDark,
-                    fontSize: 12,
+                    color: Colors.black,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500
                 ),
               ),
-            ),
-            const Gap(6),
-            Container(
-              decoration: BoxDecoration(
-                color: grayGradient,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.asset(getFileIcon(getFileExtension(listMessages[index].fileName ?? '')),width: 36,height: 36,),
-                  const Gap(8),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(listMessages[index].fileName ?? '',style: const TextStyle(color: black,fontWeight: FontWeight.w500,fontSize: 12),),
-                      Text(getFileExtension(listMessages[index].fileName ?? ''),style: const TextStyle(color: graySemiDark,fontWeight: FontWeight.w500,fontSize: 10),),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            const Gap(6),
-            Text(
-              timeStampToDateTimeForMsg(listMessages[index].timestamp),
-              textAlign: TextAlign.end,
-              style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-            )
-          ],
-        ),
-      ),
-    )
-        : Container(
-      margin: EdgeInsets.only(
-          left: listMessages[index].senderId != sessionManager.getUserId() ? 20 : 80,
-          right: listMessages[index].senderId != sessionManager.getUserId() ? 80 : 20,
-          bottom: 6
-      ),
-      padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Visibility(
-            visible: listMessages[index].senderId != sessionManager.getUserId(),
-            child: Text(
-              listMessages[index].sender ?? '',
-              style: const TextStyle(
-                  color: graySemiDark,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500
-              ),
-            ),
-          ),
-          Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
-          Text(
-            listMessages[index].content ?? '',
-            style: const TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w500
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Visibility(
-                visible: listMessages[index].isEdited ?? false,
-                child: Row(
-                  children: [
-                    const Text(
-                      "Edited",
-                      textAlign: TextAlign.end,
-                      style: TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                  Visibility(
+                    visible: listMessages[index].isEdited ?? false,
+                    child: Row(
+                      children: [
+                        const Text(
+                          "Edited",
+                          textAlign: TextAlign.end,
+                          style: TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                        ),
+                        const Gap(4),
+                        Container(
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: graySemiDark),
+                          width: 4,
+                          height: 4,
+                        ),
+                        const Gap(4),
+                      ],
                     ),
-                    const Gap(4),
-                    Container(
-                      decoration: const BoxDecoration(shape: BoxShape.circle, color: graySemiDark),
-                      width: 4,
-                      height: 4,
-                    ),
-                    const Gap(4),
-                  ],
-                ),
-              ),
-              Text(
-                timeStampToDateTimeForMsg(listMessages[index].timestamp),
-                textAlign: TextAlign.end,
-                style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
-              ),
+                  ),
+                  Text(
+                    timeStampToDateTimeForMsg(listMessages[index].timestamp),
+                    textAlign: TextAlign.end,
+                    style: const TextStyle(fontSize: 12, color: graySemiDark, fontWeight: FontWeight.w500),
+                  ),
 
+                ],
+              )
             ],
-          )
-        ],
-      ),
-    );
-  }
+          ),
+        );
+  }*/
 
   void openReactionBottomSheet(String documentId) {
     showModalBottomSheet<void>(
@@ -2500,5 +2637,15 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
     // Display the results
     return Text(totalCount > 3 ? "${topThreeReactions.join(" ")} +${totalCount - 3}" : topThreeReactions.join(" "));
+  }
+
+  Future<void> deleteUserCount() async {
+
+    print("is Calling counter");
+
+    var userCount = firestoreInstance.collection(usersCount).doc(sessionManager.getUserId()).set({"count" : 0},);
+
+    userCount.then((value) => print("deleted"));
+
   }
 }
