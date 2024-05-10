@@ -53,7 +53,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
   String selectedFaculty = '';
   String selectedFacultyId = '';
   //List<String> dateFilterList = ["All", "Today", "Yesterday", "Last 7 Days", "Last 30 Days", "This Month", "Last Month", "Custom range"];
-  List<String> dateFilterList = ["All", "Today", "Tomorrow", "Next 7 Days", "Next 30 Days", "This Month", "Next Month", "Custom range"];
+  List<String> dateFilterList = ["All", "Today", "Yesterday","Tomorrow","Last 7 Days", "Next 7 Days","Last 30 Days", "Next 30 Days", "Last Month","This Month", "Next Month", "Custom range"];
 
   @override
   void initState(){
@@ -508,7 +508,7 @@ class _LectureScreenState extends BaseState<LectureScreen> {
 
     Map<String, String> jsonBody = {
       'faculty_id': selectedFacultyId,
-      'filter': 'upcoming_class',
+      'filter': '',
       'filter_by_class_status': "active",
       'filter_name': "Filter",
       'from_date_filter': fromDateApi,

@@ -50,8 +50,8 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 21
-        versionName "2.9"
+        versionCode 22
+        versionName "3.0"
     }
 
     packagingOptions {

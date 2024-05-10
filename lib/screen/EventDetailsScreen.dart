@@ -81,7 +81,7 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
                           Text(checkValidString(getSet.title).toString(),style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
                           const Gap(12),
                           Text(
-                            universalDateConverter("yyyy-MM-dd","dd MMM, yyyy", getSet.date.toString()),
+                            universalDateConverter("dd-MM-yyyy hh:mm a", "dd MMM, yyyy hh:mm a", getSet.date.toString()),
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 16,

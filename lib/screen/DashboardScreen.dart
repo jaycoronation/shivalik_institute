@@ -622,7 +622,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
                                   ),
                                 ),
                                 Visibility(
-                                  visible: value.response.upcomingClasses?.isNotEmpty ?? false,
+                                  // visible: value.response.upcomingClasses?.isNotEmpty ?? false,
                                   child: Container(
                                     padding: const EdgeInsets.only(top: 12,bottom: 22),
                                     child: Column(
@@ -1210,9 +1210,9 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
                                                                       borderRadius: BorderRadius.circular(4),
                                                                       color: brandColor
                                                                   ),
-                                                                  margin: EdgeInsets.only(left: 8),
+                                                                  margin: const EdgeInsets.only(left: 8),
                                                                   padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
-                                                                  child: Text("Upcoming",style: const TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
+                                                                  child: const Text("Upcoming",style: TextStyle(color: white,fontSize: 14,fontWeight: FontWeight.w500)),
                                                                 ),
                                                               ),
                                                             ],

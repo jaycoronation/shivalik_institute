@@ -1123,7 +1123,12 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                           ),
                                                         ),
                                                         Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
-                                                        SelectableLinkify(text : listMessages[index].content ?? '',
+                                                        SelectableLinkify(
+                                                          text : listMessages[index].content ?? '',
+                                                          onOpen: (link) async {
+                                                            launchCustomTab(context, link.url);
+                                                          },
+                                                          enableInteractiveSelection: true,
                                                           style: const TextStyle(
                                                               color: Colors.black,
                                                               fontSize: 14,
