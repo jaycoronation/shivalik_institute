@@ -50,8 +50,8 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 22
-        versionName "3.0"
+        versionCode 24
+        versionName "3.2"
     }
 
     packagingOptions {
@@ -59,6 +59,7 @@ android {
         // when your project uses more than one plugin that depend on C++ libs.
         pickFirst 'lib/**/libc++_shared.so'
     }
+
 
     buildTypes {
         release {

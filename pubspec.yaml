@@ -72,7 +72,7 @@ dependencies:
   syncfusion_flutter_pdfviewer:
   flutter_bounceable: ^1.1.0
   screen_protector: ^1.4.2
-  package_info_plus:
+  package_info_plus: ^8.0.0
   shimmer: ^3.0.0
   flutter_file_downloader: ^1.2.1
   flutter_cache_manager: ^3.3.1

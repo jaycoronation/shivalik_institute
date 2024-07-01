@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -36,8 +38,16 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
   bool _isLoadingMore = false;
   Details getSet = Details();
 
+  late PackageInfo packageInfo;
+  String version = '';
+  String buildNumber = '';
+  String appName = '';
+  String packageName = '';
+
+
   @override
   void initState(){
+    getAppVersion();
     getUserData();
     super.initState();
   }
@@ -106,539 +116,553 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(height: 16,),
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () async {
-                        // startActivity(context, ProfileScreen());
-                        var value = await Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
-                        getUserData();
-                      },
-                      child: Center(
-                          child: Stack(
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(top: 12),
-                                decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(Radius.circular(150),),
-                                    color: grayLight,
-                                  border: Border.all(color: grayLight,width: 0.5)
-                                ),
-                                width: 100,
-                                height: 100,
-                                child:  ClipOval(
-                                    child: getSet.profilePic.toString().isEmpty
-                                        ? Image.asset('assets/images/ic_user_placeholder.png', fit: BoxFit.cover,)
-                                        : Image.network(getSet.profilePic.toString(), fit: BoxFit.cover)
-                                ),
-                              ),
-                              Visibility(
-                                visible: false,
-                                child: Positioned(
-                                    right: 0,
-                                    bottom: 12,
-                                    child: Container(
-                                        decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)),
-                                          color: grayLight,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(6.0),
-                                          child: Image.asset('assets/images/ic_edit.png', height: 18, width: 18,),
-                                        )
-                                    )
-                                ),
-                              )
-                            ],
-                          )
-                      ),
-                    ),
-                    Container(height: 22,),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
+                        Container(height: 16,),
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () async {
+                            // startActivity(context, ProfileScreen());
+                            var value = await Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+                            getUserData();
+                          },
+                          child: Center(
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 12),
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(Radius.circular(150),),
+                                        color: grayLight,
+                                      border: Border.all(color: grayLight,width: 0.5)
+                                    ),
+                                    width: 100,
+                                    height: 100,
+                                    child:  ClipOval(
+                                        child: getSet.profilePic.toString().isEmpty
+                                            ? Image.asset('assets/images/ic_user_placeholder.png', fit: BoxFit.cover,)
+                                            : Image.network(getSet.profilePic.toString(), fit: BoxFit.cover)
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: false,
+                                    child: Positioned(
+                                        right: 0,
+                                        bottom: 12,
+                                        child: Container(
+                                            decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)),
+                                              color: grayLight,
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(6.0),
+                                              child: Image.asset('assets/images/ic_edit.png', height: 18, width: 18,),
+                                            )
+                                        )
+                                    ),
+                                  )
+                                ],
+                              )
+                          ),
+                        ),
+                        Container(height: 22,),
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Spacer(),
-                            const Gap(34),
-                            Text(
-                              "${getSet.firstName ?? ''} ${getSet.lastName ?? ''}",
-                              textAlign: TextAlign.start,
-                              style: const TextStyle(fontWeight: FontWeight.w500, color: black, fontSize: 22, fontFamily: 'Colfax'),
-                            ),
-                            const Gap(12),
-                            InkWell(
-                              customBorder: const CircleBorder(),
-                              onTap: () async {
-                                var value = await Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
-                                getUserData();
-                              },
-                              child: Container(
-                                width: 34,
-                                height: 34,
-                                decoration: const BoxDecoration(color: grayButton, shape: BoxShape.circle),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Image.asset('assets/images/ic_edit_pencil.png', width: 28, height: 28, color: black),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Spacer(),
+                                const Gap(34),
+                                Text(
+                                  "${getSet.firstName ?? ''} ${getSet.lastName ?? ''}",
+                                  textAlign: TextAlign.start,
+                                  style: const TextStyle(fontWeight: FontWeight.w500, color: black, fontSize: 22, fontFamily: 'Colfax'),
                                 ),
+                                const Gap(12),
+                                InkWell(
+                                  customBorder: const CircleBorder(),
+                                  onTap: () async {
+                                    var value = await Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+                                    getUserData();
+                                  },
+                                  child: Container(
+                                    width: 34,
+                                    height: 34,
+                                    decoration: const BoxDecoration(color: grayButton, shape: BoxShape.circle),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Image.asset('assets/images/ic_edit_pencil.png', width: 28, height: 28, color: black),
+                                    ),
+                                  ),
+                                ),
+                                const Spacer(),
+                              ],
+                            ),
+                            const Gap(6),
+                            Container(
+                              decoration: BoxDecoration(color: grayNew, borderRadius: BorderRadius.circular(8)),
+                              padding: const EdgeInsets.fromLTRB(9, 6, 9, 6),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    checkValidString(getSet.batchName),
+                                    textAlign: TextAlign.start,
+                                    style: const TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 14, fontFamily: 'Colfax'),
+                                  ),
+                                  const Gap(6),
+                                  Image.asset(
+                                    'assets/images/ic_arrow_right.png',
+                                    width: 8,
+                                    height: 8,
+                                  ),
+                                ],
                               ),
                             ),
-                            const Spacer(),
                           ],
                         ),
-                        const Gap(6),
+                        Visibility(
+                          visible: false,
+                          child: Container(
+                            margin: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: white,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 18.0, right: 18,top: 12,bottom: 12),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Visibility(
+                                        visible: getSet.firstName?.isNotEmpty ?? false,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Image.asset('assets/images/ic_profile.png', width: 22,height: 22,),
+                                            Container(width: 12,),
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children:  [
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                                    child: Text("${getSet.firstName} ${getSet.lastName}",
+                                                        style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  const Divider(
+                                                    thickness: 0.5,
+                                                    endIndent: 0,
+                                                    indent: 0,
+                                                    color: grayLight,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible: getSet.email?.isNotEmpty ?? false,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Image.asset('assets/images/ic_Mail.png', width: 22,height: 22,),
+                                            Container(width: 12,),
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children:  [
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                                    child: Text((getSet.email.toString()),
+                                                        style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  const Divider(
+                                                    thickness: 0.5,
+                                                    endIndent: 0,
+                                                    indent: 0,
+                                                    color: grayLight,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                          ],
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible: getSet.contactNo?.isNotEmpty ?? false,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Image.asset('assets/images/ic_Phone.png', width: 22,height: 22,),
+                                            Container(width: 12,),
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children:  [
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                                    child: Text((getSet.contactNo.toString()),
+                                                        style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  const Divider(
+                                                    thickness: 0.5,
+                                                    endIndent: 0,
+                                                    indent: 0,
+                                                    color: grayLight,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                          ],
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible: getSet.dateOfBirth?.isNotEmpty ?? false,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Image.asset('assets/images/ic_birthdate.png', width: 22,height: 22,),
+                                            Container(width: 12,),
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children:  [
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                                    child: Text(universalDateConverter("yyyy-MM-dd", "dd MMM, yyyy", getSet.dateOfBirth ?? ""),
+                                                        style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  const Divider(
+                                                    thickness: 0.5,
+                                                    endIndent: 0,
+                                                    indent: 0,
+                                                    color: grayLight,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible: getSet.courseName?.isNotEmpty ?? false,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Image.asset('assets/images/ic_course.png', width: 22,height: 22,),
+                                            Container(width: 12,),
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children:  [
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                                    child: Text(getSet.courseName.toString(),
+                                                        style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  const Divider(
+                                                    thickness: 0.5,
+                                                    endIndent: 0,
+                                                    indent: 0,
+                                                    color: grayLight,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                          ],
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible: getSet.batchName?.isNotEmpty ?? false,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Image.asset('assets/images/ic_batch.png', width: 22,height: 22,),
+                                            Container(width: 12,),
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children:  [
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                                    child: Text(getSet.batchName.toString(),
+                                                        style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
+                                                    ),
+                                                  ),
+                                                  const Divider(
+                                                    thickness: 0.5,
+                                                    endIndent: 0,
+                                                    indent: 0,
+                                                    color: grayLight,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                          ],
+                                        ),
+                                      ),
+                                      const Gap(12),
+
+
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(height: 22,),
                         Container(
-                          decoration: BoxDecoration(color: grayNew, borderRadius: BorderRadius.circular(8)),
-                          padding: const EdgeInsets.fromLTRB(9, 6, 9, 6),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
+                          margin: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.only(left: 18.0, right: 18,top: 12,bottom: 12),
+                          decoration: BoxDecoration(
+                            color: white,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                checkValidString(getSet.batchName),
-                                textAlign: TextAlign.start,
-                                style: const TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 14, fontFamily: 'Colfax'),
+                              Visibility(
+                                visible: getSet.invoiceFile?.isNotEmpty ?? false,
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: (){
+                                    logFirebase("invoice_profile", {});
+                                    startActivity(context, PdfViewer(getSet.invoiceFile ?? '',"0","Payment_Invoice.pdf"));
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Image.asset('assets/images/ic_download.png', width: 22,height: 22,),
+                                        Container(width: 12),
+                                         const Expanded(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children:  [
+                                              Padding(
+                                                padding: EdgeInsets.only(bottom: 8.0,),
+                                                child: Text(
+                                                  "Invoice",
+                                                  style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w400, height: 1.4),
+                                                ),
+                                              ),
+                                              Divider(
+                                                thickness: 0.5,
+                                                endIndent: 0,
+                                                indent: 0,
+                                                color: grayLight,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
-                              const Gap(6),
-                              Image.asset(
-                                'assets/images/ic_arrow_right.png',
-                                width: 8,
-                                height: 8,
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: (){
+                                  logFirebase("payment_history_profile", {});
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentHistoryScreen()));
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Image.asset('assets/images/ic_payment.png', width: 22,height: 22,),
+                                      Container(width: 12),
+                                       const Expanded(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children:  [
+                                            Padding(
+                                              padding: EdgeInsets.only(bottom: 8.0,),
+                                              child: Text("Payment History",
+                                                style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w400, height: 1.4),
+                                              ),
+                                            ),
+                                            Divider(
+                                              thickness: 0.5,
+                                              endIndent: 0,
+                                              indent: 0,
+                                              color: grayLight,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: (){
+                                  logFirebase("holidays_profile", {});
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const HolidayScreen()));
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Image.asset('assets/images/ic_calendar.png', width: 22,height: 22,),
+                                      Container(width: 12),
+                                       const Expanded(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children:  [
+                                            Padding(
+                                              padding: EdgeInsets.only(bottom: 8.0,),
+                                              child: Text("Holidays",
+                                                style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w400, height: 1.4),
+                                              ),
+                                            ),
+                                            Divider(
+                                              thickness: 0.5,
+                                              endIndent: 0,
+                                              indent: 0,
+                                              color: grayLight,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: (){
+                                  logFirebase("notifications_profile", {});
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationListScreen()));
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Image.asset('assets/images/ic_notification.png', width: 22,height: 22,),
+                                      Container(width: 12),
+                                       const Expanded(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children:  [
+                                            Padding(
+                                              padding: EdgeInsets.only(bottom: 8.0,),
+                                              child: Text("Notifications",
+                                                style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w400, height: 1.4),
+                                              ),
+                                            ),
+                                            Divider(
+                                              thickness: 0.5,
+                                              endIndent: 0,
+                                              indent: 0,
+                                              color: grayLight,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: (){
+                                  _logOutDialog();
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Image.asset('assets/images/ic_logout.png', width: 22,height: 22,),
+                                      Container(width: 12),
+                                       const Expanded(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children:  [
+                                            Padding(
+                                              padding:  EdgeInsets.only(bottom: 8.0,),
+                                              child:  Text("Logout",
+                                                style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w400, height: 1.4),),
+                                            ),
+                                            Divider(
+                                              thickness: 0.5,
+                                              endIndent: 0,
+                                              indent: 0,
+                                              color: grayLight,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const Gap(12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text("App Version : $version",style: const TextStyle(fontWeight: FontWeight.w500,fontSize: 16,color: brandColor),),
+                                ],
                               ),
                             ],
                           ),
                         ),
+
+                        const Gap(22),
                       ],
                     ),
-                    Visibility(
-                      visible: false,
-                      child: Container(
-                        margin: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: white,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 18.0, right: 18,top: 12,bottom: 12),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Visibility(
-                                    visible: getSet.firstName?.isNotEmpty ?? false,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset('assets/images/ic_profile.png', width: 22,height: 22,),
-                                        Container(width: 12,),
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children:  [
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                                child: Text("${getSet.firstName} ${getSet.lastName}",
-                                                    style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
-                                                ),
-                                              ),
-                                              const Divider(
-                                                thickness: 0.5,
-                                                endIndent: 0,
-                                                indent: 0,
-                                                color: grayLight,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: getSet.email?.isNotEmpty ?? false,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset('assets/images/ic_Mail.png', width: 22,height: 22,),
-                                        Container(width: 12,),
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children:  [
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                                child: Text((getSet.email.toString()),
-                                                    style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
-                                                ),
-                                              ),
-                                              const Divider(
-                                                thickness: 0.5,
-                                                endIndent: 0,
-                                                indent: 0,
-                                                color: grayLight,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
 
-                                      ],
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: getSet.contactNo?.isNotEmpty ?? false,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset('assets/images/ic_Phone.png', width: 22,height: 22,),
-                                        Container(width: 12,),
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children:  [
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                                child: Text((getSet.contactNo.toString()),
-                                                    style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
-                                                ),
-                                              ),
-                                              const Divider(
-                                                thickness: 0.5,
-                                                endIndent: 0,
-                                                indent: 0,
-                                                color: grayLight,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-                                      ],
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: getSet.dateOfBirth?.isNotEmpty ?? false,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset('assets/images/ic_birthdate.png', width: 22,height: 22,),
-                                        Container(width: 12,),
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children:  [
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                                child: Text(universalDateConverter("yyyy-MM-dd", "dd MMM, yyyy", getSet.dateOfBirth ?? ""),
-                                                    style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
-                                                ),
-                                              ),
-                                              const Divider(
-                                                thickness: 0.5,
-                                                endIndent: 0,
-                                                indent: 0,
-                                                color: grayLight,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: getSet.courseName?.isNotEmpty ?? false,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset('assets/images/ic_course.png', width: 22,height: 22,),
-                                        Container(width: 12,),
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children:  [
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                                child: Text(getSet.courseName.toString(),
-                                                    style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
-                                                ),
-                                              ),
-                                              const Divider(
-                                                thickness: 0.5,
-                                                endIndent: 0,
-                                                indent: 0,
-                                                color: grayLight,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-                                      ],
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: getSet.batchName?.isNotEmpty ?? false,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset('assets/images/ic_batch.png', width: 22,height: 22,),
-                                        Container(width: 12,),
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children:  [
-                                              Padding(
-                                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                                child: Text(getSet.batchName.toString(),
-                                                    style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
-                                                ),
-                                              ),
-                                              const Divider(
-                                                thickness: 0.5,
-                                                endIndent: 0,
-                                                indent: 0,
-                                                color: grayLight,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-                                      ],
-                                    ),
-                                  ),
-                                  const Gap(12),
-
-
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(height: 22,),
-                    Container(
-                      margin: const EdgeInsets.all(12),
-                      padding: const EdgeInsets.only(left: 18.0, right: 18,top: 12,bottom: 12),
-                      decoration: BoxDecoration(
-                        color: white,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Visibility(
-                            visible: getSet.invoiceFile?.isNotEmpty ?? false,
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: (){
-                                logFirebase("invoice_profile", {});
-                                startActivity(context, PdfViewer(getSet.invoiceFile ?? '',"0","Payment_Invoice.pdf"));
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Image.asset('assets/images/ic_download.png', width: 22,height: 22,),
-                                    Container(width: 12),
-                                     const Expanded(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children:  [
-                                          Padding(
-                                            padding: EdgeInsets.only(bottom: 8.0,),
-                                            child: Text(
-                                              "Invoice",
-                                              style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w400, height: 1.4),
-                                            ),
-                                          ),
-                                          Divider(
-                                            thickness: 0.5,
-                                            endIndent: 0,
-                                            indent: 0,
-                                            color: grayLight,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: (){
-                              logFirebase("payment_history_profile", {});
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentHistoryScreen()));
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset('assets/images/ic_payment.png', width: 22,height: 22,),
-                                  Container(width: 12),
-                                   const Expanded(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children:  [
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 8.0,),
-                                          child: Text("Payment History",
-                                            style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w400, height: 1.4),
-                                          ),
-                                        ),
-                                        Divider(
-                                          thickness: 0.5,
-                                          endIndent: 0,
-                                          indent: 0,
-                                          color: grayLight,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: (){
-                              logFirebase("holidays_profile", {});
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const HolidayScreen()));
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset('assets/images/ic_calendar.png', width: 22,height: 22,),
-                                  Container(width: 12),
-                                   const Expanded(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children:  [
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 8.0,),
-                                          child: Text("Holidays",
-                                            style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w400, height: 1.4),
-                                          ),
-                                        ),
-                                        Divider(
-                                          thickness: 0.5,
-                                          endIndent: 0,
-                                          indent: 0,
-                                          color: grayLight,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: (){
-                              logFirebase("notifications_profile", {});
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationListScreen()));
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset('assets/images/ic_notification.png', width: 22,height: 22,),
-                                  Container(width: 12),
-                                   const Expanded(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children:  [
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 8.0,),
-                                          child: Text("Notifications",
-                                            style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w400, height: 1.4),
-                                          ),
-                                        ),
-                                        Divider(
-                                          thickness: 0.5,
-                                          endIndent: 0,
-                                          indent: 0,
-                                          color: grayLight,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: (){
-                              _logOutDialog();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset('assets/images/ic_logout.png', width: 22,height: 22,),
-                                  Container(width: 12),
-                                   const Expanded(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children:  [
-                                        Padding(
-                                          padding:  EdgeInsets.only(bottom: 8.0,),
-                                          child:  Text("Logout",
-                                            style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w400, height: 1.4),),
-                                        ),
-                                        Divider(
-                                          thickness: 0.5,
-                                          endIndent: 0,
-                                          indent: 0,
-                                          color: grayLight,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Gap(22)
                   ],
                 ),
               );
@@ -845,6 +869,14 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
 
     }
 
+  }
+
+  Future<void> getAppVersion() async {
+    packageInfo = await PackageInfo.fromPlatform();
+    appName = packageInfo.appName;
+    packageName = packageInfo.packageName;
+    version = packageInfo.version;
+    buildNumber = packageInfo.buildNumber;
   }
 
 }

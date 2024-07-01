@@ -44,12 +44,10 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
             listBatchIds.add(listBatches[i].id ?? '');
           }
 
-
-        if (listBatches[i].name == 'JRE10')
+       /* if (listBatches[i].name == 'JRE10')
           {
             listBatchIds.add(listBatches[i].id ?? '');
-          }
-
+          }*/
       }
 
     //listBatchIds = sessionManager.getMainBatchId()?.split(",") ?? [];

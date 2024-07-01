@@ -742,6 +742,9 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                     ),
                                                     Gap(listMessages[index].senderId != sessionManager.getUserId() ? 6 : 0),
                                                     SelectableLinkify(text : listMessages[index].content ?? '',
+                                                      onOpen: (link) async {
+                                                        launchCustomTab(context, link.url);
+                                                      },
                                                       style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 14,
@@ -751,7 +754,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                                         color: brandColor,
                                                         fontSize: 14,
                                                         fontWeight: FontWeight.w500
-                                                    ),),
+                                                    ),
+                                                    ),
                                                     Row(
                                                       mainAxisAlignment: MainAxisAlignment.end,
                                                       crossAxisAlignment: CrossAxisAlignment.end,
