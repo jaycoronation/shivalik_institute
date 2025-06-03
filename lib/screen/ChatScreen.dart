@@ -55,13 +55,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
   List<MessageSchema> listMessages = [];
   List<ReactionModel> listReaction = [];
+  String valueEmoji = '';
   List<DeviceTokens> listDeviceTokens = [];
   bool isSendButtonVisible = false;
   String selectedMedia = '';
   String documentID = '';
   bool _isLoading = false;
   bool isDarkTheme = false;
-  String valueEmoji = '';
+
   String searchParam = '';
 
   List<UserList> listUser = [];
@@ -477,7 +478,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                           onTap: () async {
                                             updateTxtBottomSheet(listMessages[index]);
                                           },
-
                                         ),
                                         PullDownMenuItem(
                                           title: 'Copy',
@@ -1871,13 +1871,10 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
     for(int i=0; i < listDeviceTokens.length; i++)
     {
-      print("Condition Running ===== ${listDeviceTokens[i].userId != sessionManager.getUserId().toString()}");
-      print("Condition Running ===== ${sessionManager.getUserId().toString()}");
-      print("Condition Running ===== ${listDeviceTokens[i].userId}");
       if (listDeviceTokens[i].userId != sessionManager.getUserId().toString())
       {
         final userCountRef = firestoreInstance.collection(usersCount).doc(listDeviceTokens[i].userId);
-        userCountRef.set({'count' : FieldValue.increment(1)}).then((value) => print("Doneeee"));
+        userCountRef.set({'count' : FieldValue.increment(1)});
       }
 
     }

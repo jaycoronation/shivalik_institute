@@ -245,11 +245,6 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
     );
   }
 
-  @override
-  void castStatefulWidget() {
-    widget is ConversationScreen;
-  }
-
   Widget getMessageContent(LastMessage lastMessage) {
     Widget dataWidget = Container();
     if (lastMessage.type == "text")
@@ -294,6 +289,11 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
       }
 
     return dataWidget;
+  }
+
+  @override
+  void castStatefulWidget() {
+    widget is ConversationScreen;
   }
 
 }

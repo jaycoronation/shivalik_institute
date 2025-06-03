@@ -128,7 +128,8 @@ class LectureList {
       String? deletedAt, 
       String? isCancelled, 
       String? cancelReason, 
-      BatchDetails? batchDetails, 
+      String? type,
+      BatchDetails? batchDetails,
       ModuleDetails? moduleDetails, 
       List<dynamic>? classMaterial, 
       List<dynamic>? classWorksheet, 
@@ -167,6 +168,7 @@ class LectureList {
     _deletedAt = deletedAt;
     _isCancelled = isCancelled;
     _cancelReason = cancelReason;
+    _type = type;
     _batchDetails = batchDetails;
     _moduleDetails = moduleDetails;
     _classMaterial = classMaterial;
@@ -209,6 +211,7 @@ class LectureList {
     _deletedAt = json['deleted_at'];
     _isCancelled = json['is_cancelled'];
     _cancelReason = json['cancel_reason'];
+    _type = json['type'];
     _batchDetails = json['batch_details'] != null ? BatchDetails.fromJson(json['batch_details']) : null;
     _moduleDetails = json['module_details'] != null ? ModuleDetails.fromJson(json['module_details']) : null;
     if (json['class_material'] != null) {
@@ -259,6 +262,7 @@ class LectureList {
   String? _deletedAt;
   String? _isCancelled;
   String? _cancelReason;
+  String? _type;
   BatchDetails? _batchDetails;
   ModuleDetails? _moduleDetails;
   List<dynamic>? _classMaterial;
@@ -298,6 +302,7 @@ LectureList copyWith({  String? id,
   String? deletedAt,
   String? isCancelled,
   String? cancelReason,
+  String? type,
   BatchDetails? batchDetails,
   ModuleDetails? moduleDetails,
   List<dynamic>? classMaterial,
@@ -337,6 +342,7 @@ LectureList copyWith({  String? id,
   deletedAt: deletedAt ?? _deletedAt,
   isCancelled: isCancelled ?? _isCancelled,
   cancelReason: cancelReason ?? _cancelReason,
+  type: type ?? _type,
   batchDetails: batchDetails ?? _batchDetails,
   moduleDetails: moduleDetails ?? _moduleDetails,
   classMaterial: classMaterial ?? _classMaterial,
@@ -377,6 +383,7 @@ LectureList copyWith({  String? id,
   String? get deletedAt => _deletedAt;
   String? get isCancelled => _isCancelled;
   String? get cancelReason => _cancelReason;
+  String? get type => _type;
   BatchDetails? get batchDetails => _batchDetails;
   ModuleDetails? get moduleDetails => _moduleDetails;
   List<dynamic>? get classMaterial => _classMaterial;
@@ -419,6 +426,7 @@ LectureList copyWith({  String? id,
     map['deleted_at'] = _deletedAt;
     map['is_cancelled'] = _isCancelled;
     map['cancel_reason'] = _cancelReason;
+    map['type'] = _type;
     if (_batchDetails != null) {
       map['batch_details'] = _batchDetails?.toJson();
     }

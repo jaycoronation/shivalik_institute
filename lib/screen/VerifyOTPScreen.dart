@@ -9,7 +9,6 @@ import 'package:shivalik_institute/constant/api_end_point.dart';
 import 'package:shivalik_institute/model/VerifyOtpResponseModel.dart';
 import '../common_widget/common_widget.dart';
 import '../constant/colors.dart';
-import '../model/CommonResponseModel.dart';
 import '../model/GenerateOTPResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
@@ -250,7 +249,7 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                         margin: const EdgeInsets.only(bottom: 10, left: 6, top: 14,right: 44),
                                         child: RichText(
                                               text: TextSpan(
-                                                style: Theme.of(context).textTheme.bodyText1,
+                                                style: Theme.of(context).textTheme.bodyMedium,
                                                 children: [
                                                   const WidgetSpan(child: Gap(10)),
                                                   const TextSpan(
@@ -263,7 +262,7 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                                     style: TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w600),
                                                   ),
                                                   TextSpan(
-                                                    text:_start < 10 ? " 0$_start Seconds" : " $_start Seconds",
+                                                    text:_start < 10 ? " 0$_start Second" : " $_start Seconds",
                                                     style: const TextStyle(fontSize: 14, color: black, fontWeight: FontWeight.w600),
                                                   ),
                                                 ],

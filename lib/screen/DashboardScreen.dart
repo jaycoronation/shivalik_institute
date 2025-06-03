@@ -622,7 +622,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
                                   ),
                                 ),
                                 Visibility(
-                                  // visible: value.response.upcomingClasses?.isNotEmpty ?? false,
+                                  visible: value.response.upcomingClasses?.isNotEmpty ?? false,
                                   child: Container(
                                     padding: const EdgeInsets.only(top: 12,bottom: 22),
                                     child: Column(
@@ -1109,10 +1109,9 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
                                   ),
                                 ),
                                 Visibility(
-                                  visible: listEvent?.isNotEmpty ?? false,
+                                  visible: listEvent.isNotEmpty,
                                   child: Container(
                                     margin: const EdgeInsets.only(top: 12,),
-                                    padding: const EdgeInsets.only(left: 18),
                                     height: 300,
                                     child: AnimationLimiter(
                                       child: PageView.builder(
@@ -1143,7 +1142,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
                                                   child: Container(
                                                     height: 300,
                                                     width : MediaQuery.of(context).size.width,
-                                                    margin: EdgeInsets.only(left: index == 0 ? 0 : 12,right: 12),
+                                                    margin: EdgeInsets.only(left: 12,right: 12),
                                                     decoration:  BoxDecoration(
                                                       border: Border.all(color: white, width: 0.5),
                                                       borderRadius:const BorderRadius.all(Radius.circular(8),) ,

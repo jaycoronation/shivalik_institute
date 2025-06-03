@@ -22,6 +22,7 @@ import '../model/CommonResponseModel.dart';
 import '../model/LecturesResponseModel.dart';
 import '../model/MaterialDResponseModel.dart';
 import '../model/MaterialDetailResponseModel.dart';
+import '../model/MediaListResponseModel.dart';
 import '../model/ModuleResponseModel.dart';
 import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
@@ -43,6 +44,7 @@ class MaterialDetailScreen extends StatefulWidget {
 
 class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
 
+  ModuleList getSetData = ModuleList();
   String isForCoverPic = "coverPic";
   TextEditingController searchController = TextEditingController();
   String searchParam = "";
@@ -51,7 +53,8 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
   int _pageIndex = 1;
   bool _isSearchHideShow = false;
   final int _pageResult = 10;
-  List<MaterialDataList> listDocument = [];
+  List<Files> listDocument = [];
+  List<MaterialDataList> listDocumentMain = [];
 
   late ScrollController _scrollViewController;
   bool isScrollingDown = false;
@@ -62,7 +65,17 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
   @override
   void initState(){
     super.initState();
-    getClassesDocumentData(true,);
+
+    getSetData = (widget as MaterialDetailScreen).getSet;
+
+    if ((widget as MaterialDetailScreen).classGetSet.date?.isNotEmpty ?? false)
+      {
+        getClassesDocumentDataMain(true,);
+      }
+    else
+      {
+        getClassesDocumentData(true,);
+      }
 
     _scrollViewController = ScrollController();
     _scrollViewController.addListener(() {
@@ -165,6 +178,192 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                   ),
               ),
           )
+            : listDocumentMain.isNotEmpty
+            ? Padding(
+          padding: const EdgeInsets.only(left: 18.0, right: 18),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Visibility(
+                visible: _isSearchHideShow,
+                child: Stack(
+                  alignment: Alignment.centerRight,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 12),
+                      height: 50,
+                      child: TextField(
+                        cursorColor: black,
+                        controller: searchController,
+                        keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.words,
+                        textInputAction: TextInputAction.search,
+                        onSubmitted: (text) {
+                          if (text.isNotEmpty)
+                          {
+                            setState(() {
+                              searchParam = text;
+                            });
+                            getClassesDocumentDataMain();
+                          }
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            searchParam = value;
+                          });
+                        },
+                        cursorHeight: 20,
+                        style: const TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 16, height: 1.3),
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                          alignLabelWithHint: true,
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: lableHint,
+                          ),
+                          hintText: 'Search...',
+                          contentPadding: EdgeInsets.zero,
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                            borderRadius: BorderRadius.circular(kBorderRadius),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                            borderRadius: BorderRadius.circular(kBorderRadius),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                            borderRadius: BorderRadius.circular(kBorderRadius),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                            borderRadius: BorderRadius.circular(kBorderRadius),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(width: 0, color: Colors.transparent),
+                            borderRadius: BorderRadius.circular(kBorderRadius),
+                          ),
+                          floatingLabelAlignment: FloatingLabelAlignment.center,
+                          filled: true,
+                          fillColor: searchColor,
+                          hintStyle: const TextStyle(fontWeight: FontWeight.w400, color: lableHint, fontSize: 16, height: 25 / 15),
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: searchParam.isNotEmpty,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          FocusScope.of(context).unfocus();
+                          setState(() {
+                            searchController.clear();
+                            searchParam = "";
+                            listDocumentMain = [];
+                          });
+                          getClassesDocumentData();
+                        },
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          margin: const EdgeInsets.only(right: 12),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: grayDark,
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(4.0),
+                            child: Icon(
+                              Icons.close,
+                              size: 12,
+                              color: white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const Gap(12),
+              Expanded(
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  removeBottom: true,
+                  child: ListView.builder(
+                    controller: _scrollViewController,
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: listDocumentMain.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () async {
+
+                          openFileView(context, listDocumentMain[index].fileType ?? '', listDocumentMain[index].fullPath ?? "", listDocumentMain[index].isPrivate ?? "", listDocumentMain[index].file ?? "",);
+
+                          /*if (listDocument[index].fileType == "pdf")
+                                  {
+                                    startActivity(context, PdfViewer(listDocument[index].fullPath ?? "",listDocument[index].isPrivate ?? "",listDocument[index].file ?? "",));
+                                  }
+                                else if ((listDocument[index].fileType == "xls") || (listDocument[index].fileType == "xlsx"))
+                                  {
+                                    Uri fileUri = Uri.parse(listDocument[index]. fullPath?? "");
+
+                                    if (await canLaunchUrl(fileUri))
+                                      {
+                                        launchUrl(fileUri,mode: LaunchMode.externalApplication);
+                                      }
+                                  }
+                                else if (listDocument[index].fileType == "pptx")
+                                  {
+                                    startActivity(context, PPTXViewer(listDocument[index].fullPath ?? '', listDocument[index].isPrivate ?? '0',listDocument[index].file ?? ''));
+                                  }
+                                else
+                                  {
+                                    startActivity(context, WebViewContainer(listDocument[index].fullPath ?? "",'',listDocument[index].isPrivate ?? ''));
+                                  }*/
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: white,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Stack(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Image.asset("assets/images/ic_resource.png" , height: 22,width: 22),
+                                  const Gap(12),
+                                  Expanded(
+                                    child: Text(
+                                      listDocumentMain[index].file ?? '',
+                                      maxLines: 3,
+                                      style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400,overflow: TextOverflow.ellipsis),
+                                    ),
+                                  ),
+                                  Image.asset("assets/images/ic_arrow_right.png",width: 22,height: 22,),
+                                ],
+                              ),
+                              Container(height: 12,),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
             : listDocument.isNotEmpty
             ? Padding(
                 padding: const EdgeInsets.only(left: 18.0, right: 18),
@@ -290,7 +489,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                               behavior: HitTestBehavior.opaque,
                               onTap: () async {
 
-                                openFileView(context, listDocument[index].fileType ?? '', listDocument[index].fullPath ?? "", listDocument[index].isPrivate ?? "", listDocument[index].file ?? "",);
+                                openFileView(context, listDocument[index].fileType ?? '', listDocument[index].media ?? "", listDocument[index].isPrivate ?? "", listDocument[index].fileName ?? "",);
 
                                 /*if (listDocument[index].fileType == "pdf")
                                   {
@@ -331,7 +530,7 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
                                         const Gap(12),
                                         Expanded(
                                           child: Text(
-                                            listDocument[index].file.toString(),
+                                            listDocument[index].fileName ?? '',
                                             maxLines: 3,
                                             style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400,overflow: TextOverflow.ellipsis),
                                           ),
@@ -620,6 +819,89 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
     ]);
 
     final url = Uri.parse(materialDetailListUrl);
+    /*Map<String, String> jsonBody = {
+      'batch_id': "",
+      'class_id': NavigationService.notif_id.isNotEmpty ? NavigationService.notif_id : (widget as MaterialDetailScreen).classGetSet.id ?? '',
+      'flag': "",
+      'limit': _pageResult.toString(),
+      'page': _pageIndex.toString(),
+      'search': searchParam,
+      'module_id': (widget as MaterialDetailScreen).getSet.id ?? '',
+      'status': "1",
+      'total': "0",
+      'student_id': sessionManager.getUserId() ?? '',
+      "type": "material",
+      'from_app' : FROM_APP
+    };*/
+
+    Map<String, String> jsonBody = {
+      'from_app' : FROM_APP,
+      'parent_id' : NavigationService.notif_id.isNotEmpty ? NavigationService.notif_id : (widget as MaterialDetailScreen).classGetSet.id ?? '',
+    };
+
+    final response = await http.post(url, body: jsonBody);
+    final statusCode = response.statusCode;
+
+    final body = response.body;
+    Map<String, dynamic> order = jsonDecode(body);
+    var dataResponse = MediaListResponseModel.fromJson(order);
+
+    if (isFirstTime) {
+      if (listDocument.isNotEmpty) {
+        listDocument = [];
+      }
+    }
+
+    if (statusCode == 200) {
+
+      if (dataResponse.mediaList?.files?.isNotEmpty ?? false) {
+        List<Files>? _tempList = [];
+        _tempList = dataResponse?.mediaList?.files ?? [];
+        listDocument.addAll(_tempList!);
+
+        if (_tempList.isNotEmpty)
+          {
+            _pageIndex += 1;
+            if (_tempList.isEmpty || _tempList.length % _pageResult != 0 )
+              {
+                _isLastPage = true;
+              }
+          }
+      }
+      else
+      {
+      }
+
+      setState(() {
+        _isLoading = false;
+        _isLoadingMore = false;
+      });
+
+    }else {
+      setState(() {
+        _isLoading = false;
+        _isLoadingMore = false;
+      });
+    }
+
+  }
+
+  void getClassesDocumentDataMain([bool isFirstTime = false, bool isFromClose = false]) async {
+
+    if (isFirstTime) {
+      setState(() {
+        _isLoading = true;
+        _isLoadingMore = false;
+        _pageIndex = 1;
+        _isLastPage = false;
+      });
+    }
+
+    HttpWithMiddleware http = HttpWithMiddleware.build(middlewares: [
+      HttpLogger(logLevel: LogLevel.BODY),
+    ]);
+
+    final url = Uri.parse(materialDetailListUrlFocDocs);
     Map<String, String> jsonBody = {
       'batch_id': "",
       'class_id': NavigationService.notif_id.isNotEmpty ? NavigationService.notif_id : (widget as MaterialDetailScreen).classGetSet.id ?? '',
@@ -643,8 +925,8 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
     var dataResponse = MaterialDResponseModel.fromJson(order);
 
     if (isFirstTime) {
-      if (listDocument.isNotEmpty) {
-        listDocument = [];
+      if (listDocumentMain.isNotEmpty) {
+        listDocumentMain = [];
       }
     }
 
@@ -653,16 +935,16 @@ class _MaterialDetailScreenState extends BaseState<MaterialDetailScreen> {
       if (dataResponse.list?.isNotEmpty ?? false) {
         List<MaterialDataList>? _tempList = [];
         _tempList = dataResponse.list;
-        listDocument.addAll(_tempList!);
+        listDocumentMain.addAll(_tempList!);
 
         if (_tempList.isNotEmpty)
+        {
+          _pageIndex += 1;
+          if (_tempList.isEmpty || _tempList.length % _pageResult != 0 )
           {
-            _pageIndex += 1;
-            if (_tempList.isEmpty || _tempList.length % _pageResult != 0 )
-              {
-                _isLastPage = true;
-              }
+            _isLastPage = true;
           }
+        }
       }
       else
       {

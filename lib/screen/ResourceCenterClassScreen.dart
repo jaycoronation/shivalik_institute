@@ -280,7 +280,7 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
                             physics: const BouncingScrollPhysics(),
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
-                            itemCount: listClasses.length ?? 0,
+                            itemCount: listClasses.length,
                             itemBuilder: (context, index) {
                               var getSet = listClasses[index];
                               return Visibility(
@@ -288,13 +288,16 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
                                 child: GestureDetector(
                                   behavior: HitTestBehavior.opaque,
                                   onTap: () {
-
                                     if ((widget as ResourceCenterClassScreen).isForSubmission)
                                     {
                                       startActivity(context, ResourceMaterialScreen((widget as ResourceCenterClassScreen).getSet,listClasses[index]));
                                     }
                                     else
                                     {
+                                      if (listClasses[index].type == "folder")
+                                        {
+
+                                        }
                                       startActivity(context, MaterialDetailScreen((widget as ResourceCenterClassScreen).getSet,listClasses[index]));
                                     }
                                   },
@@ -311,7 +314,11 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
                                       children: [
                                         Image.asset(isForSubmission ? "assets/images/ic_submission.png" : "assets/images/ic_resource.png" , height: 22,width: 22),
                                         const Gap(12),
-                                        Expanded(child: Text("${getSet.classNoFormat}, ${getSet.date}",style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),)),
+                                        Expanded(
+                                            child: Text(
+                                              getSet.date?.isNotEmpty ?? false ? "${getSet.classNoFormat}, ${getSet.date}" : getSet.classNoFormat ?? '',style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w400),
+                                            )
+                                        ),
                                         Image.asset("assets/images/ic_arrow_right.png",width: 22,height: 22,),
                                       ],
                                     ),
@@ -347,14 +354,27 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
   }
 
   Future<void> getClassesData() async {
+
+    String batchId = '';
+
+    if ((sessionManager.getBatchId() ?? '').contains(","))
+      {
+        batchId = (sessionManager.getBatchId() ?? '').split(",")[0];
+      }
+    else
+      {
+        batchId = (sessionManager.getBatchId() ?? '');
+      }
+
     Map<String, String> jsonBody = {
-      'batch_id': "",
+      'batch_id': batchId,
       'limit': _pageResult.toString(),
       'page': _pageIndex.toString(),
       'search': searchParam,
       'module_id': (widget as ResourceCenterClassScreen).getSet.id ?? '',
       'status': "1",
       'total': "0",
+      "page_name":"resource_center",
       'student_id': sessionManager.getUserId() ?? '',
       'from_app' : FROM_APP
     };

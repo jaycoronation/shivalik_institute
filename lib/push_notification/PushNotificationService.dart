@@ -74,7 +74,9 @@ class PushNotificationService {
       var contentType = "";
       var image = "";
       var messageData = "";
+
       print('Data Payload:${message.data.toString()}');
+
       message.data.forEach((key, value) {
         if (key == "content_id") {
           id = value;
@@ -92,6 +94,7 @@ class PushNotificationService {
           messageData = value;
         }
       });
+
       print('<><> onMessageOpenedApp id--->$id');
       print('<><> onMessageOpenedApp contentType--->$contentType');
 
@@ -157,6 +160,8 @@ class PushNotificationService {
 
           print('<><> onMessage id--->$id');
           print('<><> onMessage contentType--->$contentType');
+          print('<><> onMessage title--->$title');
+          print('<><> onMessage messageData--->$messageData');
           print("<><> onMessage Image URL : $image <><>");
           print("<><> onMessage Payload : $payload <><>");
 

@@ -30,6 +30,11 @@ android {
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
+    packagingOptions {
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/libfbjni.so'
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -50,8 +55,8 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 24
-        versionName "3.2"
+        versionCode 27
+        versionName "3.5"
     }
 
     packagingOptions {

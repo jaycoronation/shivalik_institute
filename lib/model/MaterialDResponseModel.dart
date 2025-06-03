@@ -19,7 +19,7 @@ class MaterialDResponseModel {
 }
 
   MaterialDResponseModel.fromJson(dynamic json) {
-    _success = json['success'];
+    _success = json['success'].toString();
     _message = json['message'];
     _totalRecords = json['total_records'];
     if (json['list'] != null) {
