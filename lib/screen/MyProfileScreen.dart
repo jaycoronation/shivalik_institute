@@ -1,8 +1,5 @@
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
@@ -14,8 +11,6 @@ import 'package:shivalik_institute/screen/NotificationListScreen.dart';
 import 'package:shivalik_institute/screen/PaymentHistroyScreen.dart';
 import 'package:shivalik_institute/utils/pdf_viewer.dart';
 import '../common_widget/common_widget.dart';
-import '../common_widget/loading.dart';
-import '../common_widget/loading_more.dart';
 import '../constant/api_end_point.dart';
 import '../constant/colors.dart';
 import '../model/UpdateDeviceTokenModel.dart';
@@ -26,6 +21,8 @@ import '../utils/session_manager_methods.dart';
 import '../viewmodels/UserViewModel.dart';
 import 'LoginWithOtpScreen.dart';
 import 'ProfileScreen.dart';
+import 'package:to_do_package_shivalik/screens/todo_list_screen.dart';
+
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({super.key});
@@ -608,6 +605,60 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                         ),
                                       ),
                                     ],
+                                  ),
+                                ),
+                              ),
+                              Visibility(
+                                visible: sessionManager.getIsBatchAdmin() == "1",
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: (){
+                                    logFirebase("Tasks", {});
+                                    // Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationListScreen()));
+                                    // startActivity(context, ToDoListScreen(sessionManager.getToken() ?? "", sessionManager.getRoleId() ?? "", sessionManager.getUserId() ?? "",  "${sessionManager.getName() ?? ""} ${sessionManager.getLastName() ?? ""}", sessionManager.getProfilePic() ?? ""));
+
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                        ToDoListScreen(
+                                            // sessionManager.getaccessToken()?? "",
+                                            AuthHeader,
+                                            sessionManager.getUserId() ?? "",
+                                            sessionManager.getUserId() ?? "",
+                                            "${sessionManager.getName() ?? ""} ${sessionManager.getLastName() ?? ""}",
+                                            sessionManager.getProfilePic() ?? ""
+                                        )
+                                    ));
+
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Image.asset('assets/images/ic_followUp.png', width: 22,height: 22,),
+                                        Container(width: 12),
+                                         const Expanded(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children:  [
+                                              Padding(
+                                                padding: EdgeInsets.only(bottom: 8.0,),
+                                                child: Text("Follow-up",
+                                                  style: TextStyle(fontSize: 16, color: black,fontWeight: FontWeight.w400, height: 1.4),
+                                                ),
+                                              ),
+                                              Divider(
+                                                thickness: 0.5,
+                                                endIndent: 0,
+                                                indent: 0,
+                                                color: grayLight,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

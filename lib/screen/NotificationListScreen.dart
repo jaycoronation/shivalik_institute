@@ -20,7 +20,6 @@ import 'package:shivalik_institute/screen/FacultyProfileScreen.dart';
 import 'package:shivalik_institute/screen/LectureDetailsScreen.dart';
 import 'package:shivalik_institute/screen/ResourceMaterialScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../common_widget/common_widget.dart';
 import '../common_widget/loading_more.dart';
 import '../model/NotificationListResponseModel.dart';
@@ -28,6 +27,9 @@ import '../utils/app_utils.dart';
 import '../utils/base_class.dart';
 import '../viewmodels/UserViewModel.dart';
 import 'MaterialDetailScreen.dart';
+import 'package:to_do_package_shivalik/screens/todo_list_screen.dart';
+import 'package:to_do_package_shivalik/screens/todo_detail_screen.dart';
+import 'package:to_do_package_shivalik/model/todo_list_data_response_model.dart';
 
 class NotificationListScreen extends StatefulWidget {
   const NotificationListScreen({super.key});
@@ -440,6 +442,23 @@ class _NotificationListScreenState extends BaseState<NotificationListScreen> {
                                       {
                                         startActivity(context, FacultyProfileScreen(getSet.userId ?? ''));
                                       }
+                                    else if(getSet.operation == "task_deleted" || getSet.operation == "removed_from_task_observation" || getSet.operation == "removed_from_task"){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  ToDoListScreen(
+                                          AuthHeader,
+                                          sessionManager.getUserId() ?? "",
+                                          sessionManager.getUserId() ?? "",
+                                          "${sessionManager.getName() ?? ""} ${sessionManager.getLastName() ?? ""}",
+                                          sessionManager.getProfilePic() ?? ""
+                                      )));
+                                    }
+                                    else if(getSet.operation == "new_task_assigned" || getSet.operation == "observer_assigned_to_task" || getSet.operation == "task_update" || getSet.operation == "daily_task_summary" || getSet.operation == "task_comment"){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ToDoDetailScreen(
+                                            TodoList(), const [], true,false,getSet.task_id ?? "",userId:  sessionManager.getUserId() ?? "",AuthHeader,
+                                            userProfile: sessionManager.getProfilePic() ?? "",
+                                            name: "${sessionManager.getName() ?? ""} ${sessionManager.getLastName() ?? ""}", filterProjectList: [],
+                                          )
+                                      ));
+                                    }
                                     },
                                   child: Padding(
                                     padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),

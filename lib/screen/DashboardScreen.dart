@@ -132,6 +132,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
     getPendingFeedbacks();
     getBatchData();
 
+    print("device token===============================   ${sessionManager.getDeviceToken()}");
+
     FirebaseMessaging.onMessage.listen((message) {
       var id = "";
       var contentType = "";
@@ -310,77 +312,79 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
                     baseColor: Colors.grey.shade300,
                     highlightColor: Colors.grey.shade100,
                     enabled: true,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 50,
-                          margin: const EdgeInsets.only(top: 22),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            controller: scrollController,
-                            physics: const NeverScrollableScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: 10,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () {},
-                                child: LimitedBox(
-                                  maxWidth: 220,
-                                  child: Container(
-                                      margin: const EdgeInsets.only(left: 12),
-                                      decoration: BoxDecoration(
-                                          color: white,
-                                          borderRadius: BorderRadius.circular(4)
-                                      ),
-                                      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 50,
+                            margin: const EdgeInsets.only(top: 22),
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              controller: scrollController,
+                              physics: const NeverScrollableScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 10,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () {},
+                                  child: LimitedBox(
+                                    maxWidth: 220,
+                                    child: Container(
+                                        margin: const EdgeInsets.only(left: 12),
+                                        decoration: BoxDecoration(
+                                            color: white,
+                                            borderRadius: BorderRadius.circular(4)
+                                        ),
+                                        padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                        Container(
-                          width: double.infinity,
-                          height: 120.0,
-                          margin: const EdgeInsets.all(16.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: Colors.white,
+                          Container(
+                            width: double.infinity,
+                            height: 120.0,
+                            margin: const EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        const BannerPlaceholder(),
-                        Container(
-                          width: double.infinity,
-                          height: 50.0,
-                          margin: const EdgeInsets.only(top: 16,right: 16,left: 16),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            color: Colors.white,
+                          const BannerPlaceholder(),
+                          Container(
+                            width: double.infinity,
+                            height: 50.0,
+                            margin: const EdgeInsets.only(top: 16,right: 16,left: 16),
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        Container(
-                          width: double.infinity,
-                          height: 50.0,
-                          margin: const EdgeInsets.only(top: 16,right: 16,left: 16),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            color: Colors.white,
+                          Container(
+                            width: double.infinity,
+                            height: 50.0,
+                            margin: const EdgeInsets.only(top: 16,right: 16,left: 16),
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        Container(
-                          width: double.infinity,
-                          height: 50.0,
-                          margin: const EdgeInsets.only(top: 16,right: 16,left: 16),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            color: Colors.white,
+                          Container(
+                            width: double.infinity,
+                            height: 50.0,
+                            margin: const EdgeInsets.only(top: 16,right: 16,left: 16),
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        const BannerPlaceholder(),
-                      ],
+                          const BannerPlaceholder(),
+                        ],
+                      ),
                     ),
                   );
                 }
@@ -719,8 +723,8 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
                                                                 ? "${getSet.startTime} To ${getSet.endTime}"
                                                                 : getSet.session1Starttime ?? ''
                                                                 : "${getSet.session1Starttime} To ${getSet.session1Endtime}",
-                                                              style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),
-                                                            ),
+                                                                  style: const TextStyle(color: black,fontSize: 14,fontWeight: FontWeight.w500),
+                                                                ),
                                                           ),
                                                         ],
                                                       ),

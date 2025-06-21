@@ -86,7 +86,9 @@ class Notifications {
       String? title, 
       String? createdAt, 
       String? time, 
-      num? isRead,}){
+      String? task_id ,
+      num? isRead,
+  }){
     _id = id;
     _userId = userId;
     _classId = classId;
@@ -97,6 +99,7 @@ class Notifications {
     _title = title;
     _createdAt = createdAt;
     _time = time;
+    _task_id  = task_id;
     _isRead = isRead;
 }
 
@@ -111,6 +114,7 @@ class Notifications {
     _title = json['title'];
     _createdAt = json['created_at'];
     _time = json['time'];
+    _task_id  = json['task_id'];
     _isRead = json['is_read'];
   }
   String? _id;
@@ -123,6 +127,7 @@ class Notifications {
   String? _title;
   String? _createdAt;
   String? _time;
+  String? _task_id;
   num? _isRead;
 Notifications copyWith({  String? id,
   String? userId,
@@ -134,6 +139,7 @@ Notifications copyWith({  String? id,
   String? title,
   String? createdAt,
   String? time,
+  String? task_id ,
   num? isRead,
 }) => Notifications(  id: id ?? _id,
   userId: userId ?? _userId,
@@ -145,6 +151,7 @@ Notifications copyWith({  String? id,
   title: title ?? _title,
   createdAt: createdAt ?? _createdAt,
   time: time ?? _time,
+  task_id : task_id  ?? _task_id,
   isRead: isRead ?? _isRead,
 );
   String? get id => _id;
@@ -157,6 +164,7 @@ Notifications copyWith({  String? id,
   String? get title => _title;
   String? get createdAt => _createdAt;
   String? get time => _time;
+  String? get task_id  => _task_id;
   num? get isRead => _isRead;
 
   Map<String, dynamic> toJson() {
@@ -171,6 +179,7 @@ Notifications copyWith({  String? id,
     map['title'] = _title;
     map['created_at'] = _createdAt;
     map['time'] = _time;
+    map['task_id '] = _task_id;
     map['is_read'] = _isRead;
     return map;
   }

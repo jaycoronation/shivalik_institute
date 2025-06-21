@@ -53,12 +53,36 @@ TextStyle getTitleFontStyle(){
 TextStyle getSecondaryTitleFontStyle(){
   return GoogleFonts.rubik(fontWeight: FontWeight.w400, color: black, fontSize: 14);
 }
-
+/*
 void logFirebase(String name,Map<String,String?> params){
   params.addAll({"user_name" : "${SessionManager().getName()} ${SessionManager().getLastName()}",'user_id' : SessionManager().getUserId()});
   analytics.logEvent(name: name,parameters: params,).then((value) {
   });
 }
+
+ */
+void logFirebase(String name, Map<String, Object?> params) {
+  final cleanedParams = <String, Object>{};
+
+  // Clean nulls and ensure values are Object (not null)
+  params.forEach((key, value) {
+    if (value != null) {
+      cleanedParams[key] = value;
+    }
+  });
+
+  cleanedParams.addAll({
+    "user_name": "${SessionManager().getName() ?? ''} ${SessionManager().getLastName() ?? ''}",
+    "user_id": SessionManager().getUserId() ?? '',
+  });
+
+  analytics.logEvent(
+    name: name,
+    parameters: cleanedParams,
+  );
+}
+
+
 
 Future<String> getLocalDownloadPath(String fileName) async {
   final _directory = await getTemporaryDirectory();
@@ -69,7 +93,7 @@ Future<String> getLocalDownloadPath(String fileName) async {
 
 String getFileExtension(String fileNameParam) {
 
-  String fileName = checkValidString(fileNameParam);
+  String fileName = fileNameParam;
 
   try {
     print('.${fileName.split('.').last}');
@@ -81,7 +105,7 @@ String getFileExtension(String fileNameParam) {
 
 String getFileNameWithExtension(String fileNameParam) {
 
-  String fileName = checkValidString(fileNameParam);
+  String fileName = fileNameParam;
 
   try {
     return fileName.split('/').last;
@@ -220,7 +244,7 @@ isValidPhoneNumber(String? input)
 /*convert string to CamelCase*/
 toDisplayCase (String str) {
   try {
-    return checkValidString(str).toLowerCase().split(' ').map((word) {
+    return str.toLowerCase().split(' ').map((word) {
         String leftText = (word.length > 1) ? word.substring(1, word.length) : '';
         return word[0].toUpperCase() + leftText;
       }).join(' ');

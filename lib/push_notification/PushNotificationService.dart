@@ -1,29 +1,29 @@
-import 'dart:convert';
+
+import 'dart:async';
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pretty_http_logger/pretty_http_logger.dart';
-import 'package:shivalik_institute/firebase_options.dart';
 import 'package:shivalik_institute/model/LecturesResponseModel.dart';
 import 'package:shivalik_institute/screen/ChatScreen.dart';
 import 'package:shivalik_institute/screen/DashboardScreen.dart';
 import 'package:shivalik_institute/screen/FacultyProfileScreen.dart';
 import 'package:shivalik_institute/screen/LectureDetailsScreen.dart';
+import '../constant/api_end_point.dart';
 import '../constant/global_context.dart';
 import '../model/EventResponseModel.dart';
 import '../model/ModuleResponseModel.dart';
 import '../screen/EventDetailsScreen.dart';
 import '../screen/MaterialDetailScreen.dart';
-import '../utils/app_utils.dart';
 import '../utils/session_manager.dart';
 import 'package:http/http.dart' as http;
-
 import '../utils/session_manager_methods.dart';
+import 'package:to_do_package_shivalik/screens/todo_list_screen.dart';
+import 'package:to_do_package_shivalik/screens/todo_detail_screen.dart';
+import 'package:to_do_package_shivalik/model/todo_list_data_response_model.dart';
 
-// ignore: slash_for_doc_comments
 /**
  * Documents added by Alaa, enjoy ^-^:
  * There are 3 major things to consider when dealing with push notification :
@@ -47,10 +47,29 @@ import '../utils/session_manager_methods.dart';
  *   is called when user clicks on the notification.
  *
  * */
+
 class PushNotificationService {
-  Future<void> setupInteractedMessage() async {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    await FirebaseMessaging.instance.requestPermission();
+
+  Future<void> setupInteractedMessage() async
+  {
+    await Firebase.initializeApp();
+    if (Platform.isAndroid)
+    {
+      await FirebaseMessaging.instance.requestPermission();
+    }
+    else
+    {
+      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
     await enableIOSNotifications();
     await registerNotificationListeners();
     await FirebaseMessaging.instance.setAutoInitEnabled(true);
@@ -74,11 +93,9 @@ class PushNotificationService {
       var contentType = "";
       var image = "";
       var messageData = "";
-
       print('Data Payload:${message.data.toString()}');
-
       message.data.forEach((key, value) {
-        if (key == "content_id") {
+        if (key == "id") {
           id = value;
         }
 
@@ -86,41 +103,44 @@ class PushNotificationService {
           contentType = value;
         }
 
-        if (key == "image") {
+        /*if (key == "image") {
           image = value;
         }
 
-        if (key == "message") {
+        if (key == "body") {
           messageData = value;
-        }
+        }*/
       });
 
-      print('<><> onMessageOpenedApp id--->$id');
-      print('<><> onMessageOpenedApp contentType--->$contentType');
+      print('<><> onMessageOpenedApp setupInteractedMessage id--->$id');
+      print('<><> onMessageOpenedApp setupInteractedMessage contentType--->$contentType');
 
       NavigationService.notif_id = id;
+      NavigationService.notif_type = contentType;
+
 
       SessionManagerMethods.init();
 
       SessionManager sessionManager = SessionManager();
 
       if (contentType == "lecture_complete")
-        {
-          sessionManager.setClassId(id);
-        }
+      {
+        sessionManager.setClassId(id);
+      }
       else if (contentType == "user_chat")
-        {
-          int userCount = sessionManager.getMessageCount() ?? 0;
+      {
+        int userCount = sessionManager.getMessageCount() ?? 0;
 
-          userCount = userCount + 1;
+        userCount = userCount + 1;
 
-          print("USER CHAT BEFORE ===== $userCount");
+        print("USER CHAT BEFORE ===== $userCount");
 
-          sessionManager.setMessageCount(userCount);
-          sessionManager.setBatchId(message.data['content_id']);
+        sessionManager.setMessageCount(userCount);
+        sessionManager.setBatchId(message.data['id']);
 
-          print("USER CHAT ===== ${sessionManager.getMessageCount()}");
-        }
+        print("USER CHAT ===== ${sessionManager.getMessageCount()}");
+      }
+
 
       openPage(contentType);
     });
@@ -133,110 +153,28 @@ class PushNotificationService {
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
+
     var androidSettings = const AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    var iOSSettings = DarwinInitializationSettings(
-      requestSoundPermission: true,
-      requestBadgePermission: true,
-      requestAlertPermission: true,
-      defaultPresentAlert: true,
-      defaultPresentBadge: true,
-      defaultPresentSound: true,
-      onDidReceiveLocalNotification: (id, title, body, payload) async {
-        SessionManagerMethods.init();
-        SessionManager sessionManager = SessionManager();
-        var isLoggedIn = sessionManager.checkIsLoggedIn() ?? false;
-        if (title != null && isLoggedIn)
-        {
-          var idAPI = "";
-          var contentType = "";
-          var image = "";
-          var titleAPI = "";
-          var messageData = "";
-
-          titleAPI = title.toString();
-          idAPI = id.toString();
-          messageData = body.toString();
-
-          print('<><> onMessage id--->$id');
-          print('<><> onMessage contentType--->$contentType');
-          print('<><> onMessage title--->$title');
-          print('<><> onMessage messageData--->$messageData');
-          print("<><> onMessage Image URL : $image <><>");
-          print("<><> onMessage Payload : $payload <><>");
-
-          SessionManagerMethods.init();
-
-          int userCount = sessionManager.getMessageCount() ?? 0;
-
-          userCount = userCount + 1;
-
-          print("USER CHAT BEFORE ===== $userCount");
-
-          sessionManager.setMessageCount(userCount);
-
-          print("USER CHAT ===== ${sessionManager.getMessageCount()}");
-
-          const DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails(presentSound: true, presentAlert: true);
-
-          flutterLocalNotificationsPlugin.show(
-            id.hashCode,
-            title,
-            messageData,
-            payload: contentType,
-            NotificationDetails(
-              android: AndroidNotificationDetails('SIRE', 'SIRE',
-                channelDescription: channel.description,
-                icon: payload,
-                playSound: true,
-                importance: Importance.max,
-                styleInformation: BigTextStyleInformation(messageData),
-                priority: Priority.high
-              ),
-              iOS: iOSPlatformChannelSpecifics
-            ),
-          );
-        }
-        else
-        {
-          print("<><> CHECK DATA : " " <><>");
-        }
-      },
-    );
+    var iOSSettings = const DarwinInitializationSettings(
+        requestSoundPermission: true,defaultPresentSound: true);
 
     var initSettings = InitializationSettings(android: androidSettings, iOS: iOSSettings);
 
-    flutterLocalNotificationsPlugin.initialize(initSettings, onDidReceiveNotificationResponse: (payload) {
+    flutterLocalNotificationsPlugin.initialize(initSettings, onDidReceiveNotificationResponse: (NotificationResponse payload) {
       // This function handles the click in the notification when the app is in foreground
       // Get.toNamed(NOTIFICATIOINS_ROUTE);
       try {
-        var contentType = payload.toString();
-        print(payload.notificationResponseType.name);
-        print(payload.notificationResponseType.index);
-        print(payload.actionId);
-        print(payload.payload);
-
-        SessionManagerMethods.init();
-
-      if (contentType == "user_chat")
-        {
-          int userCount = SessionManager().getMessageCount() ?? 0;
-
-          userCount = userCount + 1;
-
-          print("USER CHAT BEFORE ===== $userCount");
-
-          SessionManager().setMessageCount(userCount);
-
-          print("USER CHAT ===== ${SessionManager().getMessageCount()}");
-        }
-
-        openPage(payload.payload ?? '');
+        print('<><> TAP onMessage :' + payload.payload.toString() + "  <><>");
+        var contentType = payload.payload.toString();
+        openPage(contentType);
       } catch (e) {
         print(e);
       }
     });
+
     // onMessage is called when the app is in foreground and a notification is received
+
     FirebaseMessaging.onMessage.listen((RemoteMessage? message) async {
       print('onMessage Notification Payload:${message?.notification!.toMap().toString()}');
       print('onMessage Data Payload:${message?.data.toString()}');
@@ -246,91 +184,149 @@ class PushNotificationService {
       SessionManager sessionManager = SessionManager();
       var isLoggedIn = sessionManager.checkIsLoggedIn() ?? false;
       if (notification != null && isLoggedIn)
+      {
+        var id = "";
+        var contentType = "";
+        var image = "";
+        var title = "";
+        var messageData = "";
+
+        message?.notification?.toMap().forEach((key, value) {
+          if (key == "image") {
+            image = value;
+          }
+
+          if (key == "title") {
+            title = value;
+          }
+
+          if (key == "body") {
+            messageData = value;
+          }
+        });
+
+        print("data ==== ${message?.data}");
+        print("notification ==== ${message?.notification}");
+
+        message?.data.forEach((key, value) {
+          if (key == "id") {
+            id = value;
+          }
+
+          if (key == "operation") {
+            contentType = value;
+          }
+
+          if (key == "image") {
+            image = value;
+          }
+
+          if (key == "title") {
+            title = value;
+          }
+
+          if (key == "body") {
+            messageData = value;
+          }
+        });
+
+        image = android?.imageUrl ?? '';
+
+        print('<><> onMessage id--->$id');
+        print('<><> onMessage title--->$title');
+        print('<><> onMessage messageData--->$messageData');
+        print('<><> onMessage contentType--->$contentType');
+        print("<><> onMessage Image URL : $image <><>");
+
+        SessionManagerMethods.init();
+
+        int userCount = sessionManager.getMessageCount() ?? 0;
+
+        userCount = userCount + 1;
+
+        print("USER CHAT BEFORE ===== $userCount");
+
+        sessionManager.setMessageCount(userCount);
+
+
+        if (image.isNotEmpty)
         {
-          var id = "";
-          var contentType = "";
-          var image = "";
-          var title = "";
-          var messageData = "";
 
-          message?.data.forEach((key, value) {
-            if (key == "content_id") {
-              id = value;
-            }
+          String largeIconPath = await _downloadAndSaveFile(image.toString().replaceAll(" ", "%20"), 'largeIcon');
+          String bigPicturePath = await _downloadAndSaveFile(image.toString().replaceAll(" ", "%20"), 'bigPicture');
 
-            if (key == "operation") {
-              contentType = value;
-            }
+          final BigPictureStyleInformation bigPictureStyleInformation = BigPictureStyleInformation(
+              FilePathAndroidBitmap(bigPicturePath),
+              largeIcon: FilePathAndroidBitmap(largeIconPath),
+              hideExpandedLargeIcon: false,
+              contentTitle: title, //"<b>$title</b>"
+              htmlFormatContentTitle: true,
+              summaryText: '',
+              htmlFormatSummaryText: true
+          );
 
-            if (key == "image") {
-              image = value;
-            }
+          final DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails(
+              presentSound: true,
+              presentAlert: true,
+              categoryIdentifier: "myNotificationCategory",
+              threadIdentifier: "myNotificationCategory",
+              attachments: <DarwinNotificationAttachment>[
+                DarwinNotificationAttachment(
+                  bigPicturePath,
+                )
+              ]);
 
-            if (key == "title") {
-              title = value;
-            }
+          print("object------->$bigPicturePath**************");
 
-            if (key == "message") {
-              messageData = value;
-            }
-          });
+          flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+                android: AndroidNotificationDetails('SIRE', 'SIRE',
+                    channelDescription: channel.description,
+                    icon: android!.smallIcon,
+                    playSound: true,
+                    styleInformation: bigPictureStyleInformation,
+                    importance: Importance.max,
+                    priority: Priority.high),
+                iOS: iOSPlatformChannelSpecifics),
+            payload: contentType,
+          );
 
-           print('<><> onMessage id--->$id');
-          print('<><> onMessage contentType--->$contentType');
-          print('<><> onMessage title--->$title');
-          print('<><> onMessage messageData--->$messageData');
-          print("<><> onMessage Image URL : $image <><>");
-
-          NavigationService.notif_id = id;
-
-          SessionManagerMethods.init();
-
-          if (contentType == "lecture_complete")
-            {
-              SessionManager().setClassId(id);
-            }
-
-          if (contentType == "user_chat")
-            {
-              SessionManager().setBatchId(id);
-
-              int userCount = SessionManager().getMessageCount() ?? 0;
-
-              userCount = userCount + 1;
-
-              print("USER CHAT BEFORE ===== $userCount");
-
-              SessionManager().setMessageCount(userCount);
-
-              print("USER CHAT ===== ${SessionManager().getMessageCount()}");
-
-            }
-
-          const DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails(
-              presentSound: true, presentAlert: true);
-
+        }
+        else
+        {
+          print("IMAGE NOT EMPTY");
+          const DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails(presentSound: true, presentAlert: true,);
+          print("IMAGE  ==== ${title} ====== ${messageData}");
           flutterLocalNotificationsPlugin.show(
             notification.hashCode,
             title,
             messageData,
             payload: contentType,
             NotificationDetails(
-              android: AndroidNotificationDetails('SIRE', 'SIRE',
+              android: AndroidNotificationDetails(
+                'SIRE',
+                'SIRE',
                 channelDescription: channel.description,
-                icon: android?.smallIcon,
+                icon: android!.smallIcon,
                 playSound: true,
                 importance: Importance.max,
                 styleInformation: BigTextStyleInformation(messageData),
-                priority: Priority.high
+                priority: Priority.high,
               ),
-              iOS: iOSPlatformChannelSpecifics
+              iOS: iOSPlatformChannelSpecifics,
             ),
           );
         }
+
+      }
       else
-        {
-            print("<><> CHECK DATA :  <><>");
-        }
+      {
+        print("<><> CHECK DATA : " + " <><>");
+      }
+
     });
   }
 
@@ -356,11 +352,16 @@ class PushNotificationService {
     description: 'This channel is used for important notifications.', // description
     importance: Importance.max,
     playSound: true,
+    sound: RawResourceAndroidNotificationSound('notification_sound_tone.mp3'),
   );
 
-  void openPage(String contentId) {
+
+void openPage(String contentId) {
 
     SessionManagerMethods.init();
+
+
+    print("<><> ONTAP DATA :: " + contentId + "<><>");
 
     NavigationService.notif_type = contentId;
     if (contentId == "event_scheduled")
@@ -436,6 +437,28 @@ class PushNotificationService {
             MaterialPageRoute(builder: (context) => const ChatScreen(false)), (Route<dynamic> route) => false
         );
       }
+    else if(contentId == "task_deleted" || contentId == "removed_from_task_observation" || contentId == "removed_from_task"){
+      NavigationService.navigatorKey.currentState!.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) =>  ToDoListScreen(
+              AuthHeader,
+              SessionManager().getUserId() ?? "",
+              SessionManager().getUserId() ?? "",
+              "${SessionManager().getName() ?? ""} ${SessionManager().getLastName() ?? ""}",
+              SessionManager().getProfilePic() ?? ""
+          )), (Route<dynamic> route) => false
+      );
+
+    }
+    else if(contentId == "new_task_assigned" || contentId == "observer_assigned_to_task" || contentId == "task_update" || contentId == "daily_task_summary" || contentId == "task_comment"){
+      NavigationService.navigatorKey.currentState!.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) =>  ToDoDetailScreen(
+            TodoList(), const [], true,false,NavigationService.notif_id,userId: SessionManager().getUserId() ?? "",AuthHeader,
+            userProfile: SessionManager().getProfilePic() ?? "",
+            name:  "${SessionManager().getName() ?? ""} ${SessionManager().getLastName() ?? ""}", filterProjectList: [],
+          )), (Route<dynamic> route) => false
+      );
+
+    }
     else
       {
         NavigationService.navigatorKey.currentState!.pushAndRemoveUntil(
@@ -443,5 +466,6 @@ class PushNotificationService {
         );
       }
   }
+
 
 }

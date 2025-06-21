@@ -1,14 +1,14 @@
+
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +43,6 @@ import 'package:shivalik_institute/viewmodels/UserListViewModel.dart';
 import 'package:shivalik_institute/viewmodels/UserViewModel.dart';
 import 'package:shivalik_institute/viewmodels/VerifyOtpViewModel.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'common_widget/common_widget.dart';
 import 'constant/colors.dart';
 import 'constant/global_context.dart';
@@ -54,23 +53,57 @@ import 'model/LecturesResponseModel.dart';
 import 'model/ModuleResponseModel.dart';
 import 'push_notification/PushNotificationService.dart';
 import 'screen/FacultyProfileScreen.dart';
-import 'package:web_socket_channel/io.dart';
+import 'package:to_do_package_shivalik/screens/todo_list_screen.dart';
+import 'package:to_do_package_shivalik/screens/todo_detail_screen.dart';
+import 'package:to_do_package_shivalik/model/todo_list_data_response_model.dart';
 
-
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+  print("@@@@@@@@ Main Dart @@@@@@@@ ${message.data}");
+}
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SessionManagerMethods.init();
   Firebase.initializeApp(name: 'SIRE',options: DefaultFirebaseOptions.currentPlatform);
 
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 1000 << 40; // for increase the cache memory
+
   await PushNotificationService().setupInteractedMessage();
-
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+  log("@@@@@@@@ Main Dart initialMessage @@@@@@@@ ${initialMessage?.data}");
+  if (initialMessage != null)
+  {
+    print("@@@@@@@@ Main Dart initialMessage @@@@@@@@ ${initialMessage.data}");
+    NavigationService.notif_type = initialMessage.data['operation'];
+    NavigationService.notif_id = initialMessage.data['id'];
+    print("IS IN <MAIN ==== ${initialMessage.data}");
+    SessionManager sessionManager = SessionManager();
+
+    if (NavigationService.notif_type == "lecture_complete")
+    {
+      sessionManager.setClassId(initialMessage.data['id']);
+    }
+    else if (NavigationService.notif_type == "user_chat")
+    {
+
+      int userCount = sessionManager.getMessageCount() ?? 0;
+
+      print("USER CHAT BEFORE ADD ===== $userCount");
+
+      userCount = userCount + 1;
+
+      print("USER CHAT BEFORE ===== $userCount");
+
+      sessionManager.setBatchId(initialMessage.data['id']);
+      sessionManager.setMessageCount(userCount);
+      print("USER CHAT ===== ${sessionManager.getMessageCount()}");
+    }
+  }
+
 
   //FOR NOTIFICATION//
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((value) => runApp(
@@ -104,41 +137,7 @@ Future<void> main() async {
 }
 
 @pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print("Handling a background message: ${message.messageId}");
 
-  print("@@@@@@@@ Main Dart @@@@@@@@ ${message.data}");
-  NavigationService.notif_type = message.data['operation'];
-  NavigationService.notif_id = message.data['content_id'];
-
-  SessionManagerMethods.init();
-
-  SessionManager sessionManager = SessionManager();
-
-  if (NavigationService.notif_type == "lecture_complete")
-    {
-      sessionManager.setClassId(message.data['content_id']);
-    }
-  else if (NavigationService.notif_type == "user_chat")
-  {
-
-    int userCount = sessionManager.getMessageCount() ?? 0;
-
-    print("USER CHAT BEFORE ADD ===== $userCount");
-
-    userCount = userCount + 1;
-
-    print("USER CHAT BEFORE ===== $userCount");
-
-    sessionManager.setBatchId(message.data['content_id']);
-    sessionManager.setMessageCount(userCount);
-    print("USER CHAT ===== ${sessionManager.getMessageCount()}");
-  }
-
-  print("USER CHAT OUT ===== ${sessionManager.getMessageCount()}");
-
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -324,6 +323,28 @@ class _MyHomePageState extends State<MyHomePage> {
               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const ChatScreen(false)),(route) => false);
             });
           }
+        else if(contentId == "task_deleted" || contentId == "removed_from_task_observation" || contentId == "removed_from_task"){
+          Timer(const Duration(seconds: 3),(){
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  ToDoListScreen(
+                AuthHeader,
+                sessionManager.getUserId() ?? "",
+                sessionManager.getUserId() ?? "",
+                "${sessionManager.getName() ?? ""} ${sessionManager.getLastName() ?? ""}",
+                sessionManager.getProfilePic() ?? ""
+            )),(route) => false);
+          });
+        }
+        else if(contentId == "new_task_assigned" || contentId == "observer_assigned_to_task" || contentId == "task_update" || contentId == "daily_task_summary" || contentId == "task_comment"){
+          Timer(const Duration(seconds: 3),(){
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>
+                ToDoDetailScreen(
+                  TodoList(), const [], true,false,NavigationService.notif_id,userId:  sessionManager.getUserId() ?? "",AuthHeader,
+                  userProfile: sessionManager.getProfilePic() ?? "",
+                  name: "${sessionManager.getName() ?? ""} ${sessionManager.getLastName() ?? ""}", filterProjectList: [],
+                )
+            ),(route) => false);
+          });
+        }
         else
         {
           Timer(const Duration(seconds: 3),(){
@@ -367,6 +388,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final body = response.body;
     Map<String, dynamic> apiResponse = jsonDecode(body);
     var dataResponse = AppVersionResponseModel.fromJson(apiResponse);
+    print(dataResponse);
 
     if (statusCode == 200 && dataResponse.success == 1)
     {
