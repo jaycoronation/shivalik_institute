@@ -142,7 +142,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
       var messageData = "";
 
       message.data.forEach((key, value) {
-        if (key == "content_id") {
+        if (key == "id") {
           id = value;
         }
 
@@ -190,7 +190,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
 
           print("USER CHAT BEFORE ===== $userCount");
 
-          sessionManager.setBatchId(message.data['content_id']);
+          sessionManager.setBatchId(message.data['id']);
           sessionManager.setMessageCount(userCount);
           print("USER CHAT ===== ${sessionManager.getMessageCount()}");
           setState(() {

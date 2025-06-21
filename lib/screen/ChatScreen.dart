@@ -2019,7 +2019,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
             'body': msg,
             'title': "New message from ${checkValidString(sessionManager.getName())} ${checkValidString(sessionManager.getLastName())} on SIRE Connect",
           },
-          'data': <String, dynamic>{'content_id': sessionManager.getBatchId() ?? '', 'message': msg, 'operation': "user_chat",},
+          'data': <String, dynamic>{'id': sessionManager.getBatchId() ?? '', 'message': msg, 'operation': "user_chat",},
           'content_available' : true,
           'registration_ids': token
         },
