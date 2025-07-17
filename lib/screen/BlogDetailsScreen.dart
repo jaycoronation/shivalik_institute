@@ -83,7 +83,7 @@ class _BlogDetailsScreen extends BaseState<BlogDetailsScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(checkValidString(getSet.title).toString(),style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
+                      Text(getSet.title ?? "",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
                       const Gap(12),
                       Container(
                         alignment: Alignment.centerLeft,

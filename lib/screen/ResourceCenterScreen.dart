@@ -1,13 +1,11 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:shivalik_institute/common_widget/loading.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/viewmodels/ModuleViewModel.dart';
-
 import '../common_widget/common_widget.dart';
 import '../common_widget/placeholder.dart';
 import '../constant/api_end_point.dart';

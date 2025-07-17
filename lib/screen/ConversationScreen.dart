@@ -192,7 +192,9 @@ class _ConversationScreenState extends BaseState<ConversationScreen> {
                                             Text(listData[index].name ?? '', style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w500,color: black),),
                                             Visibility(
                                                 visible: listData[index].lastMessage?.content?.isNotEmpty ?? false,
-                                                child: Text(timeStampToDateTimeForMsg(listData[index].lastMessage?.timestamp), style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w500,color: black),)),
+                                                child: Text(timeStampToDateTimeForMsg(listData[index].lastMessage?.timestamp),
+                                                  style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w500,color: black))
+                                            ),
                                           ],
                                         ),
                                         const Gap(6),

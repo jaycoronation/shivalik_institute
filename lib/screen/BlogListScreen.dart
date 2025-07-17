@@ -227,7 +227,7 @@ class _BlogListScreenState extends BaseState<BlogListScreen> {
                                             )),
                                       ),
                                       Text(
-                                        toDisplayCase(listBlog[index].title.toString().trim()),
+                                        toDisplayCase(listBlog[index].title?.trim() ?? ""),
                                         overflow: TextOverflow.clip,
                                         maxLines: 2,
                                         style: TextStyle(color: black, fontWeight: FontWeight.w500, fontSize: textFiledSize),
@@ -313,6 +313,7 @@ class _BlogListScreenState extends BaseState<BlogListScreen> {
     final body = response.body;
     Map<String, dynamic> user = jsonDecode(body);
     var dataResponse = BlogListResponseModel.fromJson(user);
+    print(dataResponse);
 
     if (statusCode == 200 && dataResponse.success == 1)
     {

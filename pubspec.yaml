@@ -122,7 +122,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/notification_data.json
+    - assets/sire-10879-firebase-adminsdk-6y4f6-0229b6b7bc.json
 
   fonts:
     - family: Poppins

@@ -343,7 +343,7 @@ class _VerifyOTPScreenState extends BaseState<VerifyOTPScreen> {
                                               value.user?.isAlumini ?? '',
                                               value.user?.isBatchAdmin ?? ''
                                             );
-                                            startActivity(context, DashboardScreen());
+                                            startActivity(context, const DashboardScreen());
                                             showToast(value.message, context);
                                           }
                                           else
