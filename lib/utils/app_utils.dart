@@ -242,16 +242,39 @@ isValidPhoneNumber(String? input)
 }
 
 /*convert string to CamelCase*/
-toDisplayCase (String str) {
+// toDisplayCase (String str) {
+//   try {
+//     return str.toLowerCase().split(' ').map((word) {
+//         String leftText = (word.length > 1) ? word.substring(1, word.length) : '';
+//         return word[0].toUpperCase() + leftText;
+//       }).join(' ');
+//   } catch (e) {
+//     if (kDebugMode) {
+//       print(e);
+//     }
+//   }
+// }
+
+String toDisplayCase(String str) {
   try {
-    return str.toLowerCase().split(' ').map((word) {
+
+    if (str == null || str.toLowerCase() == "null" || str.isEmpty) {
+      return "";
+    } else {
+
+      return str.toLowerCase().split(RegExp(r'(\s+|[\.,;])')).map((word) {
+        if (word.isEmpty) {
+          return word;
+        }
         String leftText = (word.length > 1) ? word.substring(1, word.length) : '';
         return word[0].toUpperCase() + leftText;
       }).join(' ');
+    }
   } catch (e) {
     if (kDebugMode) {
       print(e);
     }
+    return "";
   }
 }
 
@@ -307,9 +330,9 @@ String getPrice(String text) {
   {
     try {
       var formatter = NumberFormat('#,##,###');
-      return "${formatter.format(double.parse(text))}";
+      return formatter.format(double.parse(text));
     } catch (e) {
-      return "$text";
+      return text;
     }
   }
   else

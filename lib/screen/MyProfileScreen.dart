@@ -207,7 +207,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    checkValidString(getSet.batchName),
+                                    getSet.batchName ?? "",
                                     textAlign: TextAlign.start,
                                     style: const TextStyle(fontWeight: FontWeight.w400, color: black, fontSize: 14, fontFamily: 'Colfax'),
                                   ),
@@ -286,7 +286,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                                 children:  [
                                                   Padding(
                                                     padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                                    child: Text((getSet.email.toString()),
+                                                    child: Text(getSet.email ?? "",
                                                         style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
                                                     ),
                                                   ),
@@ -318,7 +318,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                                 children:  [
                                                   Padding(
                                                     padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                                    child: Text((getSet.contactNo.toString()),
+                                                    child: Text((getSet.contactNo ?? ""),
                                                         style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
                                                     ),
                                                   ),
@@ -381,7 +381,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                                 children:  [
                                                   Padding(
                                                     padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                                    child: Text(getSet.courseName.toString(),
+                                                    child: Text(getSet.courseName ?? "",
                                                         style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
                                                     ),
                                                   ),
@@ -413,7 +413,7 @@ class _MyProfileScreenState extends BaseState<MyProfileScreen> {
                                                 children:  [
                                                   Padding(
                                                     padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                                    child: Text(getSet.batchName.toString(),
+                                                    child: Text(getSet.batchName ?? "",
                                                         style: const TextStyle(fontSize: 16, color:black,fontWeight: FontWeight.w400),textAlign: TextAlign.center
                                                     ),
                                                   ),

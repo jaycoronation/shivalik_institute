@@ -78,7 +78,7 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(checkValidString(getSet.title).toString(),style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
+                          Text(getSet.title ?? "",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: black),),
                           const Gap(12),
                           Text(
                             universalDateConverter("dd-MM-yyyy hh:mm a", "dd MMM, yyyy hh:mm a", getSet.date.toString()),
@@ -222,7 +222,7 @@ class _EventsDetailsScreen extends BaseState<EventsDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           HtmlWidget(
-                            checkValidString(getSet.description),
+                            getSet.description ?? "",
                             textStyle: const TextStyle(fontSize: 16, color: grayDark, fontWeight: FontWeight.w400),
                           ),
                         ],

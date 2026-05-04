@@ -91,7 +91,7 @@ class _MediaScreenState extends BaseState<MediaScreen> {
               ),
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: PreferredSize(
-                preferredSize: Size(100, 50),
+                preferredSize: const Size(100, 50),
                 child: TabBar(
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicatorColor: Colors.transparent,
@@ -118,7 +118,7 @@ class _MediaScreenState extends BaseState<MediaScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: listMedia.isEmpty ? MyNoDataNewWidget(msg: "No Media uploaded yet", img: ''): SingleChildScrollView(
+                child: listMedia.isEmpty ? const MyNoDataNewWidget(msg: "No Media uploaded yet", img: ''): SingleChildScrollView(
                   child: GridView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
@@ -158,7 +158,7 @@ class _MediaScreenState extends BaseState<MediaScreen> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child:  listDocument.isEmpty
-                    ? MyNoDataNewWidget(msg: "No Document uploaded yet", img: '')
+                    ? const MyNoDataNewWidget(msg: "No Document uploaded yet", img: '')
                     : SingleChildScrollView(
                   child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
@@ -184,12 +184,12 @@ class _MediaScreenState extends BaseState<MediaScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Image.asset('assets/images/ic_file_inside.png', width: 55, height: 55,),
-                                  Gap(12),
+                                  const Gap(12),
                                   Text(listDocument[index].name,style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 14),),
                                 ],
                               ),
-                              Gap(12),
-                              Divider(
+                              const Gap(12),
+                              const Divider(
                                 height: 1,
                                 thickness: 1,
                                 color: grayLight,
