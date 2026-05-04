@@ -280,7 +280,7 @@ class _BlogDetailsScreen extends BaseState<BlogDetailsScreen> {
                   )),
             ),
             Text(
-              toDisplayCase(blogListData[index].title.toString().trim()),
+              (blogListData[index].title.toString().trim()),
               overflow: TextOverflow.clip,
               maxLines: 2,
               style: TextStyle(color: black, fontWeight: FontWeight.w500, fontSize: textFiledSize),

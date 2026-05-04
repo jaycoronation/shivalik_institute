@@ -409,9 +409,6 @@ class _ResourceCenterClassScreenState extends BaseState<ResourceCenterClassScree
             }
           }
         }
-
     }
-
   }
-
 }

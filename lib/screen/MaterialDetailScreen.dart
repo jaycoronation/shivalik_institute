@@ -5,14 +5,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pretty_http_logger/pretty_http_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:shivalik_institute/common_widget/no_data_new.dart';
 import 'package:shivalik_institute/constant/global_context.dart';
 import 'package:shivalik_institute/screen/DashboardScreen.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../common_widget/common_widget.dart';
 import '../common_widget/placeholder.dart';

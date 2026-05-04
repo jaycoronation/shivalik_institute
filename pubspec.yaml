@@ -46,12 +46,12 @@ dependencies:
   photo_view:
   lottie: ^1.2.1
   smooth_page_indicator: ^1.0.0+2
-  fluttertoast: ^8.0.9
+  fluttertoast: ^8.2.12
   pin_code_fields: ^8.0.1
-  image_picker: ^1.0.1
+  image_picker: ^1.1.2
   file_picker:
   url_launcher:
-  image_cropper: ^9.0.0
+  image_cropper: ^9.1.0
   flutter_custom_tabs:
   gap:
   countup: ^0.1.3
@@ -64,7 +64,7 @@ dependencies:
   chewie: ^1.7.1
   video_player:
   share_plus: ^10.1.4
-  firebase_core:
+  firebase_core: ^3.14.0
   firebase_messaging:
   flutter_local_notifications: ^18.0.1
   flutter_widget_from_html:
@@ -74,8 +74,6 @@ dependencies:
   screen_protector: ^1.4.2
   package_info_plus: ^8.0.0
   shimmer: ^3.0.0
-  flutter_file_downloader: ^1.2.1
-  flutter_cache_manager: ^3.3.1
   webview_flutter: ^4.7.0
   device_info_plus: ^11.0.0
   readmore: ^3.0.0
@@ -90,7 +88,7 @@ dependencies:
   flutter_reaction_button: ^3.0.0+3
   emoji_picker_flutter:
   pull_down_button: ^0.9.3
-  permission_handler: ^10.2.0
+  permission_handler: ^12.0.0+1
   open_file: ^3.5.8
   path_provider: ^2.1.2
   flutter_linkify: ^6.0.0
@@ -101,7 +99,7 @@ dev_dependencies:
     sdk: flutter
 
   to_do_package_shivalik:
-    path: C:\Users\Hetvi\AndroidStudioProjects\to_do_package_shivalik
+    path: /Users/jaymistry/Documents/JayMistry/Demo/to_do_package_shivalik
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -122,7 +120,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/notification_data.json
+    - assets/sire-10879-firebase-adminsdk-6y4f6-0229b6b7bc.json
 
   fonts:
     - family: Poppins

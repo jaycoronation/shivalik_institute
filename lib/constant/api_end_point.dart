@@ -1,4 +1,4 @@
-const String MAIN_URL = "https://www.shivalik.institute/api/Services/";
+const String MAIN_URL = "https://lms.shivalik.institute/api/Services/";
 const String MAIN_URL_REECOSYS = "https://www.reecosys.com/api/Admin/";
 const String MAIN_URL_REECOSYS_SERVICE = "https://www.reecosys.com/api/Services/";
 const FROM_APP = "true";
@@ -44,5 +44,5 @@ const feedbackFormUrl = "${MAIN_URL}manage_form/details";
 const saveFeedbackUrl = "${MAIN_URL}form_submission";
 const removeDeviceToken = "${MAIN_URL}remove_device_token";
 const lectureAttendance = "${MAIN_URL}attendance_report/user_lecture_attendance";
-const pendingFeedback = "${MAIN_URL}pending_feedbacks";
+const pendingFeedback = "${MAIN_URL}pending_feedbacks_v1";
 const batchWiseDeviceToken = "${MAIN_URL}get_batch_device_tokens";

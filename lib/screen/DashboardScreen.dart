@@ -233,7 +233,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
             centerTitle: false,
             leading: InkWell(
               onTap: () async {
-                var value = await Navigator.push(context, MaterialPageRoute(builder: (context) => const MyProfileScreen()));
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => const MyProfileScreen()));
                 getUserData();
               },
               customBorder: const CircleBorder(),
@@ -486,15 +486,15 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
                                 onDatePressed: (DateTime datetime) {
                                   // Do something
 
-                                  DateTime selectedDate = DateTime.now();
-
-                                  for(int i=0;i<listCalenderEvents.length;i++)
-                                  {
-                                    if(DateFormat('yyyy-MM-dd').format(listCalenderEvents[i].date ?? DateTime.now()) == DateFormat('yyyy-MM-dd').format(datetime))
-                                    {
-                                      selectedDate = listCalenderEvents[i].date ?? DateTime.now();
-                                    }
-                                  }
+                                  // DateTime selectedDate = DateTime.now();
+                                  //
+                                  // for(int i=0;i<listCalenderEvents.length;i++)
+                                  // {
+                                  //   if(DateFormat('yyyy-MM-dd').format(listCalenderEvents[i].date ?? DateTime.now()) == DateFormat('yyyy-MM-dd').format(datetime))
+                                  //   {
+                                  //     selectedDate = listCalenderEvents[i].date ?? DateTime.now();
+                                  //   }
+                                  // }
 
                                   for (var i=0; i < listUpcomingLectures.length; i++)
                                   {
@@ -539,7 +539,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
                                   ),
                                 ),
                                 decorations: listCalenderEvents,
-
                               ),
                             ),
                           ),
@@ -1515,7 +1514,7 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
                         )),
                   ),
                   Text(
-                    toDisplayCase(listBlog[index].title.toString().trim()),
+                    (listBlog[index].title.toString().trim()),
                     overflow: TextOverflow.clip,
                     maxLines: 2,
                     style: TextStyle(color: black, fontWeight: FontWeight.w500, fontSize: textFiledSize),
@@ -1711,7 +1710,11 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
 
     if (moduleViewModel.response.success == '1')
       {
+
+        print("IS IN SUCCESS == 1");
         listModule = moduleViewModel.response.list ?? [];
+
+        print("listModule ==  ${listModule.length}");
 
         for (var i=0; i < listModule.length; i++)
           {
@@ -2153,8 +2156,6 @@ class _DashboardScreenState extends BaseState<DashboardScreen> with WidgetsBindi
             startActivity(context, FeedbackFormScreenNew(dataResponse.records ?? []));
           }
       }
-    else
-      {}
   }
 
   Future<void> getBatchData() async {

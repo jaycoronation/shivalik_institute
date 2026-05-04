@@ -221,13 +221,13 @@ class _BlogListScreenState extends BaseState<BlogListScreen> {
                                                     borderRadius: BorderRadius.circular(kBorderRadius),
                                                   ),
                                                   padding: const EdgeInsets.fromLTRB(6, 3, 6, 3),
-                                                  child: Text(toDisplayCase(listBlog[index].publishedDate ?? ''),style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 12)),
+                                                  child: Text((listBlog[index].publishedDate ?? ''),style: const TextStyle(color: black,fontWeight: FontWeight.w400,fontSize: 12)),
                                                 )
                                               ],
                                             )),
                                       ),
                                       Text(
-                                        toDisplayCase(listBlog[index].title.toString().trim()),
+                                        (listBlog[index].title.toString().trim()),
                                         overflow: TextOverflow.clip,
                                         maxLines: 2,
                                         style: TextStyle(color: black, fontWeight: FontWeight.w500, fontSize: textFiledSize),
